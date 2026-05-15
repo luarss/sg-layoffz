@@ -184,6 +184,13 @@ async function main() {
 
   console.log(`\n📊 Session summary: ${approved} approved, ${rejected} rejected, ${remaining.length} remaining`);
   validateCsv(LAYOFFS_CSV);
+
+  if (approved > 0 || rejected > 0) {
+    console.log(`\n💡 Changes made. Commit and push with:`);
+    console.log(`   git add data/layoffs.csv data/review-queue.csv data/rejected.csv`);
+    console.log(`   git commit -m "review: process review queue ($(date +%Y-%m-%d))"`);
+    console.log(`   git push`);
+  }
 }
 
 main().catch(console.error);

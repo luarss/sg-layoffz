@@ -188,6 +188,7 @@ async function main() {
   }
 
   console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
+  console.log(`SCRAPE_RESULT:source=direct_sources,new_entries=${newEntries.length},duplicates=${dupes},potential_dupes=${potentialDupes}`);
   console.log('\nDone. Run `npm run review` to process the queue.');
 }
 
