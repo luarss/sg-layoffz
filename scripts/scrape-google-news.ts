@@ -1,0 +1,139 @@
+import Parser from 'rss-parser';
+import { readCsv, appendCsv } from '../src/lib/csv';
+import { ReviewEntry } from '../src/lib/types';
+import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
+import { isDuplicate } from './deduplicate';
+
+const parser = new Parser();
+
+const QUERIES = [
+  'Singapore layoffs',
+  'Singapore retrenchment',
+  'job cuts Singapore',
+  'Singapore tech layoffs',
+];
+
+interface RawCandidate {
+  title: string;
+  url: string;
+  snippet: string;
+  pubDate: string;
+  source: string;
+}
+
+async function resolveGoogleNewsUrl(obfuscatedUrl: string): Promise<string> {
+  try {
+    const resp = await fetch(obfuscatedUrl, { redirect: 'follow', signal: AbortSignal.timeout(10000) });
+    return resp.url;
+  } catch {
+    return obfuscatedUrl;
+  }
+}
+
+async function scrapeQuery(query: string): Promise<RawCandidate[]> {
+  const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-SG&gl=SG&ceid=SG:en`;
+  const results: RawCandidate[] = [];
+
+  try {
+    const feed = await parser.parseURL(rssUrl);
+    for (const item of feed.items || []) {
+      if (!item.title || !item.link) continue;
+      results.push({
+        title: item.title,
+        url: item.link,
+        snippet: item.contentSnippet || item.content || '',
+        pubDate: item.pubDate || '',
+        source: item.source?.name || 'Google News',
+      });
+    }
+  } catch (err) {
+    console.error(`Failed to fetch RSS for "${query}":`, err);
+  }
+
+  return results;
+}
+
+function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
+  const combined = `${c.title}. ${c.snippet}`;
+
+  return {
+    review_id: `${Date.now()}-${index}`,
+    company: normalizeCompany(c.title.split(/cuts?|lays? off|retrench|sheds?/i)[0] || c.title),
+    date_announced: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
+    jobs_cut: extractJobsFromText(combined),
+    pct_workforce: null,
+    hq_location: 'Singapore',
+    industry: 'Other',
+    source_link: c.url,
+    notes: '',
+    status: 'rumored',
+    candidate_urls: c.url,
+    snippet: c.snippet.slice(0, 300),
+  };
+}
+
+async function main() {
+  console.log('🔍 Scraping Google News for Singapore layoff coverage...\n');
+
+  const layoffs = readCsv('layoffs.csv');
+  const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
+
+  const allCandidates: RawCandidate[] = [];
+
+  for (const query of QUERIES) {
+    console.log(`  Query: "${query}"`);
+    const results = await scrapeQuery(query);
+    console.log(`    Found ${results.length} articles`);
+    allCandidates.push(...results);
+    // Small delay between queries to avoid rate limiting
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+
+  // Deduplicate by URL across all queries
+  const seenUrls = new Set<string>();
+  const unique = allCandidates.filter((c) => {
+    if (seenUrls.has(c.url)) return false;
+    seenUrls.add(c.url);
+    return true;
+  });
+
+  console.log(`\n  Total unique articles: ${unique.length}`);
+
+  // Check against existing data
+  const newEntries: ReviewEntry[] = [];
+  let dupes = 0;
+  let potentialDupes = 0;
+
+  for (let i = 0; i < unique.length; i++) {
+    const candidate = unique[i];
+    // Resolve obfuscated Google News URL
+    const realUrl = await resolveGoogleNewsUrl(candidate.url);
+    candidate.url = realUrl;
+
+    const entry = candidateToReviewEntry(candidate, i);
+    const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[]);
+
+    if (result === 'new') {
+      newEntries.push(entry);
+    } else if (result === 'duplicate') {
+      dupes++;
+    } else {
+      potentialDupes++;
+      newEntries.push(entry); // Still add, but mark in notes
+      entry.notes = 'POTENTIAL DUPLICATE - verify manually';
+    }
+  }
+
+  // Write to review queue
+  if (newEntries.length > 0) {
+    appendCsv('review-queue.csv', newEntries as any);
+    console.log(`  ✅ Added ${newEntries.length} entries to review queue`);
+  } else {
+    console.log('  No new entries to add');
+  }
+
+  console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
+  console.log('\nDone. Run `npm run review` to process the queue.');
+}
+
+main().catch(console.error);

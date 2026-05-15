@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .status-confirmed {
+    @apply bg-green-100 text-green-800;
+  }
+  .status-rumored {
+    @apply bg-amber-100 text-amber-800;
+  }
+  .status-reference {
+    @apply bg-blue-100 text-blue-800;
+  }
+}

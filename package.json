@@ -1,0 +1,37 @@
+{
+  "name": "sg-layoffz",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "scrape": "tsx scripts/scrape-google-news.ts",
+    "scrape:sources": "tsx scripts/scrape-sources.ts",
+    "scrape:all": "tsx scripts/scrape-google-news.ts && tsx scripts/scrape-sources.ts",
+    "review": "tsx scripts/review.ts",
+    "validate": "tsx scripts/validate.ts"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.20.6",
+    "chart.js": "^4.4.7",
+    "next": "^14.2.21",
+    "papaparse": "^5.4.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.4.20",
+    "cheerio": "^1.0.0",
+    "postcss": "^8.4.49",
+    "rss-parser": "^3.13.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
