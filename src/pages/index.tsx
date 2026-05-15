@@ -50,7 +50,9 @@ export default function Home({ entries, stats }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-  const entries = readCsv('layoffs.csv');
+  const entries = readCsv('layoffs.csv').sort(
+    (a, b) => b.date_announced.localeCompare(a.date_announced),
+  );
   const stats = computeStats(entries);
 
   return {
