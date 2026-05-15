@@ -140,6 +140,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Clean up stale scrape PRs and branches
+        if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
+        run: |
+          BRANCH="${{ steps.commit.outputs.branch }}"
+          echo "Cleaning up stale scrape PRs (keeping $BRANCH)..."
+
+          gh pr list --head 'scrape/' --state open --json number,headRefName \
+            --jq '.[] | select(.headRefName != "'"$BRANCH"'") | .number' | while read -r pr; do
+            echo "Closing PR #$pr..."
+            gh pr close "$pr" --delete-branch
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Report no new entries
         if: steps.check_diff.outputs.changed != 'true'
         run: echo "No new layoff candidates found today."
