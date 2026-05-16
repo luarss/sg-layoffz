@@ -24,15 +24,20 @@ export function readCsv(filename: string): LayoffEntry[] {
   return parsed.data;
 }
 
+function cleanRow(row: string): string {
+  return row.replace(/\r/g, '');
+}
+
 export function appendCsv(filename: string, entries: LayoffEntry[]): void {
   const filePath = csvPath(filename);
   const fileExists = fs.existsSync(filePath);
 
   if (entries.length === 0) return;
 
-  // Unparse array-of-arrays without fields so no header row is emitted
-  const rows = Papa.unparse(
-    entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? ''))
+  const rows = cleanRow(
+    Papa.unparse(
+      entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? ''))
+    )
   );
 
   if (fileExists) {
@@ -45,10 +50,15 @@ export function appendCsv(filename: string, entries: LayoffEntry[]): void {
 
 export function writeCsv(filename: string, entries: LayoffEntry[]): void {
   const filePath = csvPath(filename);
-  const csv = Papa.unparse({
-    fields: CSV_HEADERS as string[],
-    data: entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? '')),
-  });
+  const csv = cleanRow(
+    Papa.unparse(
+      {
+        fields: CSV_HEADERS as string[],
+        data: entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? '')),
+      },
+      { newline: '\n' }
+    )
+  );
 
   fs.writeFileSync(filePath, csv + '\n');
 }

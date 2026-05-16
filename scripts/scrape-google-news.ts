@@ -21,15 +21,6 @@ interface RawCandidate {
   source: string;
 }
 
-async function resolveGoogleNewsUrl(obfuscatedUrl: string): Promise<string> {
-  try {
-    const resp = await fetch(obfuscatedUrl, { redirect: 'follow', signal: AbortSignal.timeout(10000) });
-    return resp.url;
-  } catch {
-    return obfuscatedUrl;
-  }
-}
-
 async function scrapeQuery(query: string): Promise<RawCandidate[]> {
   const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-SG&gl=SG&ceid=SG:en`;
   const results: RawCandidate[] = [];
@@ -41,7 +32,7 @@ async function scrapeQuery(query: string): Promise<RawCandidate[]> {
       results.push({
         title: item.title,
         url: item.link,
-        snippet: item.contentSnippet || item.content || '',
+        snippet: (item.contentSnippet || item.content || '').replace(/\r/g, ''),
         pubDate: item.pubDate || '',
         source: item.source?.name || 'Google News',
       });
@@ -106,10 +97,7 @@ async function main() {
 
   for (let i = 0; i < unique.length; i++) {
     const candidate = unique[i];
-    // Resolve obfuscated Google News URL
-    const realUrl = await resolveGoogleNewsUrl(candidate.url);
-    candidate.url = realUrl;
-
+    // Store raw Google News RSS URL — resolved client-side by Chrome
     const entry = candidateToReviewEntry(candidate, i);
     const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[]);
 
