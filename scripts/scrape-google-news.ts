@@ -32,7 +32,7 @@ async function scrapeQuery(query: string): Promise<RawCandidate[]> {
       results.push({
         title: item.title,
         url: item.link,
-        snippet: item.contentSnippet || item.content || '',
+        snippet: (item.contentSnippet || item.content || '').replace(/\r/g, ''),
         pubDate: item.pubDate || '',
         source: item.source?.name || 'Google News',
       });
