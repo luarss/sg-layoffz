@@ -77,9 +77,11 @@ jobs:
           # Check if branch already exists on remote
           if git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
             echo "Branch $BRANCH already exists, fetching..."
+            git stash
             git fetch origin "$BRANCH"
             git checkout "$BRANCH"
             git merge origin/main --no-edit
+            git stash pop || true
           else
             git checkout -b "$BRANCH"
           fi
