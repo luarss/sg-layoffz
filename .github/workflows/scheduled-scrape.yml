@@ -74,17 +74,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Check if branch already exists on remote
+          # Delete remote branch from a previous failed run, then start fresh
           if git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
-            echo "Branch $BRANCH already exists, fetching..."
-            git stash
-            git fetch origin "$BRANCH"
-            git checkout "$BRANCH"
-            git merge origin/main --no-edit
-            git stash pop || true
-          else
-            git checkout -b "$BRANCH"
+            echo "Branch $BRANCH already exists (previous run), deleting..."
+            git push origin --delete "$BRANCH"
           fi
+          git checkout -b "$BRANCH"
 
           git add data/review-queue.csv
           git commit -m "scrape: add ${{ steps.count.outputs.count }} candidates to review queue (${DATE})"
