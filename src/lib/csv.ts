@@ -30,16 +30,16 @@ export function appendCsv(filename: string, entries: LayoffEntry[]): void {
 
   if (entries.length === 0) return;
 
-  const csv = Papa.unparse({
-    fields: CSV_HEADERS as string[],
-    data: entries.map((e) => CSV_HEADERS.map((h) => e[h] ?? '')),
-  });
+  // Unparse array-of-arrays without fields so no header row is emitted
+  const rows = Papa.unparse(
+    entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? ''))
+  );
 
   if (fileExists) {
-    fs.appendFileSync(filePath, '\n' + csv + '\n');
+    fs.appendFileSync(filePath, rows + '\n');
   } else {
-    fs.writeFileSync(filePath, Papa.unparse({ fields: CSV_HEADERS as string[], data: [] }) + '\n');
-    fs.appendFileSync(filePath, csv + '\n');
+    fs.writeFileSync(filePath, (CSV_HEADERS as string[]).join(',') + '\n');
+    fs.appendFileSync(filePath, rows + '\n');
   }
 }
 
@@ -47,10 +47,7 @@ export function writeCsv(filename: string, entries: LayoffEntry[]): void {
   const filePath = csvPath(filename);
   const csv = Papa.unparse({
     fields: CSV_HEADERS as string[],
-    data: [
-      ...(CSV_HEADERS as string[]),
-      ...entries.map((e) => CSV_HEADERS.map((h) => e[h] ?? '')),
-    ],
+    data: entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? '')),
   });
 
   fs.writeFileSync(filePath, csv + '\n');
