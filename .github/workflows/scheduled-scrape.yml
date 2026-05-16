@@ -104,7 +104,7 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Create PR
         if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
@@ -147,7 +147,7 @@ jobs:
 
           rm -f pr-body.md
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Clean up stale scrape PRs and branches
         if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
@@ -161,7 +161,7 @@ jobs:
             gh pr close "$pr" --delete-branch
           done
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Report no new entries
         if: steps.check_diff.outputs.changed != 'true'
