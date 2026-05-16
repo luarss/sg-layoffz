@@ -134,9 +134,16 @@ jobs:
           sed -i "s/COUNT_PLACEHOLDER/${{ steps.count.outputs.count }}/g" pr-body.md
           sed -i "s|BRANCH_PLACEHOLDER|${{ steps.commit.outputs.branch }}|g" pr-body.md
 
-          gh pr create \
-            --title "scrape: new review queue candidates ($(date +%Y-%m-%d))" \
-            --body-file pr-body.md
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${{ github.repository }}/pulls" \
+            -f title="scrape: new review queue candidates ($(date +%Y-%m-%d))" \
+            -f head="${{ steps.commit.outputs.branch }}" \
+            -f base="main" \
+            -F body=@pr-body.md
+
+          rm -f pr-body.md
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -146,7 +153,7 @@ jobs:
           BRANCH="${{ steps.commit.outputs.branch }}"
           echo "Cleaning up stale scrape PRs (keeping $BRANCH)..."
 
-          gh pr list --head 'scrape/' --state open --json number,headRefName \
+          gh pr list --search 'head:scrape/ type:pr state:open' --json number,headRefName \
             --jq '.[] | select(.headRefName != "'"$BRANCH"'") | .number' | while read -r pr; do
             echo "Closing PR #$pr..."
             gh pr close "$pr" --delete-branch
