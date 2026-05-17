@@ -3,8 +3,13 @@ import { normalizeCompany } from './normalize';
 
 export type DedupResult = 'new' | 'duplicate' | 'potential-duplicate';
 
+function extractGnFingerprint(notes: string): string | null {
+  const m = notes?.match(/\[gn:([^\]]+)\]/);
+  return m ? m[1] : null;
+}
+
 export function isDuplicate(
-  candidate: { source_link?: string; company?: string; date_announced?: string },
+  candidate: { source_link?: string; company?: string; date_announced?: string; notes?: string },
   existing: LayoffEntry[],
   reviewQueue: ReviewEntry[]
 ): DedupResult {
@@ -15,11 +20,20 @@ export function isDuplicate(
     );
     if (urlMatch) return 'duplicate';
 
-    // Check review queue too
     const queueMatch = reviewQueue.find(
       (e) => e.source_link?.toLowerCase() === candidate.source_link!.toLowerCase()
     );
     if (queueMatch) return 'duplicate';
+  }
+
+  // Title fingerprint match — catches the same Google News article re-fetched under a
+  // different wrapper URL on a subsequent run (fingerprint stored as [gn:...] in notes)
+  const candidateFp = extractGnFingerprint(candidate.notes || '');
+  if (candidateFp) {
+    const fpMatch = reviewQueue.find(
+      (e) => extractGnFingerprint(e.notes || '') === candidateFp
+    );
+    if (fpMatch) return 'duplicate';
   }
 
   // Fuzzy: normalized company + month match

@@ -21,6 +21,22 @@ interface RawCandidate {
   source: string;
 }
 
+// Google News RSS gives different opaque wrapper URLs for the same article depending
+// on which query fetched it. We fingerprint the title (stripped source, first 6 words)
+// and use it as a secondary dedup key within a run and as the `notes` field so
+// isDuplicate can catch the same article coming in on a future run.
+function titleFingerprint(title: string): string {
+  return title
+    .replace(/ [-–] [^-–\n]+$/, '') // strip "- Source Name" suffix
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .slice(0, 6)
+    .join(' ');
+}
+
 async function scrapeQuery(query: string): Promise<RawCandidate[]> {
   const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-SG&gl=SG&ceid=SG:en`;
   const results: RawCandidate[] = [];
@@ -56,7 +72,7 @@ function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
     hq_location: 'Singapore',
     industry: 'Other',
     source_link: c.url,
-    notes: '',
+    notes: `[gn:${titleFingerprint(c.title)}]`,
     status: 'rumored',
     candidate_urls: c.url,
     snippet: c.snippet.slice(0, 300),
@@ -80,11 +96,16 @@ async function main() {
     await new Promise((r) => setTimeout(r, 1000));
   }
 
-  // Deduplicate by URL across all queries
+  // Dedup by URL, then by title fingerprint — Google News returns different opaque
+  // wrapper URLs for the same article across queries, but titles stay consistent.
   const seenUrls = new Set<string>();
+  const seenTitles = new Set<string>();
   const unique = allCandidates.filter((c) => {
     if (seenUrls.has(c.url)) return false;
     seenUrls.add(c.url);
+    const fp = titleFingerprint(c.title);
+    if (fp && seenTitles.has(fp)) return false;
+    seenTitles.add(fp);
     return true;
   });
 
@@ -97,7 +118,6 @@ async function main() {
 
   for (let i = 0; i < unique.length; i++) {
     const candidate = unique[i];
-    // Store raw Google News RSS URL — resolved client-side by Chrome
     const entry = candidateToReviewEntry(candidate, i);
     const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[]);
 
