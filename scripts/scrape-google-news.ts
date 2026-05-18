@@ -40,9 +40,11 @@ function titleFingerprint(title: string): string {
 async function scrapeQuery(query: string): Promise<RawCandidate[]> {
   const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-SG&gl=SG&ceid=SG:en`;
   const results: RawCandidate[] = [];
+  const t0 = Date.now();
 
   try {
     const feed = await parser.parseURL(rssUrl);
+    console.log(`    [timing] "${query}": ${((Date.now() - t0) / 1000).toFixed(2)}s`);
     for (const item of feed.items || []) {
       if (!item.title || !item.link) continue;
       results.push({
@@ -54,6 +56,7 @@ async function scrapeQuery(query: string): Promise<RawCandidate[]> {
       });
     }
   } catch (err) {
+    console.error(`    [timing] "${query}": FAILED after ${((Date.now() - t0) / 1000).toFixed(2)}s`);
     console.error(`Failed to fetch RSS for "${query}":`, err);
   }
 

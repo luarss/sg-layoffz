@@ -85,13 +85,15 @@ function fetchRaw(url: string, redirectsLeft = 5): Promise<string> {
         const status = res.statusCode || 0;
         if (status >= 300 && status < 400 && res.headers.location && redirectsLeft > 0) {
           res.resume();
+          req.destroy();
           const next = new URL(res.headers.location, url).toString();
           resolve(fetchRaw(next, redirectsLeft - 1));
           return;
         }
         if (status < 200 || status >= 300) {
-          reject(new Error(`HTTP ${status} for ${url}`));
           res.resume();
+          req.destroy();
+          reject(new Error(`HTTP ${status} for ${url}`));
           return;
         }
         let body = '';
@@ -236,4 +238,9 @@ async function main() {
   console.log('\nDone. Run `npm run review` to process the queue.');
 }
 
-main().catch(console.error);
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
