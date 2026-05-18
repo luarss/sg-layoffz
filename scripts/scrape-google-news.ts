@@ -84,6 +84,7 @@ async function main() {
 
   const layoffs = readCsv('layoffs.csv');
   const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
+  const rejected = readCsv('rejected.csv');
 
   const allCandidates: RawCandidate[] = [];
 
@@ -119,7 +120,7 @@ async function main() {
   for (let i = 0; i < unique.length; i++) {
     const candidate = unique[i];
     const entry = candidateToReviewEntry(candidate, i);
-    const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[]);
+    const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[], rejected);
 
     if (result === 'new') {
       newEntries.push(entry);
