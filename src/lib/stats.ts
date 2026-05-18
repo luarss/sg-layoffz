@@ -12,19 +12,14 @@ export function computeStats(entries: LayoffEntry[]): AggregateStats {
   );
   const latestEntryDate = sorted[0]?.date_announced ?? '';
 
-  // Monthly breakdown (last 24 months)
   const monthlyMap: Record<string, { jobs: number; count: number }> = {};
-  const now = new Date();
-  const cutoff = new Date(now.getFullYear() - 2, now.getMonth(), 1);
 
   for (const entry of confirmed) {
     const d = new Date(entry.date_announced);
-    if (d >= cutoff) {
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      if (!monthlyMap[key]) monthlyMap[key] = { jobs: 0, count: 0 };
-      monthlyMap[key].jobs += entry.jobs_cut ?? 0;
-      monthlyMap[key].count += 1;
-    }
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (!monthlyMap[key]) monthlyMap[key] = { jobs: 0, count: 0 };
+    monthlyMap[key].jobs += entry.jobs_cut ?? 0;
+    monthlyMap[key].count += 1;
   }
 
   const monthlyBreakdown = Object.entries(monthlyMap)
