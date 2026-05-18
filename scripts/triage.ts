@@ -180,6 +180,8 @@ const REJECT_KEYWORDS = [
   'retrenchment benefit not mandatory', // policy
   'nestl begins south africa', 'nestle begins south africa', // dup of Nestlé entry
   'crypto com lays 12 staff', 'singapore based crypto com lays', // dup of Crypto.com entry
+  'biospace layoff tracker', 'biospace.com', // generic aggregator
+  'danske bank', // Nordic bank, no SG nexus
 ];
 
 // Patterns indicating it's about a specific company event we want to keep.
@@ -253,6 +255,7 @@ const EVENT_RULES: EventRule[] = [
   { match: /^morgan stanley\b/i, company: 'Morgan Stanley', industry: 'Finance', verdict: 'rumored', notes: 'Morgan Stanley lays off ~2,500 globally; SG office potentially affected' },
   { match: /porsche shutters three units/i, company: 'Porsche', industry: 'Manufacturing', verdict: 'rumored', notes: 'Porsche shutters three units in first job cuts under new CEO' },
   { match: /anz latest to/i, company: 'ANZ', industry: 'Finance', verdict: 'rumored', notes: 'ANZ joins 2025 wave of bank/tech layoffs' },
+  { match: /traveloka layoffs/i, company: 'Traveloka', industry: 'Tech', verdict: 'rumored', notes: 'Traveloka reorganising workforce around capabilities, tech and growth; SG office potentially affected' },
 
   // ----- Duplicates of confirmed events already in layoffs.csv -----
 ];
@@ -284,6 +287,7 @@ const DUPLICATE_COMPANY_HINTS: { pattern: RegExp; existing: string }[] = [
   { pattern: /linkedin plans|linkedin is planning|linkedin will|linkedin/i, existing: 'LinkedIn' },
   { pattern: /^oracle\b|oracle begins|oracle anchors|oracle employees|laid off by email/i, existing: 'Oracle' },
   { pattern: /gxs bank|digital bank gxs|gxs/i, existing: 'GXS Bank' },
+  { pattern: /citigroup to|citi moves ahead/i, existing: 'Citi' },
 ];
 
 // Manual per-row overrides keyed by 0-based index in the resolved JSON.
