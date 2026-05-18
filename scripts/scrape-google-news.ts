@@ -69,7 +69,6 @@ function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
     date_announced: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
     jobs_cut: extractJobsFromText(combined),
     pct_workforce: null,
-    hq_location: 'Singapore',
     industry: 'Other',
     source_link: c.url,
     notes: `[gn:${titleFingerprint(c.title)}]`,

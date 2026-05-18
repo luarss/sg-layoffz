@@ -43,11 +43,6 @@ const COLUMNS: ColumnDef<LayoffEntry>[] = [
     },
   },
   {
-    accessorKey: 'hq_location',
-    header: 'HQ',
-    cell: (info) => info.getValue<string>() || <span className="text-gray-400">—</span>,
-  },
-  {
     accessorKey: 'industry',
     header: 'Industry',
     cell: (info) => (

@@ -21,7 +21,6 @@ function displayEntry(entry: ReviewEntry, index: number, total: number) {
   console.log(`  Date:         ${entry.date_announced}`);
   console.log(`  Jobs cut:     ${entry.jobs_cut ?? 'Unknown'}`);
   console.log(`  % Workforce:  ${entry.pct_workforce ?? 'Unknown'}`);
-  console.log(`  HQ:           ${entry.hq_location}`);
   console.log(`  Industry:     ${entry.industry}`);
   console.log(`  Source:       ${entry.source_link}`);
   console.log(`  Snippet:      ${entry.snippet?.slice(0, 200) || 'N/A'}`);
@@ -56,7 +55,6 @@ async function editEntry(
       label: '% Workforce (0-100)',
       validate: (v: string) => v === '' || (!isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100),
     },
-    { key: 'hq_location', label: 'HQ Location' },
     {
       key: 'industry',
       label: `Industry (${INDUSTRIES.join(', ')})`,

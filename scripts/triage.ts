@@ -16,7 +16,6 @@ type ResolvedRow = {
   date_announced: string;
   jobs_cut: number | null;
   pct_workforce: number | null;
-  hq_location: string;
   industry: string;
   source_link: string;
   notes: string;
@@ -331,7 +330,6 @@ function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): 
     date_announced: override.date_announced ?? row.date_announced,
     jobs_cut: override.jobs_cut ?? (row.jobs_cut == null ? null : Number(row.jobs_cut)),
     pct_workforce: override.pct_workforce ?? (row.pct_workforce == null ? null : Number(row.pct_workforce)),
-    hq_location: row.hq_location || 'Singapore',
     industry: finalIndustry,
     source_link: row.canonical_url || row.source_link,
     notes: override.notes ?? row.notes ?? '',

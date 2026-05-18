@@ -3,7 +3,6 @@ export interface LayoffEntry {
   date_announced: string; // YYYY-MM-DD
   jobs_cut: number | null;
   pct_workforce: number | null;
-  hq_location: string;
   industry: string;
   source_link: string;
   notes: string;
@@ -43,7 +42,6 @@ export const CSV_HEADERS: (keyof LayoffEntry)[] = [
   'date_announced',
   'jobs_cut',
   'pct_workforce',
-  'hq_location',
   'industry',
   'source_link',
   'notes',
