@@ -129,7 +129,7 @@ async function main() {
     } else {
       potentialDupes++;
       newEntries.push(entry); // Still add, but mark in notes
-      entry.notes = 'POTENTIAL DUPLICATE - verify manually';
+      entry.notes = `${entry.notes} | POTENTIAL DUPLICATE - verify manually`;
     }
   }
 

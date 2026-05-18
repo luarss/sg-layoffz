@@ -44,6 +44,20 @@ export function isDuplicate(
     if (fpRejected) return 'duplicate';
   }
 
+  // Google News entries: same company + exact date in the review queue is a
+  // duplicate, even if the [gn:...] fingerprint was lost from the earlier entry.
+  if (candidate.source_link?.includes('news.google.com') && candidate.company && candidate.date_announced) {
+    const normalizedCandidate = normalizeCompany(candidate.company).toLowerCase();
+    const queueMatch = reviewQueue.find((e) => {
+      if (!e.company || !e.date_announced) return false;
+      return (
+        normalizeCompany(e.company).toLowerCase() === normalizedCandidate &&
+        e.date_announced === candidate.date_announced
+      );
+    });
+    if (queueMatch) return 'duplicate';
+  }
+
   // Fuzzy: normalized company + month match.
   // Only flag against layoffs.csv + review queue (already-tracked events);
   // rejected entries here are noisy commentary, so we don't want to flag every
