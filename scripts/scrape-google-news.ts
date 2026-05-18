@@ -116,18 +116,33 @@ async function main() {
   let dupes = 0;
   let potentialDupes = 0;
 
+  // Track company+date pairs within this run so we don't add the same article
+  // twice when Google News returns slightly different titles for different
+  // queries (the title-fingerprint dedup above requires exact title match).
+  const seenCompanyDates = new Set<string>();
+
   for (let i = 0; i < unique.length; i++) {
     const candidate = unique[i];
     const entry = candidateToReviewEntry(candidate, i);
+
+    // Within-run dedup: same derived company + same date = same article.
+    const cdKey = `${normalizeCompany(entry.company).toLowerCase()}||${entry.date_announced}`;
+    if (seenCompanyDates.has(cdKey)) {
+      dupes++;
+      continue;
+    }
+
     const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[], rejected);
 
     if (result === 'new') {
       newEntries.push(entry);
+      seenCompanyDates.add(cdKey);
     } else if (result === 'duplicate') {
       dupes++;
     } else {
       potentialDupes++;
       newEntries.push(entry); // Still add, but mark in notes
+      seenCompanyDates.add(cdKey);
       entry.notes = `${entry.notes} | POTENTIAL DUPLICATE - verify manually`;
     }
   }

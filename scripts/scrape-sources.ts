@@ -1,48 +1,43 @@
-import * as cheerio from 'cheerio';
+import Parser from 'rss-parser';
 import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
 
-interface SourceConfig {
+const parser = new Parser();
+
+interface FeedConfig {
   name: string;
-  baseUrl: string;
-  searchPath: string;
-  articleSelector: string;
-  titleSelector: string;
-  linkSelector: string;
-  snippetSelector?: string;
-  dateSelector?: string;
+  url: string;
 }
 
-const SOURCES: SourceConfig[] = [
-  {
-    name: 'Channel NewsAsia',
-    baseUrl: 'https://www.channelnewsasia.com',
-    searchPath: '/search?q=layoffs+singapore&sort=date',
-    articleSelector: 'article, .list-item, .result-item',
-    titleSelector: 'h3, .title, .headline',
-    linkSelector: 'a',
-    snippetSelector: 'p, .snippet, .description',
-  },
-  {
-    name: 'Vulcan Post',
-    baseUrl: 'https://vulcanpost.com',
-    searchPath: '/?s=layoffs+singapore',
-    articleSelector: 'article, .post-item',
-    titleSelector: 'h2, .entry-title',
-    linkSelector: 'a',
-    snippetSelector: '.entry-summary, .excerpt',
-  },
-  {
-    name: 'Tech in Asia',
-    baseUrl: 'https://www.techinasia.com',
-    searchPath: '/search?query=singapore+layoffs',
-    articleSelector: '.search-result, article',
-    titleSelector: 'h2, .title',
-    linkSelector: 'a',
-    snippetSelector: '.excerpt, .summary',
-  },
+// Curated Singapore feeds with the strongest signal for layoff/retrenchment coverage.
+// Business Times verticals first (economy + SME run most stories), then CNA/ST for
+// breaking news, then general SG outlets as a wider net.
+const FEEDS: FeedConfig[] = [
+  { name: 'Business Times — Economy & Policy', url: 'https://www.businesstimes.com.sg/rss/economy-policy' },
+  { name: 'Business Times — Singapore', url: 'https://www.businesstimes.com.sg/rss/singapore' },
+  { name: 'Business Times — SGSME', url: 'https://www.businesstimes.com.sg/rss/sgsme' },
+  { name: 'CNA — Singapore', url: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=10416' },
+  { name: 'Straits Times — Singapore', url: 'https://www.straitstimes.com/news/singapore/rss.xml' },
+  { name: 'Mothership', url: 'https://mothership.sg/feed' },
+  { name: 'Vulcan Post — Singapore', url: 'https://vulcanpost.com/tag/singapore/feed/' },
+  { name: 'AsiaOne', url: 'https://www.asiaone.com/rss-feed/2' },
+];
+
+const LAYOFF_TERMS = [
+  'layoff',
+  'laid off',
+  'job cut',
+  'jobs cut',
+  'retrench',
+  'redundanc',
+  'restructur',
+  'downsiz',
+  'workforce reduction',
+  'headcount',
+  'sheds jobs',
+  'cuts jobs',
 ];
 
 interface RawCandidate {
@@ -53,63 +48,49 @@ interface RawCandidate {
   source: string;
 }
 
-async function scrapeSource(config: SourceConfig): Promise<RawCandidate[]> {
+// Fingerprint by title (stripped source suffix, first 6 words) so the same article
+// surfaced in multiple feeds within one run gets deduped, and `notes` carries the
+// fingerprint forward so subsequent runs can match it via isDuplicate.
+function titleFingerprint(title: string): string {
+  return title
+    .replace(/ [-–] [^-–\n]+$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .slice(0, 6)
+    .join(' ');
+}
+
+function isRelevant(title: string, snippet: string): boolean {
+  const combined = `${title} ${snippet}`.toLowerCase();
+  // Some feeds (Vulcan Post / Mothership) are SG-default so don't require the
+  // word "singapore"; others (BT/CNA/ST) are SG-by-publication. The layoff term
+  // is the binding constraint either way.
+  return LAYOFF_TERMS.some((term) => combined.includes(term));
+}
+
+async function scrapeFeed(config: FeedConfig): Promise<RawCandidate[]> {
   const results: RawCandidate[] = [];
-  const url = `${config.baseUrl}${config.searchPath}`;
 
   try {
-    const resp = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; sg-layoffz/1.0)' },
-      signal: AbortSignal.timeout(15000),
-    });
-    const html = await resp.text();
-    const $ = cheerio.load(html);
-
-    $(config.articleSelector).each((_, el) => {
-      const $el = $(el);
-      const title = $el.find(config.titleSelector).first().text().trim();
-      const linkEl = $el.find(config.linkSelector).first();
-      let href = linkEl.attr('href') || '';
-      const snippet = config.snippetSelector
-        ? $el.find(config.snippetSelector).first().text().trim()
-        : '';
-      const pubDate = config.dateSelector
-        ? $el.find(config.dateSelector).first().text().trim()
-        : '';
-
-      if (!title || !href) return;
-
-      // Resolve relative URLs
-      if (href.startsWith('/')) {
-        href = config.baseUrl + href;
-      }
-
-      // Only include results that mention Singapore layoffs/redundancies
-      const combined = `${title} ${snippet}`.toLowerCase();
-      const relevant =
-        combined.includes('singapore') &&
-        (combined.includes('layoff') ||
-          combined.includes('laid off') ||
-          combined.includes('job cut') ||
-          combined.includes('retrench') ||
-          combined.includes('redundanc') ||
-          combined.includes('restructur') ||
-          combined.includes('downsiz') ||
-          combined.includes('cut') ||
-          combined.includes('slash'));
-
-      if (!relevant) return;
+    const feed = await parser.parseURL(config.url);
+    for (const item of feed.items || []) {
+      if (!item.title || !item.link) continue;
+      const snippet = (item.contentSnippet || item.content || '').replace(/\r/g, '');
+      if (!isRelevant(item.title, snippet)) continue;
 
       results.push({
-        title,
-        url: href,
+        title: item.title,
+        url: item.link,
         snippet: snippet.slice(0, 500),
-        pubDate,
+        pubDate: item.pubDate || '',
         source: config.name,
       });
-    });
+    }
   } catch (err) {
-    console.error(`Failed to scrape ${config.name}:`, err);
+    console.error(`Failed to fetch RSS for ${config.name}:`, err);
   }
 
   return results;
@@ -126,7 +107,7 @@ function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
     pct_workforce: null,
     industry: 'Other',
     source_link: c.url,
-    notes: `From ${c.source}`,
+    notes: `From ${c.source} [gn:${titleFingerprint(c.title)}]`,
     status: 'rumored',
     candidate_urls: c.url,
     snippet: c.snippet.slice(0, 300),
@@ -134,7 +115,7 @@ function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
 }
 
 async function main() {
-  console.log('🔍 Scraping per-source news sites for Singapore layoff coverage...\n');
+  console.log('🔍 Scraping Singapore RSS feeds for layoff coverage...\n');
 
   const layoffs = readCsv('layoffs.csv');
   const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
@@ -142,19 +123,24 @@ async function main() {
 
   const allCandidates: RawCandidate[] = [];
 
-  for (const source of SOURCES) {
-    console.log(`  Source: ${source.name}`);
-    const results = await scrapeSource(source);
+  for (const feed of FEEDS) {
+    console.log(`  Feed: ${feed.name}`);
+    const results = await scrapeFeed(feed);
     console.log(`    Found ${results.length} relevant articles`);
     allCandidates.push(...results);
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 500));
   }
 
-  // Deduplicate by URL
+  // Dedup by URL and by title fingerprint within this run (same story can appear
+  // in multiple feeds, e.g. a BT piece syndicated to AsiaOne).
   const seenUrls = new Set<string>();
+  const seenFingerprints = new Set<string>();
   const unique = allCandidates.filter((c) => {
     if (seenUrls.has(c.url)) return false;
     seenUrls.add(c.url);
+    const fp = titleFingerprint(c.title);
+    if (fp && seenFingerprints.has(fp)) return false;
+    if (fp) seenFingerprints.add(fp);
     return true;
   });
 
@@ -164,18 +150,29 @@ async function main() {
   let dupes = 0;
   let potentialDupes = 0;
 
+  const seenCompanyDates = new Set<string>();
+
   for (let i = 0; i < unique.length; i++) {
     const candidate = unique[i];
     const entry = candidateToReviewEntry(candidate, i);
+
+    const cdKey = `${normalizeCompany(entry.company).toLowerCase()}||${entry.date_announced}`;
+    if (seenCompanyDates.has(cdKey)) {
+      dupes++;
+      continue;
+    }
+
     const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[], rejected);
 
     if (result === 'new') {
       newEntries.push(entry);
+      seenCompanyDates.add(cdKey);
     } else if (result === 'duplicate') {
       dupes++;
     } else {
       potentialDupes++;
       newEntries.push(entry);
+      seenCompanyDates.add(cdKey);
       entry.notes = (entry.notes ? entry.notes + ' | ' : '') + 'POTENTIAL DUPLICATE - verify';
     }
   }
@@ -188,7 +185,7 @@ async function main() {
   }
 
   console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
-  console.log(`SCRAPE_RESULT:source=direct_sources,new_entries=${newEntries.length},duplicates=${dupes},potential_dupes=${potentialDupes}`);
+  console.log(`SCRAPE_RESULT:source=rss_feeds,new_entries=${newEntries.length},duplicates=${dupes},potential_dupes=${potentialDupes}`);
   console.log('\nDone. Run `npm run review` to process the queue.');
 }
 
