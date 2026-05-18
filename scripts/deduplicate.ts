@@ -44,18 +44,20 @@ export function isDuplicate(
     if (fpRejected) return 'duplicate';
   }
 
-  // Google News entries: same company + exact date in the review queue is a
-  // duplicate, even if the [gn:...] fingerprint was lost from the earlier entry.
+  // Google News entries: same company + exact date in layoffs.csv, the review
+  // queue, or rejected.csv is a duplicate, even if the [gn:...] fingerprint was
+  // lost from the earlier entry.
   if (candidate.source_link?.includes('news.google.com') && candidate.company && candidate.date_announced) {
     const normalizedCandidate = normalizeCompany(candidate.company).toLowerCase();
-    const queueMatch = reviewQueue.find((e) => {
+    const allEntries = [...existing, ...reviewQueue, ...rejected];
+    const match = allEntries.find((e) => {
       if (!e.company || !e.date_announced) return false;
       return (
         normalizeCompany(e.company).toLowerCase() === normalizedCandidate &&
         e.date_announced === candidate.date_announced
       );
     });
-    if (queueMatch) return 'duplicate';
+    if (match) return 'duplicate';
   }
 
   // Fuzzy: normalized company + month match.
