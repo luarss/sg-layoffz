@@ -3,7 +3,7 @@ import { normalizeCompany } from './normalize';
 
 export type DedupResult = 'new' | 'duplicate' | 'potential-duplicate';
 
-function extractGnFingerprint(notes: string): string | null {
+export function extractGnFingerprint(notes: string): string | null {
   const m = notes?.match(/\[gn:([^\]]+)\]/);
   return m ? m[1] : null;
 }

@@ -15,6 +15,8 @@ const COMPANY_ALIASES: Record<string, string> = {
   'mediacorp singapore': 'Mediacorp',
   'singtel': 'Singtel',
   'singapore telecommunications': 'Singtel',
+  'citigroup': 'Citi',
+  'citibank': 'Citi',
 };
 
 const SUFFIXES = [
@@ -58,6 +60,74 @@ export function normalizeCompany(raw: string): string {
     .join(' ');
 
   return name || raw.trim();
+}
+
+// Build a map of {canonicalKey -> word-bounded search variants} for matching
+// a company inside a URL path or a degenerate (truncated) title. The canonical
+// key collapses URL-style variants ("ninja-van", "ninjavan", "ninja van") so
+// the clustering layer keys consistently.
+//
+// Variants are intended for word-bounded (` v `) search against a tokenized
+// path surface (separators → spaces). Pure substring search is intentionally
+// avoided to keep short tokens like "hm" (H&M) usable without false positives.
+//
+// Pass any additional company names beyond the alias table (typically the
+// canonical names already in layoffs.csv).
+export type CompanyTokenMap = Map<string, string[]>;
+
+export function companyTokens(extraNames: string[] = []): CompanyTokenMap {
+  const map: CompanyTokenMap = new Map();
+  // Words that mean nothing on their own — never use them as a search variant.
+  const GENERIC = new Set([
+    'the', 'and', 'group', 'asia', 'singapore', 'pacific', 'global', 'inc',
+    'corp', 'ltd', 'limited', 'holdings',
+  ]);
+
+  const slugify = (s: string): string =>
+    s.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  const variantsFor = (slug: string): string[] => {
+    const out = new Set<string>();
+    out.add(slug);                           // "ninja van"
+    out.add(slug.replace(/\s+/g, ''));       // "ninjavan"
+    if (slug.includes(' ')) out.add(slug.replace(/\s+/g, '-')); // "ninja-van"
+    const first = slug.split(/\s+/)[0];
+    if (first.length >= 5 && !GENERIC.has(first)) out.add(first);
+    return [...out].filter((v) => v.length > 0 && !GENERIC.has(v));
+  };
+
+  const add = (canonicalName: string, aliases: string[] = []) => {
+    const norm = slugify(normalizeCompany(canonicalName));
+    if (!norm) return;
+    const key = norm.replace(/\s+/g, '-');
+    if (GENERIC.has(key)) return;
+
+    const all = new Set<string>(variantsFor(norm));
+    for (const alias of aliases) {
+      const aliasSlug = slugify(alias);
+      if (!aliasSlug) continue;
+      for (const v of variantsFor(aliasSlug)) all.add(v);
+    }
+
+    const existing = map.get(key);
+    if (existing) {
+      for (const v of all) if (!existing.includes(v)) existing.push(v);
+    } else {
+      map.set(key, [...all]);
+    }
+  };
+
+  // Group aliases by their canonical name so each alias becomes an extra
+  // search variant under the canonical key.
+  const aliasGroups = new Map<string, string[]>();
+  for (const [alias, canonical] of Object.entries(COMPANY_ALIASES)) {
+    const arr = aliasGroups.get(canonical) ?? [];
+    arr.push(alias);
+    aliasGroups.set(canonical, arr);
+  }
+  for (const [canonical, aliases] of aliasGroups) add(canonical, aliases);
+  for (const n of extraNames) add(n);
+  return map;
 }
 
 export function normalizeIndustry(raw: string): string {

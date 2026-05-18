@@ -10,6 +10,13 @@ import Papa from 'papaparse';
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, CSV_HEADERS, INDUSTRIES } from '../src/lib/types';
 import { normalizeCompany } from './normalize';
+import {
+  buildClusters,
+  resolveCluster,
+  anchorsFromLayoffs,
+  buildCompanyTokens,
+  type ClusterNode,
+} from './cluster';
 
 type ResolvedRow = {
   company: string;
@@ -38,17 +45,15 @@ type Override = Partial<{
   date_announced: string;
 }>;
 
-// Companies already canonical in layoffs.csv; we'll dedupe new entries
-// against (company, YYYY-MM) of existing rows.
-function loadExistingKey(): Set<string> {
-  const existing = readCsv('layoffs.csv') as LayoffEntry[];
-  const keys = new Set<string>();
-  for (const e of existing) {
-    if (!e.company || !e.date_announced) continue;
-    const month = e.date_announced.slice(0, 7);
-    keys.add(`${normalizeCompany(e.company).toLowerCase()}|${month}`);
-  }
-  return keys;
+// Load canonical entries from layoffs.csv — used both as clustering anchors
+// and as a final cross-cluster (company, YYYY-MM) sanity check when an event
+// rule canonicalizes a row to a different company than its raw row.company.
+function loadExistingLayoffs(): LayoffEntry[] {
+  return readCsv('layoffs.csv') as LayoffEntry[];
+}
+
+function monthKey(name: string, date: string): string {
+  return `${normalizeCompany(name).toLowerCase()}|${date.slice(0, 7)}`;
 }
 
 // Patterns indicating commentary / statistics / policy debate -> reject
@@ -260,41 +265,11 @@ const EVENT_RULES: EventRule[] = [
   // ----- Duplicates of confirmed events already in layoffs.csv -----
 ];
 
-// Companies whose any review-queue mention is a duplicate of an existing
-// layoffs.csv entry. We treat these as rejected (duplicate of existing row).
-const DUPLICATE_COMPANY_HINTS: { pattern: RegExp; existing: string }[] = [
-  { pattern: /ninja van/i, existing: 'Ninja Van' },
-  { pattern: /mediacorp/i, existing: 'Mediacorp' },
-  { pattern: /shopback/i, existing: 'ShopBack' },
-  { pattern: /carousell/i, existing: 'Carousell' },
-  { pattern: /foodpanda/i, existing: 'Foodpanda' },
-  { pattern: /propertyguru/i, existing: 'PropertyGuru' },
-  { pattern: /^grab/i, existing: 'Grab' },
-  { pattern: /lazada/i, existing: 'Lazada' },
-  { pattern: /^agoda|agoda axes|agoda confirms|agoda layoffs|agoda denies|ntuc opposes agoda|ntuc deeply concerned/i, existing: 'Agoda' },
-  { pattern: /dyson/i, existing: 'Dyson' },
-  { pattern: /singtel/i, existing: 'Singtel' },
-  { pattern: /^h&m\b|h&m to move/i, existing: 'H&M' },
-  { pattern: /sabre asia pacific|company announces layoffs during cny/i, existing: 'Sabre Asia Pacific' },
-  { pattern: /hengli/i, existing: 'Hengli Singapore' },
-  { pattern: /coinbase/i, existing: 'Coinbase' },
-  { pattern: /^amazon|amazon to|amazon planning|amazon plans|amazon, said|amazon said|amazon targets|amazon bungles|amazon, [a-z]/i, existing: 'Amazon' },
-  { pattern: /^jll|jll retrenches|jll singapore/i, existing: 'JLL' },
-  { pattern: /knight frank/i, existing: 'Knight Frank' },
-  { pattern: /propertylimbrothers|plb confirms|plb's media|plb axes/i, existing: 'PropertyLimBrothers' },
-  { pattern: /yeo hiap seng|yeo’s|yeo's|fdawu supports/i, existing: 'Yeo Hiap Seng' },
-  { pattern: /deliveroo|ntuc helps deliveroo/i, existing: 'Deliveroo' },
-  { pattern: /linkedin plans|linkedin is planning|linkedin will|linkedin/i, existing: 'LinkedIn' },
-  { pattern: /^oracle\b|oracle begins|oracle anchors|oracle employees|laid off by email/i, existing: 'Oracle' },
-  { pattern: /gxs bank|digital bank gxs|gxs/i, existing: 'GXS Bank' },
-  { pattern: /citigroup to|citi moves ahead/i, existing: 'Citi' },
-];
-
 // Manual per-row overrides keyed by 0-based index in the resolved JSON.
 // Index-keyed overrides are inherently single-run; prefer adding patterns to
-// EVENT_RULES, REJECT_KEYWORDS, or DUPLICATE_COMPANY_HINTS so the rule survives
-// across scrapes. Use this map only for one-off cases that can't be captured
-// as a reusable pattern.
+// EVENT_RULES or REJECT_KEYWORDS so the rule survives across scrapes. Use
+// this map only for one-off cases that can't be captured as a reusable
+// pattern. Per-company dedup is no longer pattern-driven — see scripts/cluster.ts.
 const OVERRIDES: Record<number, Override> = {};
 
 // Build a matchable text blob from the row's title and canonical URL path.
@@ -320,43 +295,35 @@ function matchEvent(text: string): EventRule | null {
   return null;
 }
 
-function matchDuplicate(text: string): string | null {
-  for (const d of DUPLICATE_COMPANY_HINTS) {
-    if (d.pattern.test(text)) return d.existing;
-  }
-  return null;
-}
+type PreClassification = {
+  verdict: Verdict;
+  override: Override;
+  reason: string;
+  eventRuleMatched: boolean;
+  // Set when the row matched OVERRIDES[idx].verdict — manual overrides win
+  // even over cluster-anchor rejection.
+  manualOverride: boolean;
+};
 
-function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existingKeys: Set<string>) {
+// Pre-classify a single row without any duplicate detection. Clustering runs
+// after this pass and may override the verdict to 'rejected' (anchored cluster
+// or intra-batch duplicate).
+function preClassify(row: ResolvedRow, idx: number): PreClassification {
   const override = OVERRIDES[idx] || {};
   const text = matchText(row);
 
-  // Manual override wins.
   if (override.verdict) {
-    return { verdict: override.verdict, override, reason: 'manual override' };
+    return {
+      verdict: override.verdict,
+      override,
+      reason: 'manual override',
+      eventRuleMatched: false,
+      manualOverride: true,
+    };
   }
 
-  // Duplicate of existing entry?
-  const dupCompany = matchDuplicate(text);
-  if (dupCompany) {
-    // Check (company, YYYY-MM)
-    const key = `${normalizeCompany(dupCompany).toLowerCase()}|${(row.date_announced || '').slice(0, 7)}`;
-    if (existingKeys.has(key)) {
-      return { verdict: 'rejected' as Verdict, override: {}, reason: `Duplicate of existing ${dupCompany} entry` };
-    }
-    // Otherwise it's still about a company we already track but a different month: reject as duplicate of canonical company
-    return { verdict: 'rejected' as Verdict, override: {}, reason: `Same company as existing ${dupCompany} entry` };
-  }
-
-  // Match against curated event rules
   const eventRule = matchEvent(text);
   if (eventRule) {
-    const company = eventRule.company;
-    const key = `${normalizeCompany(company).toLowerCase()}|${(row.date_announced || '').slice(0, 7)}`;
-    if (existingKeys.has(key) || addedKeys.has(key)) {
-      return { verdict: 'rejected' as Verdict, override: {}, reason: `Duplicate of existing/added ${company} entry` };
-    }
-    addedKeys.add(key);
     return {
       verdict: eventRule.verdict,
       override: {
@@ -365,16 +332,28 @@ function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existin
         notes: eventRule.notes,
       } as Override,
       reason: `Event rule: ${eventRule.match}`,
+      eventRuleMatched: true,
+      manualOverride: false,
     };
   }
 
-  // Commentary / statistics / policy -> reject
   if (isPolicyOrCommentary(text)) {
-    return { verdict: 'rejected' as Verdict, override: {}, reason: 'Commentary / statistics / policy — not a specific layoff event' };
+    return {
+      verdict: 'rejected',
+      override: {},
+      reason: 'Commentary / statistics / policy — not a specific layoff event',
+      eventRuleMatched: false,
+      manualOverride: false,
+    };
   }
 
-  // Default: keep in review queue for manual triage
-  return { verdict: 'queue' as Verdict, override: {}, reason: 'Unclassified — kept in review queue for manual triage' };
+  return {
+    verdict: 'queue',
+    override: {},
+    reason: 'Unclassified — kept in review queue for manual triage',
+    eventRuleMatched: false,
+    manualOverride: false,
+  };
 }
 
 function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): LayoffEntry {
@@ -425,6 +404,8 @@ function writeQueue(rows: ResolvedRow[]): void {
 }
 
 function main() {
+  const dryRun = process.argv.includes('--dry-run');
+
   const resolvedPath = `${process.cwd()}/data/review-queue-resolved.json`;
   if (!fs.existsSync(resolvedPath)) {
     console.error('Missing data/review-queue-resolved.json. Run scripts/resolve-gnews.ts first.');
@@ -432,9 +413,80 @@ function main() {
   }
   const rows = JSON.parse(fs.readFileSync(resolvedPath, 'utf-8')) as ResolvedRow[];
 
-  const existingKeys = loadExistingKey();
-  const addedKeys = new Set<string>();
+  // -------- PASS 1: pre-classify (no dedup) --------
+  const preClass = rows.map((r, i) => preClassify(r, i));
 
+  // -------- PASS 2: cluster + dedup --------
+  const existingLayoffs = loadExistingLayoffs();
+  const tokens = buildCompanyTokens(existingLayoffs);
+
+  const candidateNodes: ClusterNode[] = rows.map((r, idx) => ({
+    idx,
+    kind: 'candidate',
+    company: r.company || '',
+    date_announced: r.date_announced || '',
+    url: r.canonical_url || r.source_link || '',
+    notes: r.notes || '',
+    jobs_cut: r.jobs_cut == null ? null : Number(r.jobs_cut),
+    eventRuleMatched: preClass[idx].eventRuleMatched,
+    brokenUrl: /BROKEN URL/i.test(r.notes || ''),
+  }));
+  const anchorNodes = anchorsFromLayoffs(existingLayoffs);
+  const nodes = [...candidateNodes, ...anchorNodes];
+
+  const clusters = buildClusters(nodes, tokens);
+
+  // Final verdicts per candidate idx — start with the pre-classification.
+  const finalVerdict: Verdict[] = preClass.map((p) => p.verdict);
+  const finalReason: string[] = preClass.map((p) => p.reason);
+  const finalOverride: Override[] = preClass.map((p) => p.override);
+
+  for (const cluster of clusters) {
+    const resolution = resolveCluster(cluster);
+    if (resolution.kind === 'anchored') {
+      const anchor = resolution.anchor;
+      const anchorLabel = `${anchor.company} (${anchor.date_announced})`;
+      for (const idx of resolution.rejectedCandidateIdxs) {
+        if (preClass[idx].manualOverride) continue; // manual override always wins
+        finalVerdict[idx] = 'rejected';
+        finalReason[idx] = `Duplicate of existing ${anchorLabel}`;
+        finalOverride[idx] = {};
+      }
+    } else if (resolution.kind === 'canonical') {
+      const canonicalIdx = resolution.canonicalIdx;
+      for (const idx of resolution.rejectedCandidateIdxs) {
+        if (preClass[idx].manualOverride) continue;
+        // Don't downgrade an already-rejected (e.g. commentary) row.
+        if (finalVerdict[idx] === 'rejected') continue;
+        finalVerdict[idx] = 'rejected';
+        finalReason[idx] = `Intra-batch duplicate of row ${canonicalIdx}`;
+        finalOverride[idx] = {};
+      }
+    }
+    // passthrough: no change to pre-class verdict
+  }
+
+  // -------- PASS 3: cross-cluster (event-rule canonical company, YYYY-MM) safety net --------
+  // If two rows match different EVENT_RULES but resolve to the same canonical
+  // company + month (e.g. via different clusters because companyKey or date
+  // window didn't align), keep only the first.
+  const seenMonthKey = new Set<string>();
+  for (let i = 0; i < rows.length; i++) {
+    if (finalVerdict[i] !== 'confirmed' && finalVerdict[i] !== 'rumored') continue;
+    const company = finalOverride[i].company || rows[i].company;
+    const date = finalOverride[i].date_announced || rows[i].date_announced || '';
+    if (!company || !date) continue;
+    const key = monthKey(company, date);
+    if (seenMonthKey.has(key)) {
+      finalVerdict[i] = 'rejected';
+      finalReason[i] = `Duplicate (same canonical ${company}, ${date.slice(0, 7)}) already added this run`;
+      finalOverride[i] = {};
+    } else {
+      seenMonthKey.add(key);
+    }
+  }
+
+  // -------- Emit results --------
   const confirmed: LayoffEntry[] = [];
   const rumored: LayoffEntry[] = [];
   const rejected: LayoffEntry[] = [];
@@ -442,7 +494,9 @@ function main() {
   const summary: { idx: number; verdict: Verdict; company: string; reason: string }[] = [];
 
   rows.forEach((row, idx) => {
-    const { verdict, override, reason } = classify(row, idx, addedKeys, existingKeys);
+    const verdict = finalVerdict[idx];
+    const override = finalOverride[idx];
+    const reason = finalReason[idx];
     if (verdict === 'queue') {
       queued.push(row);
       summary.push({ idx, verdict, company: override.company || row.company, reason });
@@ -452,32 +506,36 @@ function main() {
     if (verdict === 'confirmed') confirmed.push(entry);
     else if (verdict === 'rumored') rumored.push(entry);
     else {
-      // Annotate the rejection reason in notes if not already present
       const notes = (entry.notes && entry.notes.length > 0) ? entry.notes : reason;
       rejected.push({ ...entry, notes });
     }
     summary.push({ idx, verdict, company: override.company || row.company, reason });
   });
 
-  appendRows('layoffs.csv', [...confirmed, ...rumored]);
-  appendRows('rejected.csv', rejected);
-  writeQueue(queued);
+  if (dryRun) {
+    fs.writeFileSync(
+      `${process.cwd()}/data/triage-dryrun.json`,
+      JSON.stringify(summary, null, 2)
+    );
+    console.log('[dry-run] Wrote data/triage-dryrun.json — no CSV mutations.');
+  } else {
+    appendRows('layoffs.csv', [...confirmed, ...rumored]);
+    appendRows('rejected.csv', rejected);
+    writeQueue(queued);
+    fs.writeFileSync(
+      `${process.cwd()}/data/triage-summary.json`,
+      JSON.stringify(summary, null, 2)
+    );
+    console.log('Wrote data/triage-summary.json');
+  }
 
-  // Print summary
-  console.log(`\nTriage summary:`);
+  console.log(`\nTriage summary${dryRun ? ' (dry-run)' : ''}:`);
   console.log(`  confirmed: ${confirmed.length}`);
   console.log(`  rumored:   ${rumored.length}`);
   console.log(`  rejected:  ${rejected.length}`);
   console.log(`  kept in queue: ${queued.length}`);
   console.log(`  total:     ${rows.length}`);
 
-  fs.writeFileSync(
-    `${process.cwd()}/data/triage-summary.json`,
-    JSON.stringify(summary, null, 2)
-  );
-  console.log('Wrote data/triage-summary.json');
-
-  // Quick sanity dump of confirmed/rumored adds
   console.log('\nNew confirmed entries:');
   for (const e of confirmed) {
     console.log(`  - ${e.company} (${e.date_announced}) → ${e.source_link}`);
