@@ -1,4 +1,6 @@
 import Parser from 'rss-parser';
+import https from 'node:https';
+import http from 'node:http';
 import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
@@ -71,11 +73,56 @@ function isRelevant(title: string, snippet: string): boolean {
   return LAYOFF_TERMS.some((term) => combined.includes(term));
 }
 
+// Fetch a URL via Node's https module (matches rss-parser's transport, so it gets
+// through Cloudflare on feeds like Mothership where undici-based `fetch` is 403'd).
+function fetchRaw(url: string, redirectsLeft = 5): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith('https:') ? https : http;
+    const req = lib.get(
+      url,
+      { headers: { 'User-Agent': 'rss-parser', Accept: 'application/rss+xml, application/xml, text/xml, */*' } },
+      (res) => {
+        const status = res.statusCode || 0;
+        if (status >= 300 && status < 400 && res.headers.location && redirectsLeft > 0) {
+          res.resume();
+          const next = new URL(res.headers.location, url).toString();
+          resolve(fetchRaw(next, redirectsLeft - 1));
+          return;
+        }
+        if (status < 200 || status >= 300) {
+          reject(new Error(`HTTP ${status} for ${url}`));
+          res.resume();
+          return;
+        }
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => (body += chunk));
+        res.on('end', () => resolve(body));
+      }
+    );
+    req.on('error', reject);
+    req.setTimeout(15000, () => req.destroy(new Error('Timeout')));
+  });
+}
+
+// Fetch + parse with a sanitization fallback: some feeds (e.g. Mothership) emit
+// unescaped `&` characters that break the strict xml2js/sax parser. On parse
+// failure, refetch raw and escape stray ampersands before retrying.
+async function fetchAndParse(url: string) {
+  try {
+    return await parser.parseURL(url);
+  } catch (err) {
+    let xml = await fetchRaw(url);
+    xml = xml.replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;');
+    return await parser.parseString(xml);
+  }
+}
+
 async function scrapeFeed(config: FeedConfig): Promise<RawCandidate[]> {
   const results: RawCandidate[] = [];
 
   try {
-    const feed = await parser.parseURL(config.url);
+    const feed = await fetchAndParse(config.url);
     for (const item of feed.items || []) {
       if (!item.title || !item.link) continue;
       const snippet = (item.contentSnippet || item.content || '').replace(/\r/g, '');
