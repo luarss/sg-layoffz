@@ -148,6 +148,38 @@ const REJECT_KEYWORDS = [
   'mom data shows', 'mas data',
   '43% singapore professionals',
   'singapore becomes primary hub', // about Gemini AI, not layoffs
+  'sia cuts staff bonus', // bonus cut, not layoff
+  'cuts staff bonus', // bonus cut
+  'kpmg uk could', // UK-specific
+  '“don’t abandon workers”', "\"don't abandon workers\"", // PM speech
+  'don’t abandon workers', "don't abandon workers",
+  "kenneth tiong calls", 'leong mun wai renews',
+  'us jobless claims', 'us-jobless-claims',
+  'are we all one meeting away', // anecdote/commentary
+  'indonesia’s goto', "indonesia's goto", // Indonesia-focused
+  'severance policy for india', // commentary on Oracle India
+  'severance clauses', // commentary on Agoda severance
+  'just got retrenched', // guide
+  'retrenchment in the spotlight', // HR lessons commentary
+  'layoffs and job cuts singapore 2024', // year-in-review summary
+  'tech sackings', // commentary
+  'tech sector companies retrench', // commentary
+  'layoffs on everyone', // anxiety/commentary
+  'fear fallout',
+  'ripple effects on employees', // commentary
+  'jobs first approach', 'jobs-first approach',
+  'dbs, ocbc & uob', 'dbs ocbc uob', 'dbs-ocbc-uob', // SG bank aggregator commentary
+  'ntuc employers split', 'retrenchment notice lead time',
+  'ntuc offers support', 'ntuc aims to step up',
+  'how singapore tech layoffs are impacting indians', // impact commentary
+  'retrenchment hits the most expensive', // anecdote
+  'why retrenchment benefits aren', // commentary
+  'regional offices across asia could see bulk', // opinion
+  'jobs workers ai artificial intelligence reshape', // commentary
+  'retrenchment tech layoffs no jobs search long', // commentary
+  'retrenchment benefit not mandatory', // policy
+  'nestl begins south africa', 'nestle begins south africa', // dup of Nestlé entry
+  'crypto com lays 12 staff', 'singapore based crypto com lays', // dup of Crypto.com entry
 ];
 
 // Patterns indicating it's about a specific company event we want to keep.
@@ -162,6 +194,9 @@ type EventRule = {
 };
 const EVENT_RULES: EventRule[] = [
   // ----- Confirmed Singapore-specific events -----
+  { match: /biontech to close|biontech.*singapore affecting/i, company: 'BioNTech Singapore', industry: 'Other', verdict: 'confirmed', notes: 'BioNTech closing Germany + Singapore sites, ~1,860 staff affected globally' },
+  { match: /temasek-backed partior|partior slashes/i, company: 'Partior', industry: 'Tech', verdict: 'confirmed', notes: 'Temasek-backed fintech cuts ~30% of Singaporean team after US$60M funding round' },
+  { match: /microsoft to lay off 9000|microsoft cuts hundreds more|second wave of job/i, company: 'Microsoft', industry: 'Tech', verdict: 'confirmed', notes: 'Microsoft 2025 follow-up rounds (June hundreds; July 9,000) after May 6,000 cuts; incl. Singapore' },
   { match: /tiger beer|apb singapore|apbs/i, company: 'APBs (Tiger Beer)', industry: 'Manufacturing', verdict: 'confirmed', notes: 'Scaling down Tuas brewing operations; ~130 SG roles cut over 2 years' },
   { match: /dhl unit in singapore|dhl unit confirms/i, company: 'DHL Singapore', industry: 'Other', verdict: 'confirmed', notes: 'DHL Singapore confirms retrenchment of workers; scope undisclosed' },
   { match: /dhl unit$/i, company: 'DHL Singapore', industry: 'Other', verdict: 'confirmed', notes: 'DHL Singapore confirms retrenchment of workers; scope undisclosed' },
@@ -214,6 +249,10 @@ const EVENT_RULES: EventRule[] = [
   { match: /crypto exchange gemini plans/i, company: 'Gemini', industry: 'Finance', verdict: 'rumored', notes: 'Gemini plans to cut staff' },
   { match: /heineken to/i, company: 'Heineken', industry: 'Manufacturing', verdict: 'rumored', notes: 'Heineken job cuts globally (parent of APBs)' },
   { match: /oracle plans thousands/i, company: 'Oracle', industry: 'Tech', verdict: 'rumored', notes: 'Oracle plans thousands more job cuts' },
+  { match: /struggling nike will|^nike will/i, company: 'Nike', industry: 'Other', verdict: 'rumored', notes: 'Plans ~1,400 job cuts globally amid turnaround' },
+  { match: /^morgan stanley\b/i, company: 'Morgan Stanley', industry: 'Finance', verdict: 'rumored', notes: 'Morgan Stanley lays off ~2,500 globally; SG office potentially affected' },
+  { match: /porsche shutters three units/i, company: 'Porsche', industry: 'Manufacturing', verdict: 'rumored', notes: 'Porsche shutters three units in first job cuts under new CEO' },
+  { match: /anz latest to/i, company: 'ANZ', industry: 'Finance', verdict: 'rumored', notes: 'ANZ joins 2025 wave of bank/tech layoffs' },
 
   // ----- Duplicates of confirmed events already in layoffs.csv -----
 ];
@@ -247,34 +286,46 @@ const DUPLICATE_COMPANY_HINTS: { pattern: RegExp; existing: string }[] = [
   { pattern: /gxs bank|digital bank gxs|gxs/i, existing: 'GXS Bank' },
 ];
 
-// Manual per-row overrides keyed by 0-based index in the resolved JSON
-const OVERRIDES: Record<number, Override> = {
-  // (No global overrides needed for the auto-pass; the rules above are sufficient
-  // for the entries currently in the queue.)
-};
+// Manual per-row overrides keyed by 0-based index in the resolved JSON.
+// Index-keyed overrides are inherently single-run; prefer adding patterns to
+// EVENT_RULES, REJECT_KEYWORDS, or DUPLICATE_COMPANY_HINTS so the rule survives
+// across scrapes. Use this map only for one-off cases that can't be captured
+// as a reusable pattern.
+const OVERRIDES: Record<number, Override> = {};
 
-function isPolicyOrCommentary(title: string): boolean {
-  const t = title.toLowerCase();
+// Build a matchable text blob from the row's title and canonical URL path.
+// Many gnews-derived titles are truncated to a single word ("Microsoft", "Why",
+// "Sia"), so the URL path is often the most discriminating signal.
+function matchText(row: ResolvedRow): string {
+  const path = (row.canonical_url || '')
+    .replace(/^https?:\/\/[^/]+/, '')
+    .replace(/[?#].*$/, '')
+    .replace(/[-_/.]/g, ' ');
+  return `${row.company || ''} ${path}`;
+}
+
+function isPolicyOrCommentary(text: string): boolean {
+  const t = text.toLowerCase();
   return REJECT_KEYWORDS.some((k) => t.includes(k.toLowerCase()));
 }
 
-function matchEvent(title: string): EventRule | null {
+function matchEvent(text: string): EventRule | null {
   for (const rule of EVENT_RULES) {
-    if (rule.match.test(title)) return rule;
+    if (rule.match.test(text)) return rule;
   }
   return null;
 }
 
-function matchDuplicate(title: string): string | null {
+function matchDuplicate(text: string): string | null {
   for (const d of DUPLICATE_COMPANY_HINTS) {
-    if (d.pattern.test(title)) return d.existing;
+    if (d.pattern.test(text)) return d.existing;
   }
   return null;
 }
 
 function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existingKeys: Set<string>) {
   const override = OVERRIDES[idx] || {};
-  const title = row.company || '';
+  const text = matchText(row);
 
   // Manual override wins.
   if (override.verdict) {
@@ -282,7 +333,7 @@ function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existin
   }
 
   // Duplicate of existing entry?
-  const dupCompany = matchDuplicate(title);
+  const dupCompany = matchDuplicate(text);
   if (dupCompany) {
     // Check (company, YYYY-MM)
     const key = `${normalizeCompany(dupCompany).toLowerCase()}|${(row.date_announced || '').slice(0, 7)}`;
@@ -294,7 +345,7 @@ function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existin
   }
 
   // Match against curated event rules
-  const eventRule = matchEvent(title);
+  const eventRule = matchEvent(text);
   if (eventRule) {
     const company = eventRule.company;
     const key = `${normalizeCompany(company).toLowerCase()}|${(row.date_announced || '').slice(0, 7)}`;
@@ -314,7 +365,7 @@ function classify(row: ResolvedRow, idx: number, addedKeys: Set<string>, existin
   }
 
   // Commentary / statistics / policy -> reject
-  if (isPolicyOrCommentary(title)) {
+  if (isPolicyOrCommentary(text)) {
     return { verdict: 'rejected' as Verdict, override: {}, reason: 'Commentary / statistics / policy — not a specific layoff event' };
   }
 
