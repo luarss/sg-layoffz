@@ -49,7 +49,6 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GH_PAT }}
           branch: scrape/daily
           delete-branch: true
           add-paths: data/review-queue.csv
