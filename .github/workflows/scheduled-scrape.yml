@@ -144,7 +144,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: Clean up stale scrape PRs and branches
+      - name: Clean up stale scrape PRs
         if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
         run: |
           BRANCH="${{ steps.commit.outputs.branch }}"
@@ -153,7 +153,7 @@ jobs:
           gh pr list --search 'head:scrape/ type:pr state:open' --json number,headRefName \
             --jq '.[] | select(.headRefName != "'"$BRANCH"'") | .number' | while read -r pr; do
             echo "Closing PR #$pr..."
-            gh pr close "$pr" --delete-branch
+            gh pr close "$pr"
           done
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
