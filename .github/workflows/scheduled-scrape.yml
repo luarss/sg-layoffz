@@ -39,127 +39,51 @@ jobs:
         continue-on-error: true
         run: npx tsx scripts/scrape-sources.ts
 
-      - name: Check for new entries
-        id: check_diff
-        run: |
-          if git diff --exit-code data/review-queue.csv; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No new entries in review queue."
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "New entries detected in review queue."
-          fi
-
       - name: Count queue entries
         id: count
-        if: steps.check_diff.outputs.changed == 'true'
         run: |
-          COUNT=$(tail -n +2 data/review-queue.csv | grep -c '^' || echo 0)
-          echo "count=$COUNT" >> $GITHUB_OUTPUT
-          echo "Review queue has $COUNT entries."
+          echo "count=$(tail -n +2 data/review-queue.csv | grep -c '^' || echo 0)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GH_PAT }}
+          branch: scrape/daily
+          delete-branch: true
+          add-paths: data/review-queue.csv
+          commit-message: "scrape: add candidates to review queue (${{ steps.count.outputs.date }})"
+          title: "scrape: new review queue candidates (${{ steps.count.outputs.date }})"
+          body: |
+            ## Automated Scrape Results
+
+            Review queue currently has **${{ steps.count.outputs.count }}** entries.
+
+            ### How to review
+
+            1. Checkout this branch:
+               ```
+               git fetch origin && git checkout scrape/daily
+               ```
+            2. Install deps and run the interactive review:
+               ```
+               npm ci && npm run review
+               ```
+            3. After reviewing, commit and push:
+               ```
+               git add data/layoffs.csv data/review-queue.csv data/rejected.csv
+               git commit -m "review: process review queue ($(date +%Y-%m-%d))"
+               git push
+               ```
+            4. Merge this PR — Vercel will auto-deploy.
 
       - name: Warn if queue is large
-        if: steps.check_diff.outputs.changed == 'true' && fromJSON(steps.count.outputs.count) > 30
-        run: |
-          echo "::warning::Review queue has ${{ steps.count.outputs.count }} entries. Consider reviewing soon."
-
-      - name: Create branch and commit
-        id: commit
-        if: steps.check_diff.outputs.changed == 'true'
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          BRANCH="scrape/${DATE}"
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # Delete remote branch from a previous failed run, then start fresh
-          if git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
-            echo "Branch $BRANCH already exists (previous run), deleting..."
-            git push origin --delete "$BRANCH"
-          fi
-          git checkout -b "$BRANCH"
-
-          git add data/review-queue.csv
-          git commit -m "scrape: add ${{ steps.count.outputs.count }} candidates to review queue (${DATE})"
-          git push -u origin "$BRANCH"
-
-      - name: Check if PR already exists
-        id: pr_check
-        if: steps.check_diff.outputs.changed == 'true'
-        run: |
-          BRANCH="${{ steps.commit.outputs.branch }}"
-          EXISTING=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || echo "")
-          if [ -n "$EXISTING" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "number=$EXISTING" >> $GITHUB_OUTPUT
-            echo "PR #$EXISTING already exists for this branch."
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-
-      - name: Create PR
-        if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
-        run: |
-          cat > pr-body.md << 'ENDOFBODY'
-          ## Automated Scrape Results
-
-          Found **COUNT_PLACEHOLDER** new candidate(s) in the review queue.
-
-          ### How to review
-
-          1. Checkout this branch:
-             ```
-             git fetch origin && git checkout BRANCH_PLACEHOLDER
-             ```
-          2. Install deps and run the interactive review:
-             ```
-             npm ci && npm run review
-             ```
-          3. After reviewing, commit and push:
-             ```
-             git add data/layoffs.csv data/review-queue.csv data/rejected.csv
-             git commit -m "review: process review queue ($(date +%Y-%m-%d))"
-             git push
-             ```
-          4. Merge this PR — Vercel will auto-deploy.
-          ENDOFBODY
-
-          sed -i "s/COUNT_PLACEHOLDER/${{ steps.count.outputs.count }}/g" pr-body.md
-          sed -i "s|BRANCH_PLACEHOLDER|${{ steps.commit.outputs.branch }}|g" pr-body.md
-
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            "/repos/${{ github.repository }}/pulls" \
-            -f title="scrape: new review queue candidates ($(date +%Y-%m-%d))" \
-            -f head="${{ steps.commit.outputs.branch }}" \
-            -f base="main" \
-            -F body=@pr-body.md
-
-          rm -f pr-body.md
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-
-      - name: Clean up stale scrape PRs
-        if: steps.check_diff.outputs.changed == 'true' && steps.pr_check.outputs.exists != 'true'
-        run: |
-          BRANCH="${{ steps.commit.outputs.branch }}"
-          echo "Cleaning up stale scrape PRs (keeping $BRANCH)..."
-
-          gh pr list --search 'head:scrape/ type:pr state:open' --json number,headRefName \
-            --jq '.[] | select(.headRefName != "'"$BRANCH"'") | .number' | while read -r pr; do
-            echo "Closing PR #$pr..."
-            gh pr close "$pr"
-          done
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+        if: steps.cpr.outputs.pull-request-number && fromJSON(steps.count.outputs.count) > 30
+        run: echo "::warning::Review queue has ${{ steps.count.outputs.count }} entries. Consider reviewing soon."
 
       - name: Report no new entries
-        if: steps.check_diff.outputs.changed != 'true'
+        if: steps.cpr.outputs.pull-request-operation == 'none' || steps.cpr.outputs.pull-request-operation == ''
         run: echo "No new layoff candidates found today."
 
       - name: Report scraper failures
