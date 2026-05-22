@@ -1,0 +1,76 @@
+name: Wayback Archive
+
+on:
+  schedule:
+    # Weekly on Mondays at 02:00 UTC (10am SGT) — runs after the daily scrape
+    # and gives the week's freshly-merged entries a Wayback snapshot.
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: wayback-archive
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Count rows needing archival
+        id: count_before
+        run: |
+          before=$(awk -F',' 'NR>1 && $6 !~ /web\.archive\.org/' data/layoffs.csv | wc -l | tr -d ' ')
+          echo "before=$before" >> "$GITHUB_OUTPUT"
+          echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+          echo "Rows without a Wayback snapshot: $before"
+
+      - name: Archive source links via SPN2
+        if: steps.count_before.outputs.before != '0'
+        env:
+          IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+          IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+        run: npx tsx scripts/archive-wayback.ts
+
+      - name: Count rows still missing snapshot
+        id: count_after
+        run: |
+          after=$(awk -F',' 'NR>1 && $6 !~ /web\.archive\.org/' data/layoffs.csv | wc -l | tr -d ' ')
+          echo "after=$after" >> "$GITHUB_OUTPUT"
+          echo "Rows still without a Wayback snapshot: $after"
+
+      - name: Create or update PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: wayback/weekly
+          delete-branch: true
+          add-paths: data/layoffs.csv
+          commit-message: "chore: snapshot new source links via Wayback (${{ steps.count_before.outputs.date }})"
+          title: "chore: weekly Wayback snapshot pass (${{ steps.count_before.outputs.date }})"
+          body: |
+            ## Automated Wayback Archival
+
+            Rows without a Wayback URL before this run: **${{ steps.count_before.outputs.before }}**
+            Rows still without a Wayback URL after this run: **${{ steps.count_after.outputs.after }}**
+
+            Any remaining un-archived rows hit SPN's "snapshot exists" refusal where
+            the Availability API also returned empty (paywall/redirect captures).
+            Run `scripts/archive-wayback.ts` locally with the CDX fallback if needed.
+
+      - name: Report no rows to archive
+        if: steps.count_before.outputs.before == '0'
+        run: echo "All rows already have Wayback URLs. Nothing to do."
