@@ -186,7 +186,46 @@ const REJECT_KEYWORDS = [
   'nestl begins south africa', 'nestle begins south africa', // dup of Nestlé entry
   'crypto com lays 12 staff', 'singapore based crypto com lays', // dup of Crypto.com entry
   'biospace layoff tracker', 'biospace.com', // generic aggregator
+  'asia layoff tracker', 'layoff tracker:', // aggregator roundups
   'danske bank', // Nordic bank, no SG nexus
+
+  // CEO reactions / regulatory follow-ups (not new layoff events)
+  'walks back ceo', 'ceo says sorry for', 'ceo apologises', 'ceo apologizes',
+  'fields regulator queries', 'regulators want answers on', 'asia s regulators want answers',
+  "don't fight ai", 'ceo tells staff members as banks begin',
+  'urges staff to embrace change', 'hsbc ceo says ai will',
+  'banking union calls for worker support',
+  'unions call for fairness', 'unions call for support',
+
+  // Aggregator roundups and commentary listicles
+  'leaders whose comments on ai', '4 leaders whose',
+
+  // Telco / M&A news (no layoff event)
+  'telco tumult', 'simba acquisition', 'acquisition of m1 collapses',
+  'shares slide as s', // e.g. "Singtel Shares Slide As S'pore Business Weakens"
+
+  // Salary / career-advice content (not a layoff)
+  'executive assistants making',
+
+  // Singapore AI-policy commentary (no specific company event)
+  'academic questions singapore', 'singapore s rush towards ai',
+  'singapore rush towards ai',
+
+  // Community-sentiment pieces (not events)
+  'we are bleeding jobs', 'bleeding jobs in many sectors',
+  'worries of businesses pulling out of sg',
+
+  // Commentary that contextualises AI-driven cuts without naming an event
+  'tech layoffs stem from', 'revenue per bot',
+
+  // Real-estate / office-vacancy trends (not individual layoff events)
+  'changi business park emptying',
+
+  // Circles.life: company denied layoffs at the time; treated as unverified
+  'circles.life',
+
+  // Political / parliamentary commentary
+  'ex pap mp on', 'ex-pap mp on',
 ];
 
 // Patterns indicating it's about a specific company event we want to keep.
@@ -224,7 +263,7 @@ const EVENT_RULES: EventRule[] = [
   { match: /meta layoffs hit singapore.*2022|^meta$/i, company: 'Meta', industry: 'Tech', verdict: 'confirmed', notes: '2022 Meta SG layoffs' },
   { match: /meta layoffs hit singapore/i, company: 'Meta', industry: 'Tech', verdict: 'confirmed' },
   { match: /creative technology/i, company: 'Creative Technology', industry: 'Tech', verdict: 'confirmed', notes: 'Singapore audio tech company restructuring' },
-  { match: /standard chartered/i, company: 'Standard Chartered', industry: 'Finance', verdict: 'confirmed', notes: 'Standard Chartered Singapore layoffs reported' },
+  { match: /standard chartered.*(lay.?off|retrench|slash|job.cut|staff.cut|axe)/i, company: 'Standard Chartered', industry: 'Finance', verdict: 'confirmed', notes: 'Standard Chartered Singapore layoffs reported' },
   { match: /we\. communications/i, company: 'We. Communications', industry: 'Other', verdict: 'confirmed', notes: 'Global PR firm closed/scaled down Singapore office' },
   { match: /manus capital/i, company: 'Manus Capital', industry: 'Finance', verdict: 'confirmed', notes: 'Post-HQ relocation to Singapore, restructuring/layoffs' },
   { match: /cj logistics asia/i, company: 'CJ Logistics Asia', industry: 'Other', verdict: 'confirmed', notes: 'Logistics arm retrenchment' },
@@ -261,6 +300,7 @@ const EVENT_RULES: EventRule[] = [
   { match: /porsche shutters three units/i, company: 'Porsche', industry: 'Manufacturing', verdict: 'rumored', notes: 'Porsche shutters three units in first job cuts under new CEO' },
   { match: /anz latest to/i, company: 'ANZ', industry: 'Finance', verdict: 'rumored', notes: 'ANZ joins 2025 wave of bank/tech layoffs' },
   { match: /traveloka layoffs/i, company: 'Traveloka', industry: 'Tech', verdict: 'rumored', notes: 'Traveloka reorganising workforce around capabilities, tech and growth; SG office potentially affected' },
+  { match: /^intuit\b|intuit to cut|intuit cut/i, company: 'Intuit', industry: 'Tech', verdict: 'rumored', notes: 'Intuit cutting ~17% of global workforce (AI-driven restructuring); SG office potentially affected' },
 
   // ----- Duplicates of confirmed events already in layoffs.csv -----
 ];
@@ -322,6 +362,19 @@ function preClassify(row: ResolvedRow, idx: number): PreClassification {
     };
   }
 
+  // REJECT_KEYWORDS checked before EVENT_RULES: commentary about a tracked
+  // company (e.g. regulatory follow-ups on StanChart) must not be promoted to
+  // confirmed/rumored just because the company name appears in an EVENT_RULE.
+  if (isPolicyOrCommentary(text)) {
+    return {
+      verdict: 'rejected',
+      override: {},
+      reason: 'Commentary / statistics / policy — not a specific layoff event',
+      eventRuleMatched: false,
+      manualOverride: false,
+    };
+  }
+
   const eventRule = matchEvent(text);
   if (eventRule) {
     return {
@@ -333,16 +386,6 @@ function preClassify(row: ResolvedRow, idx: number): PreClassification {
       } as Override,
       reason: `Event rule: ${eventRule.match}`,
       eventRuleMatched: true,
-      manualOverride: false,
-    };
-  }
-
-  if (isPolicyOrCommentary(text)) {
-    return {
-      verdict: 'rejected',
-      override: {},
-      reason: 'Commentary / statistics / policy — not a specific layoff event',
-      eventRuleMatched: false,
       manualOverride: false,
     };
   }
