@@ -39,6 +39,13 @@ jobs:
         continue-on-error: true
         run: npx tsx scripts/scrape-sources.ts
 
+      - name: Scrape Exa
+        id: scrape_exa
+        continue-on-error: true
+        env:
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+        run: npx tsx scripts/scrape-exa.ts
+
       - name: Count queue entries
         id: count
         run: |
@@ -51,7 +58,9 @@ jobs:
         with:
           branch: scrape/daily
           delete-branch: true
-          add-paths: data/review-queue.csv
+          add-paths: |
+            data/review-queue.csv
+            data/exa-budget.json
           commit-message: "scrape: add candidates to review queue (${{ steps.count.outputs.date }})"
           title: "scrape: new review queue candidates (${{ steps.count.outputs.date }})"
           body: |
@@ -86,7 +95,7 @@ jobs:
         run: echo "No new layoff candidates found today."
 
       - name: Report scraper failures
-        if: failure() || steps.scrape_news.outcome == 'failure' || steps.scrape_sources.outcome == 'failure'
+        if: failure() || steps.scrape_news.outcome == 'failure' || steps.scrape_sources.outcome == 'failure' || steps.scrape_exa.outcome == 'failure'
         run: |
           if [ "${{ steps.scrape_news.outcome }}" = "failure" ]; then
             echo "::warning::Google News scraper failed"
@@ -94,7 +103,10 @@ jobs:
           if [ "${{ steps.scrape_sources.outcome }}" = "failure" ]; then
             echo "::warning::Source website scraper failed"
           fi
+          if [ "${{ steps.scrape_exa.outcome }}" = "failure" ]; then
+            echo "::warning::Exa scraper failed"
+          fi
           if [ "${{ steps.scrape_news.outcome }}" = "failure" ] && [ "${{ steps.scrape_sources.outcome }}" = "failure" ]; then
-            echo "::error::Both scrapers failed"
+            echo "::error::Both RSS scrapers failed"
             exit 1
           fi

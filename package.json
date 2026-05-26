@@ -8,7 +8,8 @@
     "start": "next start",
     "scrape": "tsx scripts/scrape-google-news.ts",
     "scrape:sources": "tsx scripts/scrape-sources.ts",
-    "scrape:all": "tsx scripts/scrape-google-news.ts && tsx scripts/scrape-sources.ts",
+    "scrape:exa": "tsx scripts/scrape-exa.ts",
+    "scrape:all": "tsx scripts/scrape-google-news.ts && tsx scripts/scrape-sources.ts && tsx scripts/scrape-exa.ts",
     "review": "tsx scripts/resolve-gnews.ts && tsx scripts/triage.ts && tsx scripts/review.ts",
     "review:interactive": "tsx scripts/review.ts",
     "validate": "tsx scripts/validate.ts"
