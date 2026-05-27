@@ -17,6 +17,24 @@ const LOOKBACK_DAYS = 14;
 const DEFAULT_MONTHLY_CAP = 1000;
 const DEFAULT_RUN_CAP = 10;
 
+// Job boards and recruiting sites excluded at the Exa API level via excludeDomains.
+const EXCLUDED_DOMAINS = [
+  'accaglobal.com',
+  'alchemygts.com',
+  'frazerjones.com',
+  'gaapweb.com',
+  'glassdoor.com',
+  'hireza.wuaze.com',
+  'indeed.com',
+  'interimsearch.com',
+  'jobsdb.com',
+  'linkedin.com',
+  'mycareersfuture.gov.sg',
+  'nicollcurtin.com',
+  'seek.com',
+  'totallylegal.com',
+];
+
 const BUDGET_PATH = `${process.cwd()}/data/exa-budget.json`;
 
 interface ExaResult {
@@ -90,6 +108,7 @@ async function runExaQuery(
       type: 'auto',
       startPublishedDate: startDate,
       endPublishedDate: endDate,
+      excludeDomains: EXCLUDED_DOMAINS,
       contents: { text: { maxCharacters: 800 } },
     }),
   });
@@ -165,7 +184,6 @@ async function main() {
   const start = new Date(today);
   start.setDate(start.getDate() - LOOKBACK_DAYS);
   const startDate = start.toISOString();
-
   const layoffs = readCsv('layoffs.csv');
   const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
   const rejected = readCsv('rejected.csv');
