@@ -1,0 +1,61 @@
+{
+  "run_date": "2026-06-01",
+  "providers": [
+    {
+      "name": "deepseek",
+      "model": "deepseek-v4-flash"
+    },
+    {
+      "name": "openrouter",
+      "model": "openrouter/optimus-alpha"
+    }
+  ],
+  "total": 4,
+  "confirmed": 1,
+  "rumored": 1,
+  "rejected": 1,
+  "needs_review": 1,
+  "remaining_queue": 1,
+  "rows": [
+    {
+      "original_company": "Singapore",
+      "llm_company": "Amazon, Tiger Beer, Yeos",
+      "source_link": "https://www.amkio.com/singapore-retrenchments-2026-amazon-tiger-beer-yeos-and-more-firms-cut-jobs-amid-rising-energy-costs-and-weak-demand/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Aggregator article covering multiple companies (Amazon, Tiger Beer, Yeos, and more) with no single specific event; reads as market commentary.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Amazon Singapore To",
+      "llm_company": "Amazon Singapore",
+      "source_link": "https://migrantimes.com/coporate-markets/13-05-2026/amazon-singapore-to-lay-off-staff-as-it-ends-local-fulfilment",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Article reports Amazon Singapore plans to lay off staff as it ends local fulfilment, but no specific numbers or confirmation that layoffs have started.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Stanchart Walks Back Ceo’s Remarks Of Workers As ‘lower-value Human Capital’ In Announcing Ai-linked Layoffs - The Independent Singapore News",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNSG5KLXY3SlpZNDRLVmVTM0UzWFkzTTNOWVhZTlY5Z0lwSmVvX0lLZzQ5SE5XSGVIWXNpUmthcHVoSk1oMWpnVDEwY2xlUThhUm5PR1YxV3ZVcWQ4d2ZfRnRtNWFUZktyMVhTS2huVFRWZVVRa3hoV2JlcG1CaDVHa0xSZUxueUpWZEI4cmRRdmoycjNfU0hhY0FDbTNJUjZPZ1NxYTB3b0dRdGRRdFE4dDMwUldEQ2JZVG5jNVkwZ0s4eUZFbW5tR0VHa0lrQQ?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Standard Chartered announced AI-linked layoffs and walked back CEO's controversial remarks; event is confirmed.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Dbs, Ocbc, Uob",
+      "llm_company": "DBS, OCBC, UOB",
+      "source_link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNeURKV2tVclpUVG41TGVSMWpHODEtLXVwQzQwdU5HbHNZYUhTMmNpUXZ0Rl96YUFkMlRpWkV0VWhDeHNkSVZ3RDdIaHFiazB5MFVTdVRIMEx5TDViQXYzTzJCUkp1dmZXeDRzZThtQ0lqTV9wNHJ2dlR2Q1pMZ3RBdmUxc1hBdDFTM2x5OXl4Y0dlQWFRa09zaVlCcW1xeExZYjVRWFVhWDJSZ21WaDdyNzRqRUQ4ZGV2X1U4OGJhVHVNSldyZmc?oc=5",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": "Snippet is ambiguous, likely referring to job cuts but could be market commentary. No details on numbers or confirmation.",
+      "rejection_reason": null
+    }
+  ]
+}

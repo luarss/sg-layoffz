@@ -17,7 +17,7 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +46,33 @@ jobs:
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
         run: npx tsx scripts/scrape-exa.ts
 
+      - name: LLM Triage
+        id: llm_triage
+        continue-on-error: true
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}
+          MIMO_BASE_URL: ${{ secrets.MIMO_BASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
+        run: npx tsx scripts/llm-triage.ts
+
+      - name: Read triage results
+        id: triage_result
+        if: steps.llm_triage.outcome == 'success'
+        run: |
+          remaining=$(jq '.remaining_queue' data/llm-triage-summary.json)
+          confirmed=$(jq '.confirmed' data/llm-triage-summary.json)
+          rumored=$(jq '.rumored' data/llm-triage-summary.json)
+          rejected=$(jq '.rejected' data/llm-triage-summary.json)
+          providers=$(jq -r '[.providers[].name] | join(" → ")' data/llm-triage-summary.json)
+          echo "remaining=$remaining" >> "$GITHUB_OUTPUT"
+          echo "confirmed=$confirmed" >> "$GITHUB_OUTPUT"
+          echo "rumored=$rumored" >> "$GITHUB_OUTPUT"
+          echo "rejected=$rejected" >> "$GITHUB_OUTPUT"
+          echo "providers=$providers" >> "$GITHUB_OUTPUT"
+
       - name: Count queue entries
         id: count
         run: |
@@ -60,31 +87,41 @@ jobs:
           delete-branch: true
           add-paths: |
             data/review-queue.csv
+            data/layoffs.csv
+            data/rejected.csv
             data/exa-budget.json
-          commit-message: "scrape: add candidates to review queue (${{ steps.count.outputs.date }})"
-          title: "scrape: new review queue candidates (${{ steps.count.outputs.date }})"
+            data/llm-triage-summary.json
+          commit-message: "review: classify scrape/daily candidates — ${{ steps.triage_result.outputs.confirmed || 0 }} confirmed, ${{ steps.triage_result.outputs.rumored || 0 }} rumored, ${{ steps.triage_result.outputs.rejected || 0 }} rejected (${{ steps.count.outputs.date }})"
+          title: "review: classify scrape/daily candidates (${{ steps.count.outputs.date }})"
           body: |
-            ## Automated Scrape Results
+            ## Automated Scrape & LLM Triage Results
 
-            Review queue currently has **${{ steps.count.outputs.count }}** entries.
+            | | Count |
+            |---|---|
+            | Confirmed | ${{ steps.triage_result.outputs.confirmed || '—' }} |
+            | Rumored | ${{ steps.triage_result.outputs.rumored || '—' }} |
+            | Rejected | ${{ steps.triage_result.outputs.rejected || '—' }} |
+            | Needs review | ${{ steps.count.outputs.count }} |
 
-            ### How to review
+            **Model:** `${{ steps.triage_result.outputs.providers || 'n/a' }}`
+            ${{ steps.llm_triage.outcome == 'failure' && '> ⚠️ LLM triage failed — all entries kept in queue for manual review.' || '' }}
 
-            1. Checkout this branch:
-               ```
-               git fetch origin && git checkout scrape/daily
-               ```
-            2. Install deps and run the interactive review:
-               ```
-               npm ci && npm run review
-               ```
-            3. After reviewing, commit and push:
-               ```
-               git add data/layoffs.csv data/review-queue.csv data/rejected.csv
-               git commit -m "review: process review queue ($(date +%Y-%m-%d))"
-               git push
-               ```
-            4. Merge this PR — Vercel will auto-deploy.
+            ${{ steps.count.outputs.count != '0' && '### Remaining entries need manual review' || '✅ All entries classified — PR will auto-merge.' }}
+
+            ${{ steps.count.outputs.count != '0' && '```\ngit fetch origin && git checkout scrape/daily\nnpm ci && npm run review\ngit add data/layoffs.csv data/review-queue.csv data/rejected.csv\ngit commit -m "review: process review queue ($(date +%Y-%m-%d))"\ngit push\n```' || '' }}
+
+      - name: Auto-merge PR
+        if: |
+          steps.cpr.outputs.pull-request-number &&
+          steps.triage_result.outputs.remaining == '0' &&
+          steps.llm_triage.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} \
+            --squash \
+            --title "review: classify scrape/daily candidates (${{ steps.count.outputs.date }})" \
+            --body "Auto-merged by LLM triage (${{ steps.triage_result.outputs.providers }}): ${{ steps.triage_result.outputs.confirmed }} confirmed, ${{ steps.triage_result.outputs.rumored }} rumored, ${{ steps.triage_result.outputs.rejected }} rejected."
 
       - name: Warn if queue is large
         if: steps.cpr.outputs.pull-request-number && fromJSON(steps.count.outputs.count) > 30

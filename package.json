@@ -12,12 +12,15 @@
     "scrape:all": "tsx scripts/scrape-google-news.ts && tsx scripts/scrape-sources.ts && tsx scripts/scrape-exa.ts",
     "review": "tsx scripts/resolve-gnews.ts && tsx scripts/triage.ts && tsx scripts/review.ts",
     "review:interactive": "tsx scripts/review.ts",
+    "triage:llm": "tsx scripts/llm-triage.ts",
+    "eval:llm": "tsx scripts/llm-evals.ts",
     "validate": "tsx scripts/validate.ts"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.6",
     "chart.js": "^4.4.7",
     "next": "^14.2.21",
+    "openai": "^6.39.1",
     "papaparse": "^5.4.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
