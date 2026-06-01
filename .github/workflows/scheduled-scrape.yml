@@ -12,7 +12,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   scrape:
@@ -79,57 +78,28 @@ jobs:
           echo "count=$(tail -n +2 data/review-queue.csv | grep -c '^' || echo 0)" >> "$GITHUB_OUTPUT"
           echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
-      - name: Create or update PR
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: scrape/daily
-          delete-branch: true
-          add-paths: |
-            data/review-queue.csv
-            data/layoffs.csv
-            data/rejected.csv
-            data/exa-budget.json
-            data/llm-triage-summary.json
-          commit-message: "review: classify scrape/daily candidates — ${{ steps.triage_result.outputs.confirmed || 0 }} confirmed, ${{ steps.triage_result.outputs.rumored || 0 }} rumored, ${{ steps.triage_result.outputs.rejected || 0 }} rejected (${{ steps.count.outputs.date }})"
-          title: "review: classify scrape/daily candidates (${{ steps.count.outputs.date }})"
-          body: |
-            ## Automated Scrape & LLM Triage Results
-
-            | | Count |
-            |---|---|
-            | Confirmed | ${{ steps.triage_result.outputs.confirmed || '—' }} |
-            | Rumored | ${{ steps.triage_result.outputs.rumored || '—' }} |
-            | Rejected | ${{ steps.triage_result.outputs.rejected || '—' }} |
-            | Needs review | ${{ steps.count.outputs.count }} |
-
-            **Model:** `${{ steps.triage_result.outputs.providers || 'n/a' }}`
-            ${{ steps.llm_triage.outcome == 'failure' && '> ⚠️ LLM triage failed — all entries kept in queue for manual review.' || '' }}
-
-            ${{ steps.count.outputs.count != '0' && '### Remaining entries need manual review' || '✅ All entries classified — PR will auto-merge.' }}
-
-            ${{ steps.count.outputs.count != '0' && '```\ngit fetch origin && git checkout scrape/daily\nnpm ci && npm run review\ngit add data/layoffs.csv data/review-queue.csv data/rejected.csv\ngit commit -m "review: process review queue ($(date +%Y-%m-%d))"\ngit push\n```' || '' }}
-
-      - name: Auto-merge PR
-        if: |
-          steps.cpr.outputs.pull-request-number &&
-          steps.triage_result.outputs.remaining == '0' &&
-          steps.llm_triage.outcome == 'success'
+      - name: Commit results to main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} \
-            --squash \
-            --title "review: classify scrape/daily candidates (${{ steps.count.outputs.date }})" \
-            --body "Auto-merged by LLM triage (${{ steps.triage_result.outputs.providers }}): ${{ steps.triage_result.outputs.confirmed }} confirmed, ${{ steps.triage_result.outputs.rumored }} rumored, ${{ steps.triage_result.outputs.rejected }} rejected."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/review-queue.csv \
+            data/layoffs.csv \
+            data/rejected.csv \
+            data/exa-budget.json \
+            data/llm-triage-summary.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "review: classify scrape/daily candidates — ${{ steps.triage_result.outputs.confirmed || 0 }} confirmed, ${{ steps.triage_result.outputs.rumored || 0 }} rumored, ${{ steps.triage_result.outputs.rejected || 0 }} rejected (${{ steps.count.outputs.date }})"
+            git push
+          fi
 
       - name: Warn if queue is large
-        if: steps.cpr.outputs.pull-request-number && fromJSON(steps.count.outputs.count) > 30
+        if: fromJSON(steps.count.outputs.count) > 30
         run: echo "::warning::Review queue has ${{ steps.count.outputs.count }} entries. Consider reviewing soon."
-
-      - name: Report no new entries
-        if: steps.cpr.outputs.pull-request-operation == 'none' || steps.cpr.outputs.pull-request-operation == ''
-        run: echo "No new layoff candidates found today."
 
       - name: Report scraper failures
         if: failure() || steps.scrape_news.outcome == 'failure' || steps.scrape_sources.outcome == 'failure' || steps.scrape_exa.outcome == 'failure'
