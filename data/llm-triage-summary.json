@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-06-01",
+  "run_date": "2026-06-02",
   "providers": [
     {
       "name": "deepseek",
@@ -7,55 +7,301 @@
     },
     {
       "name": "openrouter",
-      "model": "openrouter/optimus-alpha"
+      "model": "openrouter/owl-alpha"
     }
   ],
-  "total": 4,
-  "confirmed": 1,
-  "rumored": 1,
-  "rejected": 1,
-  "needs_review": 1,
-  "remaining_queue": 1,
+  "total": 29,
+  "confirmed": 6,
+  "rumored": 2,
+  "rejected": 18,
+  "needs_review": 3,
+  "remaining_queue": 3,
   "rows": [
-    {
-      "original_company": "Singapore",
-      "llm_company": "Amazon, Tiger Beer, Yeos",
-      "source_link": "https://www.amkio.com/singapore-retrenchments-2026-amazon-tiger-beer-yeos-and-more-firms-cut-jobs-amid-rising-energy-costs-and-weak-demand/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Aggregator article covering multiple companies (Amazon, Tiger Beer, Yeos, and more) with no single specific event; reads as market commentary.",
-      "rejection_reason": "aggregator"
-    },
-    {
-      "original_company": "Amazon Singapore To",
-      "llm_company": "Amazon Singapore",
-      "source_link": "https://migrantimes.com/coporate-markets/13-05-2026/amazon-singapore-to-lay-off-staff-as-it-ends-local-fulfilment",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Article reports Amazon Singapore plans to lay off staff as it ends local fulfilment, but no specific numbers or confirmation that layoffs have started.",
-      "rejection_reason": null
-    },
-    {
-      "original_company": "Stanchart Walks Back Ceo’s Remarks Of Workers As ‘lower-value Human Capital’ In Announcing Ai-linked Layoffs - The Independent Singapore News",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNSG5KLXY3SlpZNDRLVmVTM0UzWFkzTTNOWVhZTlY5Z0lwSmVvX0lLZzQ5SE5XSGVIWXNpUmthcHVoSk1oMWpnVDEwY2xlUThhUm5PR1YxV3ZVcWQ4d2ZfRnRtNWFUZktyMVhTS2huVFRWZVVRa3hoV2JlcG1CaDVHa0xSZUxueUpWZEI4cmRRdmoycjNfU0hhY0FDbTNJUjZPZ1NxYTB3b0dRdGRRdFE4dDMwUldEQ2JZVG5jNVkwZ0s4eUZFbW5tR0VHa0lrQQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Standard Chartered announced AI-linked layoffs and walked back CEO's controversial remarks; event is confirmed.",
-      "rejection_reason": null
-    },
     {
       "original_company": "Dbs, Ocbc, Uob",
       "llm_company": "DBS, OCBC, UOB",
       "source_link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNeURKV2tVclpUVG41TGVSMWpHODEtLXVwQzQwdU5HbHNZYUhTMmNpUXZ0Rl96YUFkMlRpWkV0VWhDeHNkSVZ3RDdIaHFiazB5MFVTdVRIMEx5TDViQXYzTzJCUkp1dmZXeDRzZThtQ0lqTV9wNHJ2dlR2Q1pMZ3RBdmUxc1hBdDFTM2x5OXl4Y0dlQWFRa09zaVlCcW1xeExZYjVRWFVhWDJSZ21WaDdyNzRqRUQ4ZGV2X1U4OGJhVHVNSldyZmc?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Aggregator article covering multiple banks; no specific single event.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "The Ai Layoffs Narrative Obscures What’s Really Happening In Singapore - The Straits Times",
+      "llm_company": "The Ai Layoffs Narrative Obscures What’s Really Happening In Singapore - The Straits Times",
+      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQdkg0QU84dFhCQUdXWEFSMjAwdXc0eHl6ZDREX1hnR1ItZTF6MUt3bl9SelFIYm9vc3FsZ2M4Y1dWZ2NvVTNYUGZmWm9UYkFTd01kZHloWWNydVVPdTdXVWlTaVlWNFJCNW9vVEw3eW9rWE5nMEIyS09XU2otWHBLeVZfOEpDR2ZhMEtyQzhqelhvcE5wMGFCOG5jOVNoN1pqeDJMajhoWWVXZw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a commentary/analysis article about the AI layoffs narrative, not a specific layoff announcement.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "'",
+      "llm_company": "'",
+      "source_link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNcHlsQWZOV1hqNldhRmNWLXVfeFpIOGJUUGdhSWtEX0JhTERHXzVNbVdNckpDaGRtWjNlVHRxMFJFMGNBUHZvNVAxZWFNbjk2U1ZfRFR1bERwRV9jT3pVZU1uVHVUV2dWcjNHbDhTRDhHX3ZWbUhsUTV3SlQ3SGdtWHhCVmxKSmp6NlVVVkJyWm9Fajh2d0NGcnJORlIzb28yb1ZudW5jcXEyUmVRWWhGdzJuXzQwY1li?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The snippet is a general commentary about retrenchment being part of corporate life, not a specific layoff announcement. No company identified.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "How Many Employees Does Microsoft Have In 2026? Msft’s Workforce, Locations & Layoffs Explained - Yahoo Finance",
+      "llm_company": "Microsoft",
+      "source_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNU1FCWlRhOTdWVDkzRU5QLTVjQUN4Tk02aURCSUZ4ekZkbTRhQVNWYzFhUnR6d0QxVXdWeFlHTEFtUGFHYTVPODVwQXd1RFNPYUNmSzFhUy11LUxaTHk1NlhKY2UtUTBGWGgxYnN3NFBRQmJDdWtZMTNDd19ZUDk3MjN3SE9LVVJicE1Z?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is an explanatory piece about Microsoft's workforce and layoffs in general, not a specific layoff announcement for Singapore.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Forum: Businesses Rarely Move From Success To",
+      "llm_company": "Forum: Businesses Rarely Move From Success To",
+      "source_link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOUDdhYUxubGItcHUzLUt2NzBoY1JYTHNmU1c4YkFYTmJTVWFCUG9MWHNVMjZjYzdESzJyRS0wVXIxbVVzaF82V3dqQ24tWTlWRlFVOFBUSEM2bFZINE00emNnOU5CSGpVQTdCRkZpWm90WmFJb2xiaVBKZG1RMWpqYUdBLWhGalNFbW9QUEtCQlhjRjFhWjlTeUplS3lWSGM5V0NjZXNGTnJSaWJwTDdZ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is a forum/opinion piece about business strategy, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Forum: More Safeguards Needed For",
+      "llm_company": "Forum: More Safeguards Needed For",
+      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQdlJVVFdPZUY3WFVJVVRxRTdMR2Y0bkFRcnRRcFRkeUQ5Vl96RV91NWJzSnZ5djNsZ3d3TUpaTGtzNndhbjNidHFWMElTUmRjVmFkRnF2dXBGUTYtMlMwc1plZ2cycC1wY2JVdW5heWZtbXMzd190OEVWZlg4UGY3ZDFRc2FYLTl5WklhbkVKeDFLR0RhYTlJeDNXQXRhVkozMmpNVmo0eFVPZDdkbEFhMnY2VDY2YUNyYTFVWFI3WQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a forum letter/opinion piece discussing safeguards for retrenched workers, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Qaf-owned Gardenia Axes 141 Staff In Singapore, Shifts Production To Johor Bahru - The Business Times",
+      "llm_company": "Gardenia",
+      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPVVZ2aGtYOHhvNGVGaGxRczRhQmg3RkZiU1JjSW12QTlTaHhjZGJVZnNwa1BOdTNrQ0lXaEtPZ2hGWXNxQnFVX3dOZk1kT3BsT2FmQTJrR3lJSnJKMzhZX19od3d1dEdtWlJNRFo5MEkzR1dTcUhfM3B2dmRVTVRKajRLNVFLZnVQUWcwaDlMOHBjZUNoVlYwWVVtNTB6QzM3aTJOWGw5ckVYQjBsNW5XWjFLenVVYUtEanNzMFJHTDBzQQ?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Confirmed layoff of 141 staff in Singapore, with production shifting to Johor Bahru. Reported by Business Times.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Forum: Mandating Advance",
+      "llm_company": "Forum: Mandating Advance",
+      "source_link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQZHhNTUlnUFI4YmVKMW5sX3NRX3UyLXNCOWY3blJUczdRYmRhbVdId19vS195SElZeUU2NmhXZGozX0Z3bi05MDlkTUJqTmZLYWhwcmY1S3YzOXhOYzR6S0ZIMFpaWng2eVotVW9yV0RNUVp2UjB3MXJKa1M5M2kzYUFJblVmQndTMV9vTEpWV01tODV3VXdralFneldWQ3BNTVFSUE1Sa2RHVUJ0N3hLczlOV00wUWJ0SUpkUFNTSl85OHdXNGxwYVFnUy03bHNXRWdj?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is about a forum discussing policy on advance retrenchment notification, not a specific layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "'lazy' Narrative To Connect Ai To Job",
+      "llm_company": "'lazy' Narrative To Connect Ai To Job",
+      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQMUpXSVk1TTd6RVR5ZzdnNk4xVHZMVUVQX0IxQ1hHaHZZeVlhMFdCWEFrNmRhOFRnOHdwT3hraFJBYXNTZUZ3bVJSZkhIRl9IZ2tUOWhJbDF2MW56LWt3VGdFTmYxRC1mdV9rUzdERnphRzNEUjYwZ2g3ZG55NW4wZHVKeUtORmk0QzVPbDRwSVBVZzA?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article title and snippet indicate a general commentary on AI and jobs, not a specific layoff event. No company, Singapore nexus, or layoff announcement is identifiable.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Standard Chartered To",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE51WXgzbG5MWHRWRmExQl9ZeTJNQ3JrMElqd3hOU2tGY1JiSFNrT3I5UzdvZUZFNUx4MzFJc2ItVjFmSUZZMXRBa3IwMVlUTTA0YVloajBYX1BVZw?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "openrouter",
+      "notes": "Snippet indicates Standard Chartered 'to cut thousands of' jobs, suggesting a planned or anticipated layoff rather than a confirmed completed event. Insufficient detail to confirm scope or Singapore-specific impact.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Australia’s Biggest Bank To",
+      "llm_company": "Australia's biggest bank",
+      "source_link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQZThHaFREa2ZTTzB4d19wZHZGb3pwOG03Z1NEZFpCQ2s0NzZwNGM2Rm1uUzNrN1M4OWRJSmdYa3BHWTFtTVdCTFN5RmFHZC05ZWw3cnV4QURSSzhwaGswdUpyQWFlb3BMTDV4VS1obUZlMFBDajZnOTlWS1BMUUhvZWNUcEhIQQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article is about an Australian bank and does not mention any Singapore operations or nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Us Banking Giant Morgan Stanley",
+      "llm_company": "Morgan Stanley",
+      "source_link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPQjQtUTBCTXN0MGY3Y3NoUVVvdU9zU05uZTVtekp4aUNoUmQtLWFnczRLcXVrRkVvYlpmNjYxa3h4MTJBVFZ5eXBjQXVSWmtGd1pmVm1YUVV6SHBuUlpYVzBzS3pWNUdBZWxZNE1kajB5a0htM0RoMm5qamxZR3M5NG1uRkduRXhKck52OEZjUEpFYjFyVVdxWllDTDJseDZLWkIwNmotT2NKcFJhQ0cwZ0g1VQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": "No clear Singapore nexus; snippet likely refers to US operations.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Shopee Layoffs: Tech Redundancies Necessary For Industry, Say Analysts - Cna",
+      "llm_company": "Shopee",
+      "source_link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQbGxWWXNiWTFiX1FTR3dqX3pPNmo3dmN1OTVobGdoTW52VHI3VU9ZZFRKX0VPZnd2SXdJMGhtYmtWa0x1OEU4bkxidkNUYlRMVUxaWkN1VW5WRnNiUUlXYmg3NFpyUEpKTUk4THFrSGZobktPbzlOMThlbndFSFpEajBnNnFIX2trQ05QSDlXOWh6dk5iLWlpNzFUeHI?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article from CNA reports on Shopee layoffs, confirmed by analysts' commentary on industry redundancies.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Singapore Resists Direct Intervention Over Ai-driven Bank Lay-offs - The Banker",
+      "llm_company": "Singapore Resists Direct Intervention Over Ai-driven Bank Lay-offs - The Banker",
+      "source_link": "https://www.thebanker.com/content/a4c313ec-ca80-4804-a9eb-59e54abfe474",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "none",
+      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rejected\",\n  \"confidence\": \"medium\",\n  \"company\": \"\",\n  \"industr) | openrouter: JSON parse error (raw: ```json\n{\n  \"verdict\": \"rejected\",\n  \"confidence\": \"high\",\n  \"company\": null,\n  )"
+    },
+    {
+      "original_company": "Singapore Studying Ways To Better Support At-risk Workers Before Job Losses: Desmond Choo - Cna",
+      "llm_company": "Singapore Studying Ways To Better Support At-risk Workers Before Job Losses: Desmond Choo - Cna",
+      "source_link": "https://www.channelnewsasia.com/singapore/singapore-economic-strategy-review-job-losses-workers-support-6155796",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses government studying ways to support at-risk workers, not a specific company layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Gardenia",
+      "llm_company": "Gardenia",
+      "source_link": "https://www.straitstimes.com/business/gardenia-retrenches-141-employees-as-it-shifts-production-from-singapore-to-malaysia",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Credible news report confirms Gardenia retrenches 141 employees in Singapore due to production shift to Malaysia.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Meta",
+      "llm_company": "Meta",
+      "source_link": "https://vulcanpost.com/911395/meta-layoff-singapore-2026/",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Future planned layoffs announced; not yet executed. Potential duplicate of known event."
+    },
+    {
+      "original_company": "Singapore",
+      "llm_company": "Singapore",
+      "source_link": "https://theindependent.sg/singapore-retrenchments-2026-amazon-tiger-beer-yeo-s-and-more-firms-cut-jobs-amid-rising-energy-costs-and-weak-demand/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Aggregator article covering multiple companies (Amazon, Tiger Beer, Yeo's, etc.) without focusing on a single specific event.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Singapore Staff First To Know In Meta's 8000 Global Job",
+      "llm_company": "Meta",
+      "source_link": "https://www.businesstimes.com.sg/companies-markets/telcos-media-tech/singapore-staff-first-know-metas-8000-global-job-cuts",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Business Times reports that Singapore staff are first to know about Meta's 8000 global job cuts, indicating a confirmed layoff event involving Meta's Singapore operations.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Stanchart To Slash Almost 8,000 Jobs In Ai Push | The Straits Times - Newspaper - Read This Story On Magzter.com",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://www.magzter.com/stories/newspaper/The-Straits-Times/STANCHART-TO-SLASH-ALMOST-8000-JOBS-IN-AI-PUSH",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Standard Chartered plans to cut nearly 8,000 jobs as part of an AI push, as reported by The Straits Times.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Meta begins 8,000 Global Staff",
+      "llm_company": "Meta",
+      "source_link": "https://www.thestar.com.my/business/business-news/2026/05/21/metabegins-8000-global-staff-cutsin-singapore",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "openrouter",
+      "notes": "Meta has officially begun 8,000 global staff cuts with confirmed impact in Singapore, as reported by a credible news source.",
+      "rejection_reason": null
+    },
+    {
+      "original_company": "Meta Begins Job",
+      "llm_company": "Meta Begins Job",
+      "source_link": "https://www.bloomberg.com/news/articles/2026-05-19/meta-begins-job-cuts-in-efficiency-push-spurred-on-by-ai",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
-      "notes": "Snippet is ambiguous, likely referring to job cuts but could be market commentary. No details on numbers or confirmation.",
-      "rejection_reason": null
+      "notes": ""
+    },
+    {
+      "original_company": "Meta Layoffs In Asia: Workforce Restructuring Amid Ai Investment Surge, Ethrworldsea",
+      "llm_company": "Meta Layoffs In Asia: Workforce Restructuring Amid Ai Investment Surge, Ethrworldsea",
+      "source_link": "https://hrsea.economictimes.indiatimes.com/news/industry/meta-layoffs-in-asia-workforce-restructuring-amid-ai-investment-surge/131241150",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Turnaround & Restructuring, Associate - Associate Manager",
+      "llm_company": "KPMG",
+      "source_link": "https://careers.kpmg.com.sg/job/Turnaround-&-Restructuring%2C-Associate-Associate-Manager/5944244/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Turnaround & Restructuring Associate position, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Financial Analyst | Hirevector",
+      "llm_company": "Financial Analyst | Hirevector",
+      "source_link": "https://hirevector.liveblog365.com/job/financial-analyst-189",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The input is a job posting for a financial analyst, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Vp / Associate — Capital Markets &amp; Restructuring | Boutique Investment Bank | Hirevector",
+      "llm_company": "Vp / Associate — Capital Markets &amp; Restructuring | Boutique Investment Bank | Hirevector",
+      "source_link": "https://hirevector.liveblog365.com/job/vp-associate-capital-markets-restructuring-boutique-investment-bank",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a VP/Associate position, not a layoff event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Corporate Secretary - Senior​/associate Level, Orchard Road, Hybrid | Jobflarely",
+      "llm_company": "Corporate Secretary - Senior​/associate Level, Orchard Road, Hybrid | Jobflarely",
+      "source_link": "https://jobflarely.liveblog365.com/job/corporate-secretary-senior-associate-level-orchard-road-hybrid",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Finance Transformation Consultant",
+      "llm_company": "Accenture",
+      "source_link": "https://www.accenture.com/il-en/careers/jobdetails?id=R00316270_en",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Job posting for a finance transformation consultant, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Director, Corporate Finance And Restructuring | Hirevector",
+      "llm_company": "Hirevector",
+      "source_link": "https://hirevector.liveblog365.com/job/director-corporate-finance-and-restructuring",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Director of Corporate Finance and Restructuring, not a layoff announcement.",
+      "rejection_reason": "job-posting"
     }
   ]
 }
