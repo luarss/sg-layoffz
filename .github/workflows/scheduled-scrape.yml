@@ -57,6 +57,11 @@ jobs:
           LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
         run: npx tsx scripts/llm-triage.ts
 
+      - name: Dedup layoffs.csv
+        id: dedup
+        if: steps.llm_triage.outcome == 'success'
+        run: npm run dedup
+
       - name: Read triage results
         id: triage_result
         if: steps.llm_triage.outcome == 'success'
