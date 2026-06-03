@@ -175,27 +175,38 @@ function buildUserPrompt(entry: LayoffEntry): string {
   return lines.join('\n');
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promise<LLMVerdict> {
   for (const provider of chain) {
-    try {
-      const response = await provider.client.chat.completions.create({
-        model: provider.model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(entry) },
-        ],
-        temperature: 0,
-        max_tokens: 512,
-        response_format: { type: 'json_object' },
-      });
-      const raw = response.choices[0]?.message?.content || '{}';
-      // Zod-validated against the shared VerdictSchema: a partial/empty response
-      // (e.g. '{}') or one missing a valid verdict returns null, so we fall through
-      // to the next provider instead of emitting an `undefined` verdict.
-      const parsed = parseVerdict(raw);
-      if (parsed) return parsed;
-    } catch {
-      // API error — try next provider
+    // Retry transient failures (rate limits, 5xx, truncated/empty completions) with
+    // backoff before giving up on this provider. Under concurrency these are common
+    // and previously fell straight through to needs_review — a spurious miss that
+    // made the score flap around the pass threshold.
+    const MAX_ATTEMPTS = 3;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const response = await provider.client.chat.completions.create({
+          model: provider.model,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: buildUserPrompt(entry) },
+          ],
+          temperature: 0,
+          max_tokens: 512,
+          response_format: { type: 'json_object' },
+        });
+        const raw = response.choices[0]?.message?.content || '{}';
+        // Zod-validated against the shared VerdictSchema: a partial/empty response
+        // (e.g. '{}') or one missing a valid verdict returns null, so we retry and
+        // then fall through to the next provider instead of emitting an `undefined`
+        // verdict.
+        const parsed = parseVerdict(raw);
+        if (parsed) return parsed;
+      } catch {
+        // transient API error — fall through to backoff/retry
+      }
+      if (attempt < MAX_ATTEMPTS) await sleep(500 * attempt);
     }
   }
   return {
@@ -211,9 +222,28 @@ async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promi
 }
 
 // ---- Sampling ---------------------------------------------------------------
+// Seeded RNG so a run is reproducible (a stable CI signal that doesn't flap from
+// random sampling). Override with `--seed <n>`; defaults to a fixed seed.
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+let rng: () => number = Math.random; // replaced in main() once the seed is known
+
 function sample<T>(arr: T[], n: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(n, arr.length));
+  // Fisher–Yates shuffle (the sort-by-random comparator is biased), then take n.
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a.slice(0, Math.min(n, arr.length));
 }
 
 function sampleStratified(entries: LayoffEntry[], n: number): { entry: LayoffEntry; category: string }[] {
@@ -262,6 +292,10 @@ async function main() {
   const samplesArg = process.argv.indexOf('--samples');
   const samplesPerClass = samplesArg !== -1 ? parseInt(process.argv[samplesArg + 1], 10) : 20;
 
+  const seedArg = process.argv.indexOf('--seed');
+  const seed = seedArg !== -1 ? parseInt(process.argv[seedArg + 1], 10) : 1234;
+  rng = mulberry32(seed);
+
   const allLayoffs = readCsv('layoffs.csv') as LayoffEntry[];
   const allRejected = readCsv('rejected.csv') as LayoffEntry[];
 
@@ -283,7 +317,7 @@ async function main() {
 
   const chain = getProviderChain();
   const total = acceptSample.length + rejectSample.length;
-  console.log(`\nLLM Eval — chain: ${describeChain(chain)}`);
+  console.log(`\nLLM Eval — chain: ${describeChain(chain)} (seed: ${seed})`);
   console.log(`Samples: ${acceptSample.length} from layoffs.csv, ${rejectSample.length} from rejected.csv`);
   console.log(`Excluded ${excludedDupes} duplicate-rejections from reject pool (not LLM-detectable)\n`);
 
@@ -312,7 +346,7 @@ async function main() {
   for (const { entry, category } of rejectSample) tasks.push(run(entry, 'reject', category));
 
   // Run concurrently with a small concurrency limit to avoid rate limits
-  const CONCURRENCY = 5;
+  const CONCURRENCY = 3;
   for (let i = 0; i < tasks.length; i += CONCURRENCY) {
     await Promise.all(tasks.slice(i, i + CONCURRENCY));
   }

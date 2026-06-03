@@ -10,7 +10,11 @@ export function readCsv(filename: string): LayoffEntry[] {
   const filePath = csvPath(filename);
   if (!fs.existsSync(filePath)) return [];
 
-  const raw = fs.readFileSync(filePath, 'utf-8');
+  // Normalize line endings before parsing. A file with mixed CRLF/LF endings makes
+  // PapaParse auto-detect "\r\n" as the delimiter and silently merge the LF-only
+  // lines into their neighbours' fields (dropping rows). Collapsing everything to LF
+  // first makes the parse robust regardless of how the file was written or edited.
+  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
   const parsed = Papa.parse<LayoffEntry>(raw, {
     header: true,
     dynamicTyping: true,
