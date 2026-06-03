@@ -10,21 +10,7 @@
 import OpenAI from 'openai';
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
-
-// Re-use the same types and core logic as llm-triage.ts
-type Verdict = 'confirmed' | 'rumored' | 'rejected' | 'needs_review';
-
-interface LLMVerdict {
-  verdict: Verdict;
-  confidence: string;
-  company: string;
-  industry: string;
-  date_announced: string;
-  jobs_cut: number | null;
-  pct_workforce: number | null;
-  notes: string;
-  rejection_reason?: string;
-}
+import { LLMVerdict, parseVerdict } from '../src/lib/verdict';
 
 // ---- Eval categories -------------------------------------------------------
 // Each category tests a specific rejection/acceptance signal.
@@ -203,13 +189,11 @@ async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promi
         response_format: { type: 'json_object' },
       });
       const raw = response.choices[0]?.message?.content || '{}';
-      try {
-        const p = JSON.parse(raw) as LLMVerdict;
-        p.notes = (typeof p.notes === 'string' && p.notes) ? p.notes : '';
-        return p;
-      } catch {
-        // malformed JSON — try next provider
-      }
+      // Zod-validated against the shared VerdictSchema: a partial/empty response
+      // (e.g. '{}') or one missing a valid verdict returns null, so we fall through
+      // to the next provider instead of emitting an `undefined` verdict.
+      const parsed = parseVerdict(raw);
+      if (parsed) return parsed;
     } catch {
       // API error — try next provider
     }
@@ -282,7 +266,17 @@ async function main() {
   const allRejected = readCsv('rejected.csv') as LayoffEntry[];
 
   // Filter rejected entries that look like real data (not job postings which are obvious)
-  const meaningfulRejected = allRejected.filter((e) => e.company && e.source_link);
+  const withData = allRejected.filter((e) => e.company && e.source_link);
+
+  // Exclude duplicate-rejections from the eval's reject set. These entries ARE real
+  // layoffs — they were rejected only for duplicating an already-tracked event. The
+  // LLM evaluator classifies one article in isolation and cannot detect duplicates;
+  // de-duplication is a separate downstream step (scripts/dedup-layoffs.ts). Scoring
+  // the model against them measures something it is not responsible for and is the
+  // root cause of most false positives.
+  const isDuplicateRejection = (e: LayoffEntry) => /duplicate/i.test(e.notes || '');
+  const meaningfulRejected = withData.filter((e) => !isDuplicateRejection(e));
+  const excludedDupes = withData.length - meaningfulRejected.length;
 
   const acceptSample = sample(allLayoffs, samplesPerClass);
   const rejectSample = sampleStratified(meaningfulRejected, samplesPerClass);
@@ -290,7 +284,8 @@ async function main() {
   const chain = getProviderChain();
   const total = acceptSample.length + rejectSample.length;
   console.log(`\nLLM Eval — chain: ${describeChain(chain)}`);
-  console.log(`Samples: ${acceptSample.length} from layoffs.csv, ${rejectSample.length} from rejected.csv\n`);
+  console.log(`Samples: ${acceptSample.length} from layoffs.csv, ${rejectSample.length} from rejected.csv`);
+  console.log(`Excluded ${excludedDupes} duplicate-rejections from reject pool (not LLM-detectable)\n`);
 
   type EvalRow = {
     entry: LayoffEntry;

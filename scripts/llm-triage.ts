@@ -23,23 +23,8 @@
 import fs from 'node:fs';
 import OpenAI from 'openai';
 import { readCsv, appendCsv, writeCsv } from '../src/lib/csv';
-import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
-
-type Verdict = 'confirmed' | 'rumored' | 'rejected' | 'needs_review';
-type Confidence = 'high' | 'medium' | 'low';
-type Industry = (typeof INDUSTRIES)[number];
-
-interface LLMVerdict {
-  verdict: Verdict;
-  confidence: Confidence;
-  company: string;
-  industry: Industry;
-  date_announced: string;
-  jobs_cut: number | null;
-  pct_workforce: number | null;
-  notes: string;
-  rejection_reason?: string;
-}
+import { LayoffEntry } from '../src/lib/types';
+import { LLMVerdict, coerceVerdict } from '../src/lib/verdict';
 
 interface ProviderConfig {
   name: string;
@@ -179,29 +164,6 @@ function buildUserPrompt(entry: LayoffEntry): string {
   return lines.join('\n');
 }
 
-function parseVerdict(raw: string, entry: LayoffEntry): LLMVerdict {
-  const p = JSON.parse(raw) as Partial<LLMVerdict>;
-  return {
-    verdict: (['confirmed', 'rumored', 'rejected', 'needs_review'] as const).includes(p.verdict as Verdict)
-      ? (p.verdict as Verdict)
-      : 'needs_review',
-    confidence: (['high', 'medium', 'low'] as const).includes(p.confidence as Confidence)
-      ? (p.confidence as Confidence)
-      : 'low',
-    company: p.company || entry.company,
-    industry: (INDUSTRIES as readonly string[]).includes(p.industry as string)
-      ? (p.industry as Industry)
-      : 'Other',
-    date_announced: /^\d{4}-\d{2}-\d{2}$/.test(p.date_announced || '')
-      ? p.date_announced!
-      : entry.date_announced,
-    jobs_cut: typeof p.jobs_cut === 'number' ? p.jobs_cut : entry.jobs_cut,
-    pct_workforce: typeof p.pct_workforce === 'number' ? p.pct_workforce : entry.pct_workforce,
-    notes: (typeof p.notes === 'string' && p.notes) ? p.notes : '',
-    rejection_reason: p.rejection_reason,
-  };
-}
-
 // Try providers in order, falling back on API errors.
 // Returns the verdict and which provider ultimately succeeded.
 async function evaluateEntry(
@@ -226,7 +188,7 @@ async function evaluateEntry(
       const raw = response.choices[0]?.message?.content || '{}';
 
       try {
-        return { verdict: parseVerdict(raw, entry), provider: provider.name };
+        return { verdict: coerceVerdict(raw, entry), provider: provider.name };
       } catch {
         // Malformed JSON from this provider — treat as a soft failure and try the next
         errors.push(`${provider.name}: JSON parse error (raw: ${raw.slice(0, 80)})`);
@@ -295,7 +257,7 @@ async function main() {
       confidence: verdict.confidence,
       provider,
       notes: verdict.notes,
-      rejection_reason: verdict.rejection_reason,
+      rejection_reason: verdict.rejection_reason ?? undefined,
     });
 
     const layoffEntry: LayoffEntry = {
