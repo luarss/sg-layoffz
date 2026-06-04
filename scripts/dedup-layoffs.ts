@@ -13,7 +13,7 @@ import { readCsv, writeCsv } from '../src/lib/csv';
 import { normalizeCompany } from './normalize';
 import { LayoffEntry } from '../src/lib/types';
 
-const DATE_WINDOW_DAYS = 3;
+const DATE_WINDOW_DAYS = 7;
 
 function score(entry: LayoffEntry): number {
   let s = 0;
