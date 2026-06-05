@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-06-04",
+  "run_date": "2026-06-05",
   "providers": [
     {
       "name": "deepseek",
@@ -10,98 +10,49 @@
       "model": "openrouter/owl-alpha"
     }
   ],
-  "total": 25,
+  "total": 27,
   "confirmed": 3,
-  "rumored": 1,
-  "rejected": 15,
-  "needs_review": 6,
-  "remaining_queue": 6,
+  "rumored": 4,
+  "rejected": 17,
+  "needs_review": 3,
+  "remaining_queue": 3,
   "rows": [
     {
       "original_company": "Cisco To",
-      "llm_company": "Cisco To",
+      "llm_company": "Cisco",
       "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNU1lBeVFodDlQMWticnpRMEV0OHY4U0w2NHJpSTFiTWU0akJiTVV0RldORnNUV0MtVXdpWFRJUTJSYVRXS0wzMjN3dm9zbThzQjh0SWVrZ0UtaXlVRnh1ZF9WdTg5RGdIOEx0QWNFWldGZ1RTUFFTUFlWaDRWcXJpc01XdUIxS3BTd2xMdlBpR29KanRkanFmRl9ILUVob1pxcHVDYVZsQmViSjRtV1Y5Zmdta2RGcUEzdUdibHhUZlhpbHB1ZEVz?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
+      "verdict": "rumored",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": ""
+      "notes": "Cisco plans to cut about 4,000 jobs according to news snippet."
     },
     {
       "original_company": "H&m Restructuring In Singapore Triggers Debate Over Hidden Layoffs - Scandasia",
-      "llm_company": "H&m Restructuring In Singapore Triggers Debate Over Hidden Layoffs - Scandasia",
+      "llm_company": "H&M",
       "source_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPNGwtR2pHMXFlSjJWM0l1anpXX2lwV3c1MVJMNmxtcEVQOUVTTFFrTW1BZ2hubEJDRTdISlNEck1UcEdDbWxMdTI1SjNYVVM2X0JtcmxRakpBdV9aeVRWNm1zVWtLOUEyT2pjWlBUVkJ3YjJ3SVNRYUc0M0M2RjkxT2Q3aDdSaVhBM3RERVFjQ1lSdw?oc=5",
       "verdict": "needs_review",
       "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Ntuc Concerned About Employers Presenting",
-      "llm_company": "Ntuc Concerned About Employers Presenting",
-      "source_link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPVXJDS0tJdmRqTVl3MlZpc0MxV2hZTVZMYkJHcEtVck01Vjlua0p2V3dHQTNzUTM4STUzS05mZGdrSjVBNDBxdnFRa1d4QWJ2Q3E0Z3ZTekx6dExLTjNBOGFSeHdtSXFmdUxiSGxOZWF5eWZVeE4yTllKa0hRdG1RblRmX2V5YmtMaV9FZzV4YTVsUkRQa04xUUhHZkhEdWhXdGhzaWlfQ0kxekxSSmR3X3hn?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about NTUC expressing concern over retrenchments in general, not a specific company layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Mom: Workers Whose Singapore Roles Move Overseas Are Still Considered",
-      "llm_company": "Mom: Workers Whose Singapore Roles Move Overseas Are Still Considered",
-      "source_link": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxNR280blhiTEs4VjU5Ny1tRHl2NEVaQTd0LWl4TUNNMl95NnJNTHRsME9ZUmt0UmZINWZzTXlkS18xRTlaeWQtODA2SUJuV29aVExNSkJOVHJRV194X1dsekxONjF2ZUw3clBkMXdxd3dxaGNPUHNnQ3A2clhaSUJmMk9VemFBZ2wxMWVTUTgxZ0dmZ0RJVG1aNk1CU1ZxeTRSNkRuQTZrb0V6LWRBZS05ZkV4UFVGdE9YWTc4ekY3Y25UTUtTamNIWEpCMVpIZ1p0S1lnSnhneUhHY3Bz?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a government policy statement from MOM about workers whose roles move overseas, not a specific layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Eu Industries Brace For Layoffs As Iran War Drives Energy Costs - Invezz",
-      "llm_company": "Eu Industries Brace For Layoffs As Iran War Drives Energy Costs - Invezz",
-      "source_link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQWjJTQ0FlQWhGQm9nTy14S0JTODRFYUxVaHk4LUZCb3FSVXdtMkNhalAwczhhM01RaS16dTJFN0JHSUsyZVluQVlFTjYyMkdNLUFLYkljaUVQRmRkeEJBejBvZnp3VzVreVpaMTJhYjItdFZvbEc1dFI2Q0lfRmFQbkFoU1VRUEZicV95bGZvb3RKM2QzVHlJR1RtMmxmcHNKSWRkMw?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article about European industries bracing for layoffs due to Iran war energy costs; no Singapore nexus.",
-      "rejection_reason": "not-sg"
+      "provider": "openrouter",
+      "notes": "The headline mentions 'restructuring' and 'hidden layoffs' but the snippet is too brief to determine if this is a confirmed layoff event, a rumor, or a commentary/debate piece about potential layoffs."
     },
     {
       "original_company": "Crypto Exchange Gemini Plans To",
-      "llm_company": "Crypto Exchange Gemini Plans To",
+      "llm_company": "Gemini",
       "source_link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPekJ2eF92ODM3eWJRRVFUZWQ4Z0FCcC1LY0QtZ0t2MlpvRFdtNFJISUVrZ2Y4dl9sZVVUQkFBZGUxNWVGT2MwOUVDSHNwbFF2dTMyWUotYjhyYzFEMk9rSmlfdHNzV0tDN1pnY1E1VVRrYTVPRXd2YVp1WnRadzU2Tzc1cGd0VEJXbG5wZUhRM0F5NGZxblJPMXByOWp2RDJsZ0QtWURfdUdaV2VLdnZXbmZHWjRyT2ZyOWc?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
+      "verdict": "rumored",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": ""
+      "notes": "Article title indicates planned layoffs at Gemini, but no details on scope or Singapore-specific impact."
     },
     {
       "original_company": "Facing",
       "llm_company": "Facing",
       "source_link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQdmdRc1FtTEhpLXZsUXVVQ0VMejA1Zkp1Znc3VWMtcUw5TWdOTmdCZDlNSzZpMFRBdlQyX0VXQU1mZm1kTk1IMmlTLXQyaFBmWEdhclFsRFU0SU5PenE5Vmk5dlpIT2FvS2tJYk5HZWRYSkstRlM4VFF6MksxQ2JGSjFHM09CamtNbnVBTXZXNDFRTXo4YTJ5eFU3emppdjBtR0kxdTVoQ2JzdmNNTW1STkp3?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Employees Who Lose Positions In S'pore Are Considered",
-      "llm_company": "Employees Who Lose Positions In S'pore Are Considered",
-      "source_link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1mM202WmwxMUowYkY5V3VCLUpIVnNHX1pYMlpPMktwR1JzRnNaZ29QVDV5ajIzeDgwR1I4UmdGVHpUU1R3SlozaFB3N1FZRFhuTTZkY21YOXgzOGo3anBEaExkVUNpWWxyYzU3Z2RKVXNmNzZJSlE?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article title and snippet are vague and incomplete, lacking a specific company, date, or indication of an actual layoff event. It appears to be general commentary about employees losing positions.",
+      "notes": "The snippet is vague and does not name a specific company; appears to be general commentary on retrenchment in Singapore.",
       "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Singapore's Employment Growth Moderates In Q1 On Seasonal Factors, But Labour Market Stays Resilient - The Business Times",
-      "llm_company": "Singapore's Employment Growth Moderates In Q1 On Seasonal Factors, But Labour Market Stays Resilient - The Business Times",
-      "source_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNOElrZlc5RzIyY2hpOXVNd0phU25kcWFMLWhtNm1mU1ZPSUNtUjlRc3NnSF9zbmpBTDMzOE9Pc25zS3VKRzNZNGRaMnZrYmhUTDNEd1BxYUtONXVXMHJkRG1WcWpJWVhlVHRkMmNIWHdQd24yX2ZDMnhiU0VTdEdGSzA3UHFXcklNaHhuN2M5T1M0WGZKaHpBVlZoUWJyTTA2ZzZSZ3JFX0FSVkhJN2xya3JGZ05SWlJrXzNaSXM0U1RVdmlKMGIxU3Y4Yw?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a labour market statistics article about employment growth moderation, not a specific layoff event.",
-      "rejection_reason": "statistics"
     },
     {
       "original_company": "Uber",
@@ -110,112 +61,171 @@
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "H&m Shifts Southeast Asia Hq From Singapore To Kl",
-      "llm_company": "H&M",
-      "source_link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPWG5lSUIyWWhCaWZSbjloa3pqSjJzZDJjcVZPNy1hMElqRUJ5ZGl4aTFBOEcyMHE0YUZvZlZfN25za3M4UkFHLXVvXzlUaWk4UWJEUkllTEhkajlOLXZfR0h1akRQN2dCdF9oTUJUT2V3aFBuajJfSDQzek1xYzEzMElPU3VJZUNPZUtCMG1BT1VIUzNHamc4SjNsaUtpV3BFTXg2bGRB?oc=5",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "openrouter",
-      "notes": "Article reports a headquarters relocation from Singapore to Kuala Lumpur, not a confirmed or rumored layoff event. No specific job cuts are mentioned.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Standard Chartered To",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE51WXgzbG5MWHRWRmExQl9ZeTJNQ3JrMElqd3hOU2tGY1JiSFNrT3I5UzdvZUZFNUx4MzFJc2ItVjFmSUZZMXRBa3IwMVlUTTA0YVloajBYX1BVZw?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Planned layoffs of thousands by Standard Chartered, as indicated in the news snippet."
-    },
-    {
-      "original_company": "Singapore’s Tech Salaries In 2026: Ai Skills Pay Off, With Engineers Earning Up To 25% More - Vulcan Post",
-      "llm_company": "Singapore’s Tech Salaries In 2026: Ai Skills Pay Off, With Engineers Earning Up To 25% More - Vulcan Post",
-      "source_link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE41dmVjZk1wS29OZm1SSkN4MUtLbW5TenpObU1hNE9SRnFaRXdwaEJieEZnVVJ6RkdLeG9WSzhwakpmQ2dDbGYwU3BrOHRzd0dMX3o5WnRfeFRaUjNpejVteWd0aXVNWTh5LXdVSi1HdWtrSlB5Smo2MA?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses tech salary trends, not layoffs. It is a market overview/commentary.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Nearly 50% Of Tech Roles In Singapore Saw Salary",
-      "llm_company": "Nearly 50% Of Tech Roles In Singapore Saw Salary",
-      "source_link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE02RG9ISHc3Z0txZnhzRW1vNW1RbDZIZzJtWHlYTW85NmFrNURuVWdtT19YSjlpWkN3QXdvY0EtRk1WLUE4MWxpSDZOWDNnb3Y4NmdsSk1WV1JfZUMtUXJCcmR4cDlYUEluQW1aSkZOckxZUlVIbVE?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about salary trends in tech roles, not a specific layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Sea E-commerce Arm Shopee",
-      "llm_company": "Shopee",
-      "source_link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPanhEOG54QzZyeWxoU1N2cENJc015UFZJY1pQa1ZndXpKWm1NOUtjWWU2bUk4YWtBNTAtdlBlWVNabVloRHlRdlZXQzhha3I4RlBJQXpSUHhrS2s4dC1aRmMxa3NGb0ZabXZQNHBnbGdxS1RWaVdaXzRtTThzODA2Z1Y4dDJDT3RWYzBZY3F5Y1ptX0w1TUxOUjJ5MUhCTHpNZi04aEhuSGZSZk5aTTJtRk1OUV9KUzZrR2xxQ3YxeEp2bG9VY2NkSg?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "News article about Shopee layoffs in 2022."
-    },
-    {
-      "original_company": "Edge Of Tech Special: Intel Israel Layoffs Send Shockwaves Worldwide - Ctech",
-      "llm_company": "Intel",
-      "source_link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1Mdk9TVUxjd3ZXUV82NUFCM1BMR0lNY0tNNkdGdTNpb25jT0htR004WTVkSVBMcHBmMmlyU2NVc09GRjRvUjZWWGNhbXJ5MGlzeDFvYVhJa2lTVGd3c2JrVjJVbzM2SExI?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "No Singapore nexus; article focuses on Intel Israel layoffs without mention of Singapore operations.",
-      "rejection_reason": "not-sg"
+      "notes": "Snippet suggests Uber cut 23% of its people division, but details are insufficient to confirm if this is a Singapore-specific event or if it has already occurred. Source is a Google News RSS feed with limited context."
     },
     {
       "original_company": "Singapore Layoffs Cause Cost Of Living Anxiety | Stomp",
-      "llm_company": "Singapore Layoffs Cause Cost Of Living Anxiety | Stomp",
+      "llm_company": "Gardenia",
       "source_link": "https://www.stomp.sg/trending-now/gardenia-layoffs-spark-anxiety-over-jobs-and-cost-living-among-spore-workers-deeply-uncomfortable",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Gardenia confirmed layoffs of 141 workers, sparking cost of living concerns as reported by Stomp."
+    },
+    {
+      "original_company": "H&m Relocating Southeast Asia Regional Hq From S'pore To Kl, 30% Of Regional Headcount May Be Impacted: M'sian Media - Mothership",
+      "llm_company": "H&M",
+      "source_link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBOTkdPU3QwcWhKbUc5YjdMLV9VRUp5WVh6LTVKLXZEbjFUcHFkZ1RQNFpfNXNpX0JlV0FBVGQ2aEdmS0taMGRZWE12Vnh2aTUzdEhfMl9QX1R6NW9TT0lfQkdB?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "H&M relocating Southeast Asia regional HQ from Singapore to KL; 30% of regional headcount may be impacted as per Malaysian media."
+    },
+    {
+      "original_company": "Us Job Openings Broadly Picked Up In January, Layoffs Fell - The Edge",
+      "llm_company": "Us Job Openings Broadly Picked Up In January, Layoffs Fell - The Edge",
+      "source_link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOcGF0VHA3VHhoM3dtaUYwWFF5NTVRZkVyTnJYR1FEdkM2WE9WclhWTVgxWWlpQjQ1dEtsVTBVbFNRaV9UR1RBbllaY3dNdHpIZHF5NnJLWEZlekxySFA2RWlFUUd6YXh3d3E4V0dLZ2Nod2lZMDZ2enhxdkpINExVSVFJSmxDVW5jWGwwTFNLbThpTnU5ZE53NS1HYlpSenBFTGc?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses US job openings and layoffs, not related to Singapore. No Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "There's Something You Didn't Know About The Sudden",
+      "llm_company": "There's Something You Didn't Know About The Sudden",
+      "source_link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBnZVU2LWJlOFpJcWZVWjdnM21iRzhWU2Z4QUdNa3c2Zy1zWVlDUEpNR0VFd19JalMwOTNGY3ZlcFUwdFVTWE01WUN1OGxlZjZQLUp0ZXgxZlY5UnM?oc=5",
+      "verdict": "rejected",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": "Title is vague and incomplete; no specific company or layoff event identified.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Singapore Court Rejects Bad Faith Termination Claim Against Denso - Hcamag.com",
+      "llm_company": "Denso",
+      "source_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNbDBEeXI0QV9VVUR1M0REM19jRThlRXJ5SEREekxkMWR6bXFVRVVNSjU0bGJueFVnY0JzamVWbHFRMUNkaW1Vb29pcWwxaEk5MlRqS1gxMWhMV2N5TFlDRjhHOExTY01QMEFvSnQ0NGk1TnFlUGdxb01zZ0NKZ0YzWlpNdm5UNl9uakc0WFVhM1hjOFBSZ1pmM0pRbWk5VlZwZmVuTEF4VktNZnZZdlhIZUdJTkZhS0Nld1AzWmlOR3A2ZEZ5MGt3Uy13?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Legal case regarding bad faith termination claim, not a layoff event.",
+      "rejection_reason": "legal"
+    },
+    {
+      "original_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
+      "llm_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
+      "source_link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOalhfSWs5SGt5cGxkdDVPVVFKYUozaWV6LUVPakgzSkVRU3FiR3VmczNOazlpbTA2VnVFNVVqTGpvM2dnOFM0YlBRbXY3TmNxVTZCNVpiTEc4cllwWlBSR0YwTVduSDYwYzMyczRqV0oyeTA3Q0MtQTFlNTBiTjlCZ0Nhb2c1TVdqbjAxdVpKV05OeGhYaEJfUHBRNGRfN0lWcWVQa1FtMzlaaXM?oc=5",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
       "notes": ""
     },
     {
-      "original_company": "The Ai Layoffs Narrative Obscures What's Really Happening In Singapore | The Straits Times - Newspaper - Read This Story On Magzter.com",
-      "llm_company": "The Ai Layoffs Narrative Obscures What's Really Happening In Singapore | The Straits Times - Newspaper - Read This Story On Magzter.com",
-      "source_link": "https://www.magzter.com/stories/newspaper/The-Straits-Times/THE-AI-LAYOFFS-NARRATIVE-OBSCURES-WHATS-REALLY-HAPPENING-IN-SINGAPORE",
+      "original_company": "Us Tech Sector Announces Most Job",
+      "llm_company": "Us Tech Sector Announces Most Job",
+      "source_link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOWEhRR2VuTDg0a1dyN3ppdm1vdUxCVW5UUlYyRlNoMEhvQVNJcFhiMnBwQndibEp0SzBrTTlyYkdVNHlFbk1Ba3Q2bEFjMFAtdExBOGI3T04tSnh3SENLMGs3ZTRkUjJ6TlZFMjg4dUxJNV9SRHNHcV9rajRlUFl0R3lQNERxYVVab1FfSnlZTGRXeXl2dXE5aWtYSW80ZnRjUksxRUYzWV9hVTFI0gGsAUFVX3lxTE5YSFFHZW5MODRrV3I3eml2bW91TEJVblRSVjJGU2gwSG9BU0lwWGIycHBCd2JsSnRLMGtNOXJiR1U0eUVuTUFrdDZsQWMwUC10TEE4YjdPTi1KeHdIQ0swazdlNGRSMnpOVkUyODh1TEk1X1JEc0dxX2tqNGVQWXRHeVA0RHFhVVpvUV9KeVlMZFd5eXZ1cTlpa1hJbzRmdGNSSzFFRjNZX2FVMUg?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article is a commentary/analysis piece about AI layoffs narrative in Singapore, not a specific layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Employees Asked To Reapply For Jobs In Malaysia Amid H&m Restructuring | Business & Economy",
-      "llm_company": "H&M",
-      "source_link": "https://sg.headtopics.com/news/employees-asked-to-reapply-for-jobs-in-malaysia-amid-h-m-84104343",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article focuses on H&M restructuring in Malaysia, not Singapore. No clear Singapore nexus.",
+      "notes": "Generic article about US tech sector layoffs; no Singapore nexus or specific company.",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Gardenia To Shift Singapore Bakery Production To Johor Bahru, 141 Jobs Affected - Newswav",
-      "llm_company": "Gardenia",
-      "source_link": "https://newswav.com/article/gardenia-to-shift-singapore-bakery-production-to-johor-bahru-141-jobs-affec-A2605_SADT4M",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Gardenia, a Singapore bakery, announced a shift of its Singapore production to Johor Bahru, Malaysia, affecting 141 jobs."
-    },
-    {
-      "original_company": "S'pore's Q2 Total Employment Rises But Infocomm, Professional ..",
-      "llm_company": "S'pore's Q2 Total Employment Rises But Infocomm, Professional ..",
-      "source_link": "https://www.straitstimes.com/business/singapores-q2-total-employment-rises-but-infocomm-professional-services-sectors-see-more-job-cuts",
+      "original_company": "Ai Needs To ‘work In Support Of Humans’: Josephine Teo - The Business Times",
+      "llm_company": "Ai Needs To ‘work In Support Of Humans’: Josephine Teo - The Business Times",
+      "source_link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOcnZhYTlZTGM4QnJ6SHFrOXVOTnRVQWZpV0lYVkE3WXhKb2lZeGEtMlU5a2M5UEFNVVFkaFE3Z1ZMR3Z4aFhxYmpVUXFCT3ZtY1FwOTFCdDlpRUNhbUx4WFdPbUotVzYwWFJrTkJmZU9rSFhLdnRkYk9pU05HdEwtZmE4cGRLQzNyT2ZXWUNR?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article is about aggregate employment statistics and sector-level job cuts, not a specific company layoff event.",
+      "notes": "Article is about AI policy commentary by Minister Josephine Teo, not a specific layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "'making Billions In Profit But...': Meta Employees Receive 4 Am Layoff Emails As Company Plans To",
+      "llm_company": "Meta",
+      "source_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOR2w2V1FkU1BOekdVQ2g5OFVMRkExcTZLMVFLb3JUOFpxMm9VX2VoQ2ItcF9aYUN3enFzdWttMTNTR2IxTVd1WmowWDI2NlpHMldBTGxpYnlxTFNOUDdMcUtnUHJkelNzLXljWjJTMzA1Z3VzalBNUnRzSGVxQTA1M3gyTWN6cFRVMkFFOGlvNFk2aS1TRnlmWlJYTkVrNDJxOWFITlJiTlZsSzlRNzlyTTRoZTVUa0dnLU9TRC1Ed1JiU1VTbnlWUjZkb9IB0AFBVV95cUxPTjBQZVN0NlBKd1l4cWtLS2NFaXhrNm5sbmNZVU5FblhRcDhjT0p6WDh1V0NCOTJtYXRNa1A2aTVUNEc1QS1yY1VRXzVmdFE3bXQxYnJVdDhDNXYtNUUxQm9YbFlVUGVsSzhUcmdkVGxIamVNLXhCbVZBMTJrWGNwbjZ0ekpqRnZJNGxocTNhWkJPSmN6SW84MFU2WU1lSVZSZHVKN1NZUlJndHVibGhERjdiSXdQU1YtUThoTDItMzJGVllKWG5BMVhic2hFQS1o?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "No clear Singapore nexus; article appears to be about global Meta layoffs, not specifically Singapore operations.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Pm Warns Of Ai Disruptions, Vows To Support Workers - The Edge",
+      "llm_company": "Pm Warns Of Ai Disruptions, Vows To Support Workers - The Edge",
+      "source_link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPS2NheWh3cHAycUlHLW1uTkdZMHlMZ0hBRzVZZ1l4eW0yWHRIU3hzcDI5cVpUamRxeGdsa1UzMjdlUWJELWZBWmFGVExnQVl5YUlXak1YeG1xWExjWjZ2V1Rpcm44Wjk0TnQtNVZYcnpvandsZG9QMjNYMlNJUENRWHhMRXZTLVVobHZuSHZvWDJvaUNvME9jX3pxcEg2c3NsUnR0SkYzQnB3Q2w4elkw0gG0AUFVX3lxTE9oVlUxU25ub3ZfRlF6M0YyUWZnMURSUE9uM01IalczdGdHMS05SlJHWlA5b2w5N1UzZDNiMUFKdWMteUdUMGxTSkpTVVcyemRJZU50d3JnQmZWT2UyVkhsVENpX0MwSVhJQjFGVkxKanQ3ODJrT0ZQZ29sRkEtR3RZR0VET25TRkU2ZUh0N0F4NTV2QTl6VHhrMFpHQmhtcE05ZDhJUG0wT0U2TEJzejVFOGs0Zw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is about a Prime Minister warning of AI disruptions and vowing worker support, not a specific layoff event from a named company.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Yeo's",
+      "llm_company": "Yeo's",
+      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQd20tSUxKaFZfaVZHUXR0dzhhOXVuTE0zTmNaZVZ3N2xaakNIdUY0VUg0WDFyek4yUE94MEN1bjVYOEd3UW5NMUJobU9YS3B4bTZmRmtfMHhaLVlqVmRwS0t1VlVaejBjUnV1ZVBKS1oxZEdYS0lOYnQ4akZVUmtBSlc0YTlHQmphLU42Y0lxWXB5Wkp3MnRSVDIwRVdyWHVoSWJXM0hqTUFtZVZVVHN4SUVzVGcxb0ptZWFCSDhrUdIBxAFBVV95cUxQaEJNTURJaUJTWmJ3Nlp2VzBlbGRMUEt6bzluSldqRldQUi05RWRIMDdHVjRnaDJVSkUxRDdCUUg5OG5YV2J0Wldjc0RWVGtZQTRVbnVRZzh6SzJUcjZVbnNPd2d3MVpZODRlTG9SZ1pLVVowS0dlOTd3YXNkcVFnb2VIc1ZKY3VSVUVTc0NBR09GMUF5ODA4NlRQc1hVaU5BMlI2QzNWNHFoVU52dWF3ZWxaZ1p2MThrSVU1cFlOazk2cTRO?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Snippet indicates Yeo's is cutting jobs in Singapore, but the date is in the future, suggesting a planned event."
+    },
+    {
+      "original_company": "E-commerce Giant Amazon",
+      "llm_company": "Amazon",
+      "source_link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQRXZNRm5FTXNXYy16NDAtZnN3Z2VwQzk3WGhaNDdnWW1fSVNGLUpQQWI0ZUVWc2lhYW81bEFlWmVxeWt4ME14VXV5dGtobzRIV1NucXRteDNqMXlmejJNMzBfTkJteWZIZEp6MkJ2eU4wVExpMTJzTFRfTUpXLTljYm5OWlZONnlPQjg3S040N3U?oc=5",
+      "verdict": "rejected",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "No clear Singapore nexus; the snippet does not specify that the job cuts affect Singapore operations.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Sea E-commerce Arm Shopee",
+      "llm_company": "Sea (Shopee)",
+      "source_link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPanhEOG54QzZyeWxoU1N2cENJc015UFZJY1pQa1ZndXpKWm1NOUtjWWU2bUk4YWtBNTAtdlBlWVNabVloRHlRdlZXQzhha3I4RlBJQXpSUHhrS2s4dC1aRmMxa3NGb0ZabXZQNHBnbGdxS1RWaVdaXzRtTThzODA2Z1Y4dDJDT3RWYzBZY3F5Y1ptX0w1TUxOUjJ5MUhCTHpNZi04aEhuSGZSZk5aTTJtRk1OUV9KUzZrR2xxQ3YxeEp2bG9VY2NkSg?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Shopee, the e-commerce arm of Sea Limited, conducted layoffs in November 2022 as reported by multiple credible sources."
+    },
+    {
+      "original_company": "Mom: Workers Whose Singapore Roles Move Overseas Are Still Considered",
+      "llm_company": "Mom: Workers Whose Singapore Roles Move Overseas Are Still Considered",
+      "source_link": "https://theonlinecitizen.com/2026/06/04/mom-workers-whose-singapore-roles-move-overseas-are-still-considered-retrenched-if-jobs-become-redundant",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a policy clarification from MOM, not a specific company layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Ntuc Concerned About Employers Presenting",
+      "llm_company": "Ntuc Concerned About Employers Presenting",
+      "source_link": "https://www.channelnewsasia.com/singapore/retrenchment-disguised-job-loss-apply-overseas-new-opportunity-6155641",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is about NTUC's concerns regarding employers disguising retrenchments, not a specific layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Singapore Clarifies",
+      "llm_company": "Singapore Clarifies",
+      "source_link": "https://meyka.com/blog/singapore-clarifies-retrenchment-rules-after-hm-restructuring-june-05-0406/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is about Singapore clarifying retrenchment rules after a restructuring, not a specific layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Adp Report: Only 15% Singapore Workers Feel Safe From Job",
+      "llm_company": "Adp Report: Only 15% Singapore Workers Feel Safe From Job",
+      "source_link": "https://asiatoday.co/2026/05/26/adp-report-only-15-singapore-workers-feel-safe-from-job-cuts-despite-rising-ai-adoption-also-ranked-as-among-worlds-least-confident-about-job-security/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a report on worker sentiment and job security, not an announcement of specific layoffs.",
       "rejection_reason": "statistics"
     },
     {
@@ -225,32 +235,42 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Meta confirmed global layoff of 8,000 employees, with Singapore staff receiving termination emails."
+      "notes": "Meta announced 8,000 job cuts globally, with Singapore staff affected as they received termination emails on May 22, 2026."
     },
     {
-      "original_company": "The Sea Tech Job Rebound Is Real, But What Does That Mean - Tech Collective",
-      "llm_company": "The Sea Tech Job Rebound Is Real, But What Does That Mean - Tech Collective",
-      "source_link": "https://techcollectivesea.com/2026/05/28/southeast-asian-tech-job-rebound/",
+      "original_company": "Employees Who Lose Positions In S'pore Are Considered",
+      "llm_company": "Employees Who Lose Positions In S'pore Are Considered",
+      "source_link": "https://mothership.sg/2026/06/employees-reapply-roles-retrenchment/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article is a market commentary about tech job trends in Southeast Asia, not a specific layoff event.",
+      "notes": "The article appears to be a general commentary or policy discussion about employees losing positions in Singapore, with no specific company or layoff event identified.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "‘singaporeans Will Definitely Get",
-      "llm_company": "‘singaporeans Will Definitely Get",
-      "source_link": "https://www.amkio.com/singaporeans-will-definitely-get-retrenched-at-least-once-hr-consultant-and-author-of-still-relevant-in-the-age-of-ai-says-its-only-a/",
+      "original_company": "Forum: More Safeguards Needed For",
+      "llm_company": "Forum: More Safeguards Needed For",
+      "source_link": "https://www.straitstimes.com/opinion/forum/forum-more-safeguards-needed-for-retrenched-workers-signing-severance-documents",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article is an opinion piece by an HR consultant making general claims about retrenchment, not reporting a specific layoff event.",
+      "notes": "The article is a forum opinion piece discussing safeguards for retrenched workers, not a specific layoff event.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Associate / Senior Associate Restructuring - Efinancialcareers Sg",
-      "llm_company": "Associate / Senior Associate Restructuring - Efinancialcareers Sg",
-      "source_link": "https://www.efinancialcareers.sg/jobs-Singapore-Singapore-Associate__Senior_Associate_Restructuring.id24245270",
+      "original_company": "'",
+      "llm_company": "'",
+      "source_link": "https://www.asiaone.com/singapore/retrenchment-part-corporate-life-woman-recalls-sudden-layoff-uncertainty-job-search",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Personal anecdote about a layoff experience, not a specific company layoff event.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Corporate Secretarial Manager (in-house) - Direct Search Global",
+      "llm_company": "Corporate Secretarial Manager (in-house) - Direct Search Global",
+      "source_link": "https://directsearch.global/job/corporate-secretarial-manager-in-house/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
