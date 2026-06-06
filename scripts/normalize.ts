@@ -160,7 +160,7 @@ export function normalizeIndustry(raw: string): string {
     pharmaceutical: 'Healthcare',
     education: 'Education',
     edtech: 'Education',
-    media: 'Education',
+    media: 'Other',
     logistics: 'Other',
     transport: 'Other',
     shipping: 'Other',

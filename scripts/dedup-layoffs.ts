@@ -1,6 +1,8 @@
 // Deduplicates data/layoffs.csv by grouping rows on normalizeCompany + date window.
 // Entries for the same company within DATE_WINDOW_DAYS of each other are treated as
 // the same event (handles day-off reporting lag like "May 20 vs May 21" for Meta).
+// The window slides: when a new entry joins a group, anchorDate advances to the new
+// entry's date, so a chain May 1 → May 5 → May 9 all merges within a 7-day window.
 // Within each duplicate group, keeps the highest-scoring row using a simple heuristic:
 //   +3 confirmed status
 //   +2 jobs_cut present
@@ -59,6 +61,7 @@ for (const entry of entries) {
     }
     if (daysBetween(d, group.anchorDate) <= DATE_WINDOW_DAYS) {
       group.entries.push(entry);
+      if (d > group.anchorDate) group.anchorDate = d;
       matched = true;
       break;
     }
