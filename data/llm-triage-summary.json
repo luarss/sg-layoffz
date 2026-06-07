@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-06-06",
+  "run_date": "2026-06-07",
   "providers": [
     {
       "name": "deepseek",
@@ -10,10 +10,10 @@
       "model": "openrouter/owl-alpha"
     }
   ],
-  "total": 11,
-  "confirmed": 1,
+  "total": 8,
+  "confirmed": 0,
   "rumored": 1,
-  "rejected": 8,
+  "rejected": 6,
   "needs_review": 1,
   "remaining_queue": 1,
   "rows": [
@@ -27,101 +27,72 @@
       "notes": ""
     },
     {
-      "original_company": "Uber",
-      "llm_company": "Uber",
-      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOejlLdlJ1OTFlVU1xQUVQWVZOaFdXNmNBcW95S191anNURUFhWldTVURva0JUaVlfajJkVkFyTHVRVEJfbE5NOEV0M1JWTVBYSGxoekhFSFJHYjE4NGk3M1JaMS1yRXl0MUEyWDlRbXg2VDlsd0dkVTJFcllNX0dtM0tLUzNXekpFeFR6RFBpR1NGV2VuUGpfeWxzQ0k0SW5kb19oa29FLVR4QQ?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "No mention of Singapore operations; likely a global or US-focused layoff.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
-      "llm_company": "Gardenia",
-      "source_link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOalhfSWs5SGt5cGxkdDVPVVFKYUozaWV6LUVPakgzSkVRU3FiR3VmczNOazlpbTA2VnVFNVVqTGpvM2dnOFM0YlBRbXY3TmNxVTZCNVpiTEc4cllwWlBSR0YwTVduSDYwYzMyczRqV0oyeTA3Q0MtQTFlNTBiTjlCZ0Nhb2c1TVdqbjAxdVpKV05OeGhYaEJfUHBRNGRfN0lWcWVQa1FtMzlaaXM?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "openrouter",
-      "notes": "Gardenia is shifting bakery production from Singapore to Malaysia, with 141 employees affected. This is a specific, credibly reported retrenchment event involving a named company with Singapore operations."
-    },
-    {
-      "original_company": "Ntuc, Employers Split On",
-      "llm_company": "Ntuc, Employers Split On",
-      "source_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPT2U4bHFYYXJuekh4eGpPN1JtcVpEM3FRTV9TV1hEQkN3U240WFZiekJuV2hnRnQ3SDRIbjFuRW40ZEJsMlV5WHd0dHNSUXd0UXZoS29PR0Y4YnpIWnZxNk1lRlRaTk90eXhUVFFyN3JfV05ONlVubVdnTUhHQUkwWVB5c1Itd2FIRnFzZjhGMWM0TEZyZFB1WWZwOWt5MFFSekl2bkRJdmNZUEtfMXJSQWVra3dSeDBVV2w4bWl4QkhmVWgxOGwyS25xUQ?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses a disagreement between NTUC and employers over retrenchment notice policy, not a specific layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Crypto Exchange Gemini Plans To",
-      "llm_company": "Gemini",
-      "source_link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPekJ2eF92ODM3eWJRRVFUZWQ4Z0FCcC1LY0QtZ0t2MlpvRFdtNFJISUVrZ2Y4dl9sZVVUQkFBZGUxNWVGT2MwOUVDSHNwbFF2dTMyWUotYjhyYzFEMk9rSmlfdHNzV0tDN1pnY1E1VVRrYTVPRXd2YVp1WnRadzU2Tzc1cGd0VEJXbG5wZUhRM0F5NGZxblJPMXByOWp2RDJsZ0QtWURfdUdaV2VLdnZXbmZHWjRyT2ZyOWc?oc=5",
+      "original_company": "H&m Relocating Southeast Asia Regional Hq From S'pore To Kl, 30% Of Regional Headcount May Be Impacted: M'sian Media - Mothership",
+      "llm_company": "H&M",
+      "source_link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBOTkdPU3QwcWhKbUc5YjdMLV9VRUp5WVh6LTVKLXZEbjFUcHFkZ1RQNFpfNXNpX0JlV0FBVGQ2aEdmS0taMGRZWE12Vnh2aTUzdEhfMl9QX1R6NW9TT0lfQkdB?oc=5",
       "verdict": "rumored",
-      "confidence": "high",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Article reports that crypto exchange Gemini plans layoffs, indicating a future event."
+      "notes": "H&M plans to relocate Southeast Asia regional HQ from Singapore to KL, potentially impacting 30% of regional headcount. The announcement is from Malaysian media and represents a future plan."
     },
     {
       "original_company": "Workers Who Lose Roles Due To Redundancies Considered",
       "llm_company": "Workers Who Lose Roles Due To Redundancies Considered",
-      "source_link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPX0cxLVhKaXkxNkZzckhpSDA1S0NONjJmR0hJYkJyZEw2RGxMdWdpaF9idjY4N1BMYlhsQjJfenBoaVVVakcyN3RhY3JxWDhzYXR3YnlzRkRWV2xNVWY3ajBQbTNqc0E3QXhZcWJlNmtMS2FYYWd2T3U3M1F1TVZuTW1PakJfRDBBQnF6UDR6NVc?oc=5",
+      "source_link": "https://www.asiaone.com/singapore/workers-lose-roles-redundancies-retrenchment-ntuc-mom",
       "verdict": "rejected",
-      "confidence": "medium",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": "No specific company or layoff event; appears to be a general policy discussion about workers affected by redundancies.",
+      "notes": "Article appears to be a policy discussion about redundancy and retrenchment, not a specific layoff event.",
       "rejection_reason": "policy"
     },
     {
       "original_company": "Mom/ntuc: Employers Cannot Disguise",
       "llm_company": "Mom/ntuc: Employers Cannot Disguise",
-      "source_link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxONmg3NlFCZDVfdTV6MHRDZWczcFpWU29PczQ3YTRYblJkN2l6bkV2UWZLekEyXzNzcU9QckJJM0dXaWhmcTBuR2FOMUF0NGJvMUVJNEthVWVjakdjakRfWWI2bTlwYm93Q0dDNk5QLUtja2JPRmo4Tkk5VnNaU09kdk9RNWc2Mk42MHhHdmRSZjhKUmY5TGVrWTRGcGNlcVNmaWVHbmJTYmc2YUJlaVZrQkNvbTVfWWIxZEtnZGkwYnZBV2ZnTnBsVlRGMnpWUnZTOXJKZmpKMUh6TnM5TlUzY1ZtR0pFY21Q?oc=5",
+      "source_link": "https://www.amkio.com/mom-ntuc-employers-cannot-disguise-retrenchments-as-new-opportunities-by-asking-singapore-workers-to-reapply-for-jobs-overseas/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article is about government/union policy on retrenchments, not a specific company layoff event.",
+      "notes": "Article discusses MOM/NTUC guidelines on retrenchment practices, not a specific layoff event.",
       "rejection_reason": "policy"
     },
     {
-      "original_company": "Tech Layoffs Continue To Roil Industry With 32,000 Jobs",
-      "llm_company": "N/A",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOd3FJYjA3SmZQRS1mejNkQWNGR05hdnRPcTVZV3ZFeThLakNEVVo4a3hYUzQ1OUNBNGZOd01rbGJnNmpDN1pKNFNsWUI2SXF5Mlh4TE05RkxuMGVqdHRwek84dndlYjRyREZGcUtHZTBLcE9EN2JxU0swa2R2bjVxUU1FVWtONzU3dTVmb28ySGxnSXF2TENTN3BINVBwcUlrLVdZdHdHT19yc2lFbGlab05tdWtuT1pVYmFR?oc=5",
+      "original_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Singapore News",
+      "llm_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Singapore News",
+      "source_link": "https://theindependent.sg/software-engineer-feels-undervalued-after-being-tasked-with-training-higher-paid-fresh-graduates/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "General overview article about tech layoffs aggregating 32,000 jobs; no specific company named.",
-      "rejection_reason": "aggregator"
+      "notes": "Personal anecdote about a software engineer's feelings, not a layoff event.",
+      "rejection_reason": "personal"
     },
     {
-      "original_company": "Retrenchment Benefits And Measures | Lifesg – Guides",
-      "llm_company": "Retrenchment Benefits And Measures | Lifesg – Guides",
-      "source_link": "https://www.life.gov.sg/guides/retrenchment-benefits-and-measures",
+      "original_company": "When Firms Go Low, Employees Go Solo | The Straits Times",
+      "llm_company": "When Firms Go Low, Employees Go Solo | The Straits Times",
+      "source_link": "https://www.straitstimes.com/world/united-states/when-firms-go-low-employees-go-solo",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is a general government guide about retrenchment benefits, not a news article about a specific layoff event.",
+      "notes": "Article appears to be a general commentary on employment trends, not a specific layoff announcement in Singapore.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Singapore Clarifies Retraining As Redundancy, Not Opportunity | Business",
-      "llm_company": "Singapore Clarifies Retraining As Redundancy, Not Opportunity | Business",
-      "source_link": "https://sg.headtopics.com/news/singapore-clarifies-retraining-as-redundancy-not-84194414",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about government policy clarification on retraining and redundancy, not a specific company layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Corporate Secretary - Senior​/associate Level, Orchard Road, Hybrid | Quickswoop",
-      "llm_company": "Corporate Secretary - Senior​/associate Level, Orchard Road, Hybrid | Quickswoop",
-      "source_link": "https://quickswoop.infinityfree.me/job/corporate-secretary-senior-associate-level-orchard-road-hybrid-4",
+      "original_company": "Senior Associate, Fund Structuring - Singapore | Hirequorum",
+      "llm_company": "Senior Associate, Fund Structuring - Singapore | Hirequorum",
+      "source_link": "https://hirequorum.liveblog365.com/job/senior-associate-fund-structuring-singapore",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
       "notes": "This is a job posting, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Senior Associate, Credit Risk Operations (underwriting) - Airwallex Careers",
+      "llm_company": "Airwallex",
+      "source_link": "https://careers.airwallex.com/job/70a4cf53-2312-48a9-973d-3f55f41ab2d3/senior-associate-credit-risk-operations-underwriting/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Senior Associate position, not a layoff announcement.",
       "rejection_reason": "job-posting"
     }
   ]
