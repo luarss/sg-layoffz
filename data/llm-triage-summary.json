@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-06-07",
+  "run_date": "2026-06-08",
   "providers": [
     {
       "name": "deepseek",
@@ -10,89 +10,216 @@
       "model": "openrouter/owl-alpha"
     }
   ],
-  "total": 8,
-  "confirmed": 0,
-  "rumored": 1,
-  "rejected": 6,
-  "needs_review": 1,
-  "remaining_queue": 1,
+  "total": 21,
+  "confirmed": 3,
+  "rumored": 0,
+  "rejected": 16,
+  "needs_review": 2,
+  "remaining_queue": 2,
   "rows": [
     {
       "original_company": "H&m Restructuring In Singapore Triggers Debate Over Hidden Layoffs - Scandasia",
-      "llm_company": "H&m Restructuring In Singapore Triggers Debate Over Hidden Layoffs - Scandasia",
+      "llm_company": "H&M",
       "source_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPNGwtR2pHMXFlSjJWM0l1anpXX2lwV3c1MVJMNmxtcEVQOUVTTFFrTW1BZ2hubEJDRTdISlNEck1UcEdDbWxMdTI1SjNYVVM2X0JtcmxRakpBdV9aeVRWNm1zVWtLOUEyT2pjWlBUVkJ3YjJ3SVNRYUc0M0M2RjkxT2Q3aDdSaVhBM3RERVFjQ1lSdw?oc=5",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "openrouter",
+      "notes": "The headline mentions 'restructuring' and 'hidden layoffs' but the snippet is too brief to determine if this is a confirmed/rumored layoff event or a commentary/debate piece about potential layoffs."
+    },
+    {
+      "original_company": "More",
+      "llm_company": "More",
+      "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNYWhOSHkzckZKN3RIYnJpakxDcDFoTTVFSGFTZkVacFozdXhJS3Vodi1Db3A0bGtoU2VZeXNnbmlsRk5TaDdWbWZrSENiMzN0M2dPSFBKTjRYUUtWbFo0UTUwOU5Nd1J6QWdHamlKeXNYYlgwUHNkQTNvcmFrR05zckFqak1OOTViZEFWSUFMRC1ZSU42Zm9VaXh5S1c5THFJM2VJY2dTU3QtLVVTR2JSYS1XaWRZYWNhR1Jqd1hRMnc4MWRYMklR?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article discusses a general trend of more white collar workers being retrenched in Singapore, not a specific company layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Dyson Conducts 'surprise' Layoffs In Singapore, Leaving Employees In Shock And In 'low Morale' - Cna",
+      "llm_company": "Dyson",
+      "source_link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQa0JWZFFRTVhpem5jYTdRWko0aV80ODFCMm9yNEhkdGVNYXBzTW0xY3c3YjhySmRfVTU2SmIwNklLcldvQjFjME5CVFhyd0RGMGJ4MFgwU1B4M0FObGFJLVdSTEpLRXZTUWowcnkxaTdoOVZncktVR3pSMWpxdFctLW1neEVFYU8wRUdBeGN0bjlZZHJ1YW02ampDMA?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "CNA reports Dyson conducted surprise layoffs in Singapore, causing low morale."
+    },
+    {
+      "original_company": "Dyson Layoffs: Singapore Needs To Find Balance Between Protecting Workers, Business Flexibility, Says Mom - Cna",
+      "llm_company": "Dyson Layoffs: Singapore Needs To Find Balance Between Protecting Workers, Business Flexibility, Says Mom - Cna",
+      "source_link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPWWxTZmFvaVBOYmZLTEg3T2l4emVsZ3k0UVdCUmg4dF9yellnSXJVNEhfV19kS1JoWDFvbXY1cFBnTzB5TXNxWldLTHlpdFRxeHFqenMxdURmTk9QMVU4X0ZqVE8yeXdkREJWWEwzTDJSX1ZuMWYyU1hZdzZoRWtLN0FXT1d3Zw?oc=5",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
       "notes": ""
     },
     {
-      "original_company": "H&m Relocating Southeast Asia Regional Hq From S'pore To Kl, 30% Of Regional Headcount May Be Impacted: M'sian Media - Mothership",
-      "llm_company": "H&M",
-      "source_link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBOTkdPU3QwcWhKbUc5YjdMLV9VRUp5WVh6LTVKLXZEbjFUcHFkZ1RQNFpfNXNpX0JlV0FBVGQ2aEdmS0taMGRZWE12Vnh2aTUzdEhfMl9QX1R6NW9TT0lfQkdB?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "H&M plans to relocate Southeast Asia regional HQ from Singapore to KL, potentially impacting 30% of regional headcount. The announcement is from Malaysian media and represents a future plan."
-    },
-    {
-      "original_company": "Workers Who Lose Roles Due To Redundancies Considered",
-      "llm_company": "Workers Who Lose Roles Due To Redundancies Considered",
-      "source_link": "https://www.asiaone.com/singapore/workers-lose-roles-redundancies-retrenchment-ntuc-mom",
+      "original_company": "Dyson Did Not Break Singapore Laws In Layoffs But May Have Damaged Its Reputation, Experts Say - Cna",
+      "llm_company": "Dyson",
+      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNbVNWdm94Q3pwdjltUnZiM2MwVmtNTjYxUE0xUVpRakdkaVpRS1BORUFSY3UyYWkwZW0tRnJVUWFsQ01LakgyemRudkRnc25LSHZJODVTcThQZUx6Y3hfTFRqUHkzY0h3SHQwMFN2QzVxVG5CLW1rOUNlZ245MkVjQ0NyWEZ5Slpod0NkeHdOY3lUenV3WlByU0VwS2taU0xaN2Ywc0VYLVRGZw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article appears to be a policy discussion about redundancy and retrenchment, not a specific layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Mom/ntuc: Employers Cannot Disguise",
-      "llm_company": "Mom/ntuc: Employers Cannot Disguise",
-      "source_link": "https://www.amkio.com/mom-ntuc-employers-cannot-disguise-retrenchments-as-new-opportunities-by-asking-singapore-workers-to-reapply-for-jobs-overseas/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses MOM/NTUC guidelines on retrenchment practices, not a specific layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Singapore News",
-      "llm_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Singapore News",
-      "source_link": "https://theindependent.sg/software-engineer-feels-undervalued-after-being-tasked-with-training-higher-paid-fresh-graduates/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Personal anecdote about a software engineer's feelings, not a layoff event.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "When Firms Go Low, Employees Go Solo | The Straits Times",
-      "llm_company": "When Firms Go Low, Employees Go Solo | The Straits Times",
-      "source_link": "https://www.straitstimes.com/world/united-states/when-firms-go-low-employees-go-solo",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article appears to be a general commentary on employment trends, not a specific layoff announcement in Singapore.",
+      "notes": "Article is commentary/analysis on a previously known layoff event, not an announcement of a new layoff.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Senior Associate, Fund Structuring - Singapore | Hirequorum",
-      "llm_company": "Senior Associate, Fund Structuring - Singapore | Hirequorum",
-      "source_link": "https://hirequorum.liveblog365.com/job/senior-associate-fund-structuring-singapore",
+      "original_company": "Man Says He “feels Helpless” Because Singapore No Longer Feels Like Home As Layoffs, Housing Prices, And Job Competition Are On The Rise - The Independent Singapore News",
+      "llm_company": "Man Says He “feels Helpless” Because Singapore No Longer Feels Like Home As Layoffs, Housing Prices, And Job Competition Are On The Rise - The Independent Singapore News",
+      "source_link": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxPV1ZWVnV1VjlQYjltVGF5NmhsSWVETVV4WTczRXhBLTNQY2RMNFlMTW5VWUc0ODQzcG55c28yWHNOdWpQa1JQczBUVU9aZTN0UTlDWWhFdGVmajNpQzZMSEsyQ3V0TlZLby1BNHY4Q2o3TGZZS1JQRzlUenpmVWY3ZWxvbjBRTlFZVWk0TDNMalI4cEthT3ZqZ3FKQVYxYTFKWkRTTFZNOFYxbFVZWmJ1Snh3UThmWWhZLWNIZ2k1X3VCaGtDTWEyWnFTV1BYUWtEWnVhSlVZd1JNdlVJVXdld2N6TzZwMmh5SlhtamlReEU?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Personal anecdote and commentary about general economic concerns, not a specific layoff event.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Dyson Surprise Layoffs Spark Union Dissapointment And Netizen Outrage - The Online Citizen",
+      "llm_company": "Dyson",
+      "source_link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQWFZqUjlpMDhIcHdjU2RGN3AwZUhzbktGLUpjS1V4SnRpNVVSc2NUZldHUVRSMkNsaWNPZHRJUWRKRHA4RTV1c3RackREZU9ibDNNOVN3YnJOQTlkOUxiS3lGaVBUTTNnTHBGZThVYmI2eDZmYkFzNVUtNnc0V3BaOTJnTUE0VERMeGIzZnJyZDJqdllYWE9tbGdSRjM4bzJZMmo4cXZPZXpqVmIzLV9HWEhyaw?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Dyson conducted surprise layoffs in Singapore, leading to union disappointment and public outrage."
+    },
+    {
+      "original_company": "Ntuc Assists More Singaporean Pmes Facing",
+      "llm_company": "Ntuc Assists More Singaporean Pmes Facing",
+      "source_link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNdjZkMDJCOTFaTjZqSmYwclpHc2tvZ0lqbk1rQjhtc0lBZ1EzYTFSXzBmNHRwcGZfTmZKTnMwNjVERFhXMWtIRzNiU3F4cEdaVzd5amxWOTBtNHBCdjZfV3lwQm5HbW9IRFRncWlSUHlVb3ZSOUV6eV8xSElCZGdaWGNn?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article about NTUC (union) assisting workers, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "May Sees Most Layoffs Since 2020 As Ai Drives 40% Of Job",
+      "llm_company": "May Sees Most Layoffs Since 2020 As Ai Drives 40% Of Job",
+      "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPUm56X1dleGFzeno0WGRuZUg2SzFmYWs4RXV5RkpiTXpYR0lhbk1iWnQ3ZFJkU2xIZlpnQ1FiQ09JV3FwSnJjN3doRHhyYTRwRkhqSm9NTDdMMjBQVU1DSWNhekRYb2FxSU1SUlJqRjNRMk9aNmN5QWhra2QwOHdNQWNzV05wMFQ1b19UYnprMDZjdGxDbFBOSGtoNjg4XzM0VVNLYm9HVU9uOFdrNmRJODZ6UV9QcnNZMkFpc05CUzB6bURlNHl3?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This appears to be a labor market statistics report about layoffs in May, not a specific company layoff event. It is an aggregate analysis, not a confirmed or rumored layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Ntuc Warns Against Disguising",
+      "llm_company": "Ntuc Warns Against Disguising",
+      "source_link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPUzVENTBHRVdwWVJfZEZUS01pZDI1Mmw1M0FOU1pwbVFUY0ZXaHBXR3lVZ1hkaU5NSHRpV01ZWHVvSmQtUmg3UGhLWEFrbUZqNm4yUGZPWjRDdUJDMEhwS0xCZnV6REJNY1pVZHgwTGI4b3JZXzhxdUR1aHdDcXVGemxWNFQzUlIwV0pQN0JSUFk4blpwR3ZXUV96c3A1ckRXVmpDakg2aDRQSm9BX2Q5QlJCMGRhTUlRbVpMNWdsY3ZfUFNIaUFkalc0Q183b2lTc2ln0gHYAUFVX3lxTE91RjZlZ0lhZDI3b0FSRUtCbFY0ZkVfTHZlSW9Cc1M1M0MwLTUwSmowLWZnRkFyOWNia2NKY3VQUDZIeklXdGlReHd5RmZmOUsydDdsaHdhUlg0SlJzeGhhZUJVbzZLTFlqX0c3TlRhWjVqZzlPR0NNTDBwR0M2Z3BRVW4yQkRKUTdpT0U3cWs4RlUyenpWeDB5VjBvUklFcXo5YUcyNE9QaDVCTFl0bnI0TmRVZnJkbDJ1cjBOcm1WbTZNQlBQMVFJRXFsV1h3alFNN0RyNXBYQQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "NTUC warns about disguising retrenchments; not a specific layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "More Singapore White-collar Workers Seek Union Help Amid Rising",
+      "llm_company": "More Singapore White-collar Workers Seek Union Help Amid Rising",
+      "source_link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxQQVMyaTVaMXY3S1NTTWdjRmplX0w5RWRDVjlMTTI1RmR2NWtncTltZjZxQXFTOThRSTFyRnExZzdpU0dZQU02bW1hbFFmUkxGaU56ZHVHbmVrQkZJVjl5aU9sYktjRGE2aGNkLWtwMDNlemlncm9VSllEUTFyUnFubEg1SnJ4YXFJVVpna2Rub1F2eGdXclFZVnhuWkdIT2x3YzR4Rzg0dkFhaV9MN1lGQkF6ODBRYVc4dTZxR2xLdUtNdmFGSHRod0Q3c2Z4MVRKWXZOd0t1Uldtdk1pcmYw0gHkAUFVX3lxTFBaTFBxbFo5SDJpUHI3R3ZDRzVwZXRJWWhmWmNwZlVfWU95SFZXd2ZIQ1g4dmttd09pblJaSk9LM3BvblFCOTVTRTBUOXNDY1JCanItZ1JESG5xSVZNWTJqQnNtTDdjdklndjNmc0g1WV9yZmZibkVtNUpXd1YyaGhhc3QwY3l1SUtGTm8zYTVyeFlFcFpxaFY5elRMZVBsVzdYWTNYSVdOUVEwS29WNmF5Uk05YTdJc0xQS2NHb2gwZlVuMU9zU3pEeDF2UGtDdnc4cVNLMXc2c2l6M0FueTZkX1FXWg?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is a general trend piece about white-collar workers seeking union help, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
+      "llm_company": "Gardenia",
+      "source_link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOalhfSWs5SGt5cGxkdDVPVVFKYUozaWV6LUVPakgzSkVRU3FiR3VmczNOazlpbTA2VnVFNVVqTGpvM2dnOFM0YlBRbXY3TmNxVTZCNVpiTEc4cllwWlBSR0YwTVduSDYwYzMyczRqV0oyeTA3Q0MtQTFlNTBiTjlCZ0Nhb2c1TVdqbjAxdVpKV05OeGhYaEJfUHBRNGRfN0lWcWVQa1FtMzlaaXM?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "openrouter",
+      "notes": "Gardenia is shifting bakery production from Singapore to Malaysia, resulting in 141 employees being retrenched. This is a specific, officially reported layoff event with a clear Singapore nexus."
+    },
+    {
+      "original_company": "Major Sector Gets Hit With Surprising Job",
+      "llm_company": "Major Sector Gets Hit With Surprising Job",
+      "source_link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNR3lCc21PczB2VnEzYjNQS19LQVptOXNsWU9uZm1kS0ZMb1dlUmFtSVJ1YkJZUHhSd2hJaGxLOEJwVXZteGk2WURzcmtVdDcwakpFZ0pldHNnUWFKOHVoQ2g2U05hNGxBZk5OZUkxc092bTk3SG9iNUxmb3lGRmhRWUxzaTZNaGcz?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The title and snippet are vague, lacking a specific company or details, suggesting it is commentary or an aggregator article.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Mizuho’s Asia Growth Plan Puts Singapore And India In The Spotlight - People Matters Global",
+      "llm_company": "Mizuho",
+      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOMF9sNjZSNzdhampFbVFlVjR3YXlqMS1xYVI0dXppQVc2RGE3Q0xzanhhdlpGTDkxMnNGTllXNUNtNzhXZ2VELWZXVjI5VmpnS1pLYUNuSmFEMUwtb3liMVVGQS1PSVJnWkd1UUVfSU5mQ3ZxQzVqTVBlcFVYVldpd09RZWppNVgzM1FnbncweGJaT3hva01OVmRzMWRTV2NaRUJkTkRPQUQ0dWdpV2hKR2RxLVU2UjhRb2dZalV6aw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses Mizuho's Asia growth plan and does not mention any layoffs.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Singapore Finance Professionals Embrace Ai Skills Despite Job Fears: Report - People Matters Global",
+      "llm_company": "Singapore Finance Professionals Embrace Ai Skills Despite Job Fears: Report - People Matters Global",
+      "source_link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNS1BQQjBaTWxVM0xweTFUZ09Kb0NWWm5YVWhHalhRN1hka2hXYW9rMWtobExWcFBfX2htOGpHbmNhYVhCdHFpLUdnajRTUGVIMXJXZjN3eW00Ti10b0lmUW11X3J6RzdQTkx1MGdKUFlGOHktTDdPUk1uZXg5dWFBYVpZRWF6NXl0aWVrNW83RHBDdXhzRE4wbHdNY1ZSbG9DaWtjaGlERHJocFlyVDZib0NFaUFLdTBoT2FuTmFyNlg2TzdPRU9DYzQ2Z3prdTdLY1hKV1hzeFN2dw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article is a report/commentary about finance professionals embracing AI skills, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "More",
+      "llm_company": "More",
+      "source_link": "https://www.straitstimes.com/singapore/more-retrenched-pmes-seek-union-help-ntuc-flags-concerns-about-offshoring-and-ai-job-cuts",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses overall trend of retrenched PMEs seeking union help and NTUC concerns, not a specific layoff event at a named company.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "0303 Minister Speech For Cos 2026",
+      "llm_company": "0303 Minister Speech For Cos 2026",
+      "source_link": "https://www.mom.gov.sg/newsroom/speeches/2026/0303-minister-speech-for-cos-2026",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a government minister's speech, likely policy debate, not a layoff announcement.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Amkio",
+      "llm_company": "Software Engineer Feels Undervalued After Being Tasked With Training Higher-paid Fresh Graduates - Amkio",
+      "source_link": "https://www.amkio.com/software-engineer-feels-undervalued-after-being-tasked-with-training-higher-paid-fresh-graduates/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a personal anecdote about a software engineer feeling undervalued, not a layoff announcement.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Financial Controller In Singapore | Enerpac Tool",
+      "llm_company": "Enerpac Tool Group",
+      "source_link": "https://careers.enerpactoolgroup.com/careers-home/jobs/3474?lang=en-us",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Financial Controller position, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Legal Counsel (shipping) - Direct Search Global",
+      "llm_company": "Legal Counsel (shipping) - Direct Search Global",
+      "source_link": "https://directsearch.global/job/legal-counsel-shipping-3/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Legal Counsel position, not a layoff announcement.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Vp Finance, Retail Jobs In",
+      "llm_company": "Vp Finance, Retail Jobs In",
+      "source_link": "https://kerryconsulting.com/position/vp-finance-retail-2/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
       "notes": "This is a job posting, not a layoff announcement.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Senior Associate, Credit Risk Operations (underwriting) - Airwallex Careers",
-      "llm_company": "Airwallex",
-      "source_link": "https://careers.airwallex.com/job/70a4cf53-2312-48a9-973d-3f55f41ab2d3/senior-associate-credit-risk-operations-underwriting/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a job posting for a Senior Associate position, not a layoff announcement.",
       "rejection_reason": "job-posting"
     }
   ]
