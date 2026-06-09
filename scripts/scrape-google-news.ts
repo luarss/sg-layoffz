@@ -6,11 +6,20 @@ import { isDuplicate } from './deduplicate';
 
 const parser = new Parser();
 
+// Google News RSS is free/unlimited, so we run a broad set spanning event types
+// and sectors. Bare "Singapore layoffs" returns the same top stories daily;
+// sector- and event-specific terms surface the long tail we'd otherwise miss.
 const QUERIES = [
   'Singapore layoffs',
   'Singapore retrenchment',
-  'job cuts Singapore',
+  'Singapore job cuts',
   'Singapore tech layoffs',
+  'Singapore office closure jobs',
+  'Singapore company restructuring redundancies',
+  'Singapore hiring freeze',
+  'Singapore bank job cuts',
+  'Singapore manufacturing plant closure',
+  'Singapore startup shuts down',
 ];
 
 interface RawCandidate {

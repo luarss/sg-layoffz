@@ -4,13 +4,54 @@ import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
 
-const QUERIES = [
-  'Singapore layoffs',
-  'Singapore retrenchment',
-  'Singapore job cuts',
-  'Singapore tech layoffs',
-  'Singapore restructuring jobs',
+// Exa is semantic, so natural-language intent queries beat bare keywords.
+//
+// CORE queries run every day — broad nets that catch breaking, cross-sector
+// coverage. ROTATING queries are sector/angle-specific; each day we slide a
+// window across them so the net shifts day-to-day instead of re-pulling the
+// same top stories. CORE + a window of ROTATING fills the daily run cap.
+const CORE_QUERIES = [
+  'Singapore company announces layoffs or retrenchment of employees',
+  'Singapore tech company cuts jobs or shuts down operations',
+  'multinational company closing its Singapore office or regional headquarters',
+  'Singapore startup lays off staff after funding or revenue trouble',
 ];
+
+const ROTATING_QUERIES = [
+  'Singapore bank or financial services firm reducing headcount',
+  'Singapore manufacturing plant or factory closure and retrenchment',
+  'Singapore retail chain closing stores and laying off workers',
+  'Singapore food and beverage outlets shutting down with jobs lost',
+  'Singapore logistics, shipping or aviation workforce reduction',
+  'Singapore healthcare or pharmaceutical company cutting jobs',
+  'Singapore media, advertising or marketing agency layoffs',
+  'Singapore gaming, fintech or crypto company retrenchment',
+  'Singapore real estate or construction firm downsizing staff',
+  'Singapore e-commerce or delivery platform cutting headcount',
+  'Singapore semiconductor or electronics plant job losses',
+  'Singapore professional services or consulting firm redundancies',
+  'Ministry of Manpower Singapore retrenchment figures rising',
+  'Singapore SME or business closure leaving workers retrenched',
+];
+
+// Day-of-year offset, so the rotating window advances one query per day and
+// cycles through the whole pool over time.
+function dayOfYear(d: Date): number {
+  const start = Date.UTC(d.getUTCFullYear(), 0, 0);
+  const today = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return Math.floor((today - start) / 86_400_000);
+}
+
+function buildQueries(today: Date): string[] {
+  const offset = dayOfYear(today) % ROTATING_QUERIES.length;
+  const rotated = [
+    ...ROTATING_QUERIES.slice(offset),
+    ...ROTATING_QUERIES.slice(0, offset),
+  ];
+  // CORE first (always issued), then the day's rotating window. The run-cap
+  // `allowance` below truncates this list to the searches we're allowed today.
+  return [...CORE_QUERIES, ...rotated];
+}
 
 const RESULTS_PER_QUERY = 10;
 const LOOKBACK_DAYS = 14;
@@ -184,6 +225,8 @@ async function main() {
   const start = new Date(today);
   start.setDate(start.getDate() - LOOKBACK_DAYS);
   const startDate = start.toISOString();
+  const QUERIES = buildQueries(today);
+  console.log(`  Query plan (${QUERIES.length} candidates, capped at ${allowance}):`);
   const layoffs = readCsv('layoffs.csv');
   const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
   const rejected = readCsv('rejected.csv');
