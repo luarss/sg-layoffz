@@ -51,6 +51,25 @@ const EVAL_REJECTION_CATEGORIES: { label: string; test: (e: LayoffEntry) => bool
         `${e.company} ${e.notes}`
       ),
   },
+  {
+    // Largest rejection category. Covers foreign-operations-only stories and global
+    // announcements with no stated Singapore nexus — the same failure mode that caused
+    // IKEA and Nestlé false negatives in the last eval run.
+    label: 'not-sg',
+    test: (e) =>
+      /not-sg|no (?:clear )?singapore nexus|no mention of singapore|does not mention.*singapore|no singapore/i.test(
+        e.notes ?? ''
+      ),
+  },
+  {
+    // Aggregator articles covering many companies at once. The LLM is asked to classify
+    // a single event in isolation so these must be rejected.
+    label: 'aggregator',
+    test: (e) =>
+      /aggregator|covering (?:many|multiple) companies|multiple companies|list of.*layoffs|tracker/i.test(
+        e.notes ?? ''
+      ),
+  },
 ];
 
 function categoriseRejected(e: LayoffEntry): string {
