@@ -12,14 +12,21 @@ export function computeStats(entries: LayoffEntry[]): AggregateStats {
   );
   const latestEntryDate = sorted[0]?.date_announced ?? '';
 
-  const monthlyMap: Record<string, { jobs: number; count: number }> = {};
+  const monthlyMap: Record<string, { jobs: number; count: number; rumoredCount: number }> = {};
 
   for (const entry of confirmed) {
     const d = new Date(entry.date_announced);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    if (!monthlyMap[key]) monthlyMap[key] = { jobs: 0, count: 0 };
+    if (!monthlyMap[key]) monthlyMap[key] = { jobs: 0, count: 0, rumoredCount: 0 };
     monthlyMap[key].jobs += entry.jobs_cut ?? 0;
     monthlyMap[key].count += 1;
+  }
+
+  for (const entry of rumored) {
+    const d = new Date(entry.date_announced);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (!monthlyMap[key]) monthlyMap[key] = { jobs: 0, count: 0, rumoredCount: 0 };
+    monthlyMap[key].rumoredCount += 1;
   }
 
   const monthlyBreakdown = Object.entries(monthlyMap)

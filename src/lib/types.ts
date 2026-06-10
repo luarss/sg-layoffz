@@ -21,7 +21,7 @@ export interface AggregateStats {
   totalConfirmed: number;
   totalRumored: number;
   latestEntryDate: string;
-  monthlyBreakdown: { month: string; jobs: number; count: number }[];
+  monthlyBreakdown: { month: string; jobs: number; count: number; rumoredCount: number }[];
   industryBreakdown: { industry: string; jobs: number; count: number }[];
 }
 

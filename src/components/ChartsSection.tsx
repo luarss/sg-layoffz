@@ -31,10 +31,16 @@ export default function ChartsSection({ stats }: ChartsSectionProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Jobs Cut by Month</h3>
-        <MonthlyBarChart data={stats.monthlyBreakdown} />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Jobs Cut by Month</h3>
+          <MonthlyBarChart data={stats.monthlyBreakdown} metric="jobs" />
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Companies Laying Off by Month</h3>
+          <MonthlyBarChart data={stats.monthlyBreakdown} metric="companies" />
+        </div>
       </div>
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-sm font-semibold text-gray-900 mb-4">Layoffs by Industry</h3>
