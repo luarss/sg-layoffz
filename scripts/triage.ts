@@ -17,6 +17,7 @@ import {
   buildCompanyTokens,
   type ClusterNode,
 } from './cluster';
+import { checkIntegrity } from './validate';
 
 type ResolvedRow = {
   company: string;
@@ -527,6 +528,17 @@ function main() {
       JSON.stringify(summary, null, 2)
     );
     console.log('Wrote data/triage-summary.json');
+
+    // Post-write integrity check — surface any duplicates that slipped through clustering.
+    const allEntries = readCsv('layoffs.csv') as LayoffEntry[];
+    const integrityWarnings = checkIntegrity(allEntries);
+    if (integrityWarnings.length > 0) {
+      console.warn(`\n⚠️  Post-triage integrity warnings (${integrityWarnings.length}):`);
+      for (const w of integrityWarnings) {
+        const rowLabel = w.rows.length === 1 ? `Row ${w.rows[0]}` : `Rows ${w.rows.join(' & ')}`;
+        console.warn(`  [${w.type}] ${rowLabel}: ${w.message}`);
+      }
+    }
   }
 
   console.log(`\nTriage summary${dryRun ? ' (dry-run)' : ''}:`);

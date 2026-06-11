@@ -8,7 +8,9 @@ const COMPANY_ALIASES: Record<string, string> = {
   'grab singapore': 'Grab',
   'sea limited': 'Sea',
   'sea group': 'Sea',
+  'sea (shopee)': 'Shopee',
   'shopee singapore': 'Shopee',
+  "yeo's": 'Yeo Hiap Seng',
   'ninja van': 'Ninja Van',
   'gxs bank': 'GXS Bank',
   'mediacorp pte ltd': 'Mediacorp',
@@ -17,6 +19,9 @@ const COMPANY_ALIASES: Record<string, string> = {
   'singapore telecommunications': 'Singtel',
   'citigroup': 'Citi',
   'citibank': 'Citi',
+  'biontech singapore': 'BioNTech Singapore',
+  'exxonmobil singapore': 'ExxonMobil Singapore',
+  'apbs (tiger beer)': 'APBs (Tiger Beer)',
 };
 
 const SUFFIXES = [
@@ -79,7 +84,7 @@ export function companyTokens(extraNames: string[] = []): CompanyTokenMap {
   const map: CompanyTokenMap = new Map();
   // Words that mean nothing on their own — never use them as a search variant.
   const GENERIC = new Set([
-    'the', 'and', 'group', 'asia', 'singapore', 'pacific', 'global', 'inc',
+    'the', 'and', 'group', 'asia', 'sea', 'singapore', 'pacific', 'global', 'inc',
     'corp', 'ltd', 'limited', 'holdings',
   ]);
 
