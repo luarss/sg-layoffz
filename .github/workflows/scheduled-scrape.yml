@@ -62,6 +62,12 @@ jobs:
         if: steps.llm_triage.outcome == 'success'
         run: npm run dedup
 
+      - name: Validate data integrity
+        id: validate
+        if: steps.llm_triage.outcome == 'success'
+        continue-on-error: true
+        run: npm run validate
+
       - name: Read triage results
         id: triage_result
         if: steps.llm_triage.outcome == 'success'
