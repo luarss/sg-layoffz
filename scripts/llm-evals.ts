@@ -405,6 +405,40 @@ async function main() {
     console.log(`  ${cat.padEnd(20)} ${pct(correct, rows.length).padStart(7)}  (${correct}/${rows.length})`);
   }
 
+  // ---- Confirmed-vs-rumored tier accuracy (accept set only) ----
+  // The accept/reject metric above collapses confirmed and rumored into one bucket,
+  // so a future plan or global-only story scored "confirmed" never registers as an
+  // error. This breakdown measures whether the LLM matched the human tier and, more
+  // importantly, isolates "over-confident" misses: ground-truth `rumored` that the
+  // LLM upgraded to `confirmed`. Those are exactly the rows that inflate the site's
+  // confirmed-only totalJobsCut headline (e.g. ANZ/DBS "plans to cut … globally").
+  const tierRows = results.filter(
+    (r) =>
+      r.groundTruth === 'accept' &&
+      (r.entry.status === 'confirmed' || r.entry.status === 'rumored') &&
+      (r.verdict.verdict === 'confirmed' || r.verdict.verdict === 'rumored')
+  );
+  const tierMatch = tierRows.filter((r) => r.entry.status === r.verdict.verdict).length;
+  const overConfident = tierRows.filter(
+    (r) => r.entry.status === 'rumored' && r.verdict.verdict === 'confirmed'
+  );
+  const underConfident = tierRows.filter(
+    (r) => r.entry.status === 'confirmed' && r.verdict.verdict === 'rumored'
+  );
+
+  console.log('\n' + '='.repeat(60));
+  console.log('TIER ACCURACY (confirmed vs rumored — accepted entries)');
+  console.log('='.repeat(60));
+  console.log(`  Tier match      : ${pct(tierMatch, tierRows.length)} (${tierMatch}/${tierRows.length})`);
+  console.log(`  Over-confident  : ${overConfident.length}  (ground-truth rumored → LLM confirmed)`);
+  console.log(`  Under-confident : ${underConfident.length}  (ground-truth confirmed → LLM rumored)`);
+  if (overConfident.length > 0) {
+    console.log('\n  Over-confident entries (would inflate confirmed totals):');
+    for (const r of overConfident) {
+      console.log(`    - ${r.entry.company.slice(0, 60)} (${r.entry.date_announced})`);
+    }
+  }
+
   // ---- Errors ----
   const errors = results.filter((r) => !r.correct);
   if (errors.length > 0) {
