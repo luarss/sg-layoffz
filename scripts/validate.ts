@@ -9,8 +9,45 @@ interface ValidationError {
 
 interface IntegrityWarning {
   rows: number[];
-  type: 'duplicate' | 'double-count' | 'superseded-rumor' | 'unarchived-confirmed';
+  type:
+    | 'duplicate'
+    | 'double-count'
+    | 'superseded-rumor'
+    | 'unarchived-confirmed'
+    | 'future-date'
+    | 'vague-company'
+    | 'duplicate-source'
+    | 'global-figure'
+    | 'contradictory-verdict';
   message: string;
+}
+
+// Today in YYYY-MM-DD. Overridable via VALIDATE_TODAY so tests are deterministic.
+function today(): string {
+  return process.env.VALIDATE_TODAY || new Date().toISOString().slice(0, 10);
+}
+
+// Company strings that don't name a specific, identifiable company. A confirmed
+// entry must point to a real named company (the LLM's company_identifiable rule),
+// so these are surfaced for manual naming or rejection.
+const VAGUE_COMPANY = /not specified|not named|unnamed|undisclosed|\bname not\b|\(name|firm\)|manager\)?$|company\)$/i;
+
+// Notes language that signals a future plan, an unconfirmed report, or a noticed
+// duplicate — i.e. the entry should be `rumored` (or rejected), not `confirmed`.
+const HEDGE_NOTES = /\bplans? to\b|\bexpected to\b|\bmay (?:lay|cut)\b|not confirmed|unconfirmed|appears future|date appears future|potential duplicate|likely the article|future plan|ambiguity|not clear(?:ly)?/i;
+
+// Notes that state the headcount is a global/worldwide figure. When such an entry
+// is `confirmed`, its jobs_cut is summed into the site's headline totalJobsCut even
+// though most of those roles are not in Singapore.
+const GLOBAL_FIGURE = /\bglobal(?:ly)?\b|worldwide|across (?:divisions|the group)|sg office potentially/i;
+
+// Normalise a source URL for duplicate detection: drop the Wayback prefix, tracking
+// query strings, and trailing slashes so the same underlying article matches.
+function normalizeUrl(url: string): string {
+  if (!url) return '';
+  let u = url.replace(/^https?:\/\/web\.archive\.org\/web\/\d+\//, '');
+  u = u.replace(/[?#].*$/, '').replace(/\/+$/, '');
+  return u.toLowerCase();
 }
 
 // Known alternate names that map to the same company.
@@ -23,6 +60,7 @@ const COMPANY_ALIASES: Record<string, string> = {
   'biontech singapore': 'biontech',
   'exxonmobil singapore': 'exxonmobil',
   'apbs (tiger beer)': 'heineken',
+  'dbs bank': 'dbs',
 };
 
 function normalizeCompany(name: string): string {
@@ -164,6 +202,71 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
         rows: [i + 1],
         type: 'unarchived-confirmed',
         message: `Unrecognised source for confirmed entry: "${e.company}" (${e.date_announced}) — ${e.source_link}`,
+      });
+    }
+  }
+
+  const now = today();
+
+  // Same underlying article cited by more than one row — a duplicate the
+  // company+7-day window misses when the rows are far apart in time (e.g. the same
+  // Vulcan Post story used for a 2024 and a 2026 Partior entry).
+  const bySource = new Map<string, number[]>();
+  for (let i = 0; i < entries.length; i++) {
+    const u = normalizeUrl(String(entries[i].source_link ?? ''));
+    if (!u) continue;
+    if (!bySource.has(u)) bySource.set(u, []);
+    bySource.get(u)!.push(i + 1);
+  }
+  for (const [url, rows] of bySource) {
+    if (rows.length > 1) {
+      warnings.push({
+        rows,
+        type: 'duplicate-source',
+        message: `Same article cited by ${rows.length} rows: ${url}`,
+      });
+    }
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    const notes = String(e.notes ?? '');
+
+    // A date in the future can't be an event that "already happened". Usually the
+    // scraper grabbed an article's publication date or a planned closure date.
+    if (/^\d{4}-\d{2}-\d{2}$/.test(String(e.date_announced)) && e.date_announced > now) {
+      warnings.push({
+        rows: [i + 1],
+        type: 'future-date',
+        message: `Future date: "${e.company}" dated ${e.date_announced} (after ${now})`,
+      });
+    }
+
+    // Confirmed entry that doesn't name a specific company.
+    if (e.status === 'confirmed' && VAGUE_COMPANY.test(e.company)) {
+      warnings.push({
+        rows: [i + 1],
+        type: 'vague-company',
+        message: `Vague company for confirmed entry: "${e.company}" — name a specific company or downgrade`,
+      });
+    }
+
+    // Confirmed entry whose own notes hedge (plan/unconfirmed/duplicate).
+    if (e.status === 'confirmed' && HEDGE_NOTES.test(notes)) {
+      warnings.push({
+        rows: [i + 1],
+        type: 'contradictory-verdict',
+        message: `Confirmed but notes hedge: "${e.company}" (${e.date_announced}) — "${notes.slice(0, 90)}"`,
+      });
+    }
+
+    // Confirmed entry carrying a global headcount — inflates totalJobsCut, which is
+    // SG-specific. Flag so the figure can be cleared or scoped to Singapore.
+    if (e.status === 'confirmed' && e.jobs_cut != null && e.jobs_cut >= 1000 && GLOBAL_FIGURE.test(notes)) {
+      warnings.push({
+        rows: [i + 1],
+        type: 'global-figure',
+        message: `Global figure on confirmed entry: "${e.company}" jobs_cut=${e.jobs_cut} reads as worldwide — counted into SG totalJobsCut`,
       });
     }
   }
