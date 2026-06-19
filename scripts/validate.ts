@@ -1,5 +1,6 @@
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
+import { normalizeCompany } from './normalize';
 
 interface ValidationError {
   row: number;
@@ -29,17 +30,24 @@ function today(): string {
 
 // Company strings that don't name a specific, identifiable company. A confirmed
 // entry must point to a real named company (the LLM's company_identifiable rule),
-// so these are surfaced for manual naming or rejection.
-const VAGUE_COMPANY = /not specified|not named|unnamed|undisclosed|\bname not\b|\(name|firm\)|manager\)?$|company\)$/i;
+// so these are surfaced for manual naming or rejection. The trailing alternative
+// catches generic descriptive placeholders ("Another Legacy Bank", "A major bank",
+// "A leading retailer") that name a category instead of a company.
+export const VAGUE_COMPANY =
+  /not specified|not named|unnamed|undisclosed|\bname not\b|\(name|firm\)|manager\)?$|company\)$|^(?:a|an|another)\s+(?:\w+\s+)*(?:bank|firm|company|startup|business|retailer|mnc|multinational|tech\s+firm|lender|insurer)$/i;
 
 // Notes language that signals a future plan, an unconfirmed report, or a noticed
 // duplicate — i.e. the entry should be `rumored` (or rejected), not `confirmed`.
-const HEDGE_NOTES = /\bplans? to\b|\bexpected to\b|\bmay (?:lay|cut)\b|not confirmed|unconfirmed|appears future|date appears future|potential duplicate|likely the article|future plan|ambiguity|not clear(?:ly)?/i;
+export const HEDGE_NOTES = /\bplans? to\b|\bexpected to\b|\bmay (?:lay|cut)\b|not confirmed|unconfirmed|appears future|date appears future|potential duplicate|likely the article|future plan|ambiguity|not clear(?:ly)?/i;
 
 // Notes that state the headcount is a global/worldwide figure. When such an entry
 // is `confirmed`, its jobs_cut is summed into the site's headline totalJobsCut even
-// though most of those roles are not in Singapore.
-const GLOBAL_FIGURE = /\bglobal(?:ly)?\b|worldwide|across (?:divisions|the group)|sg office potentially/i;
+// though most of those roles are not in Singapore. The "sites in … and …" and
+// multi-country alternatives catch figures spanning more than just Singapore even
+// when the words "global"/"worldwide" are absent (e.g. "sites in Germany and
+// Singapore, affecting 1,860 staff").
+const GLOBAL_FIGURE =
+  /\bglobal(?:ly)?\b|worldwide|across (?:divisions|the group)|sg office potentially|sites?\s+in\s+.+\s+and\s+|multiple (?:countries|markets|regions|sites)/i;
 
 // Normalise a source URL for duplicate detection: drop the Wayback prefix, tracking
 // query strings, and trailing slashes so the same underlying article matches.
@@ -50,23 +58,9 @@ function normalizeUrl(url: string): string {
   return u.toLowerCase();
 }
 
-// Known alternate names that map to the same company.
-// Add new aliases here whenever the LLM uses an inconsistent name.
-const COMPANY_ALIASES: Record<string, string> = {
-  "yeo's": 'yeo hiap seng',
-  'sea (shopee)': 'shopee',
-  'citibank': 'citi',
-  'citigroup': 'citi',
-  'biontech singapore': 'biontech',
-  'exxonmobil singapore': 'exxonmobil',
-  'apbs (tiger beer)': 'heineken',
-  'dbs bank': 'dbs',
-};
-
-function normalizeCompany(name: string): string {
-  const lower = name.toLowerCase().trim();
-  return COMPANY_ALIASES[lower] ?? lower;
-}
+// Company aliasing is shared with the scrape/dedup pipeline — see the single
+// COMPANY_ALIASES source of truth in scripts/normalize.ts. Integrity grouping
+// lowercases the normalized key so case differences never split a company.
 
 // Reputable direct domains that don't require Wayback archiving for confirmed status.
 // news.google.com covers RSS-sourced entries that haven't been archived yet but
@@ -149,7 +143,7 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
   // Group by normalized company name
   const byCompany = new Map<string, { idx: number; entry: LayoffEntry }[]>();
   for (let i = 0; i < entries.length; i++) {
-    const key = normalizeCompany(entries[i].company);
+    const key = normalizeCompany(entries[i].company).toLowerCase();
     if (!byCompany.has(key)) byCompany.set(key, []);
     byCompany.get(key)!.push({ idx: i, entry: entries[i] });
   }
@@ -308,6 +302,9 @@ export function validateCsv(filename: string): { valid: boolean; errors: Validat
   return { valid: allErrors.length === 0, errors: allErrors, warnings };
 }
 
-// CLI entry point
-const file = process.argv[3] || 'layoffs.csv';
-validateCsv(file);
+// CLI entry point — only when run directly (tsx scripts/validate.ts), not when
+// imported by another script (e.g. scripts/llm-evals.ts reuses the predicates).
+if (process.argv[1]?.endsWith('validate.ts')) {
+  const file = process.argv[3] || 'layoffs.csv';
+  validateCsv(file);
+}

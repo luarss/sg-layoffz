@@ -19,9 +19,16 @@ const COMPANY_ALIASES: Record<string, string> = {
   'singapore telecommunications': 'Singtel',
   'citigroup': 'Citi',
   'citibank': 'Citi',
-  'biontech singapore': 'BioNTech Singapore',
-  'exxonmobil singapore': 'ExxonMobil Singapore',
-  'apbs (tiger beer)': 'APBs (Tiger Beer)',
+  // APB (Asia Pacific Breweries / Tiger Beer) is Heineken's Singapore unit — the
+  // same Tuas cut gets reported under both names, so collapse to one key.
+  'apbs (tiger beer)': 'Heineken',
+  // Catch the parenthetical "Yeo's (Yeo Hiap Seng)" form the bare 'yeo's' alias misses.
+  "yeo's (yeo hiap seng)": 'Yeo Hiap Seng',
+  // NOTE: do NOT add self-mapping "X Singapore" → "X Singapore" aliases here. The
+  // alias lookup returns before suffix-stripping, so a self-map would prevent the
+  // 'singapore' suffix (below) from collapsing the SG-office row and the parent-
+  // company row of the same event into one key — splitting it across two rows.
+  // Let "BioNTech Singapore"/"ExxonMobil Singapore" fall through to suffix-stripping.
 };
 
 const SUFFIXES = [
