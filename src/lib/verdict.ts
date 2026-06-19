@@ -12,9 +12,15 @@ import { LayoffEntry, INDUSTRIES } from './types';
 
 export const VERDICTS = ['confirmed', 'rumored', 'rejected', 'needs_review'] as const;
 export const CONFIDENCES = ['high', 'medium', 'low'] as const;
+// Geographic scope of the jobs_cut figure. Used by the golden eval to catch
+// global/worldwide headcounts being scoped to Singapore (the totalJobsCut
+// inflation failure). Optional in the schema: the production triage prompt does
+// not ask for it, so live responses simply omit it.
+export const SCOPES = ['singapore', 'partial', 'global', 'unknown'] as const;
 
 export type Verdict = (typeof VERDICTS)[number];
 export type Confidence = (typeof CONFIDENCES)[number];
+export type Scope = (typeof SCOPES)[number];
 
 // The `verdict` label is the contract and is enforced strictly — a missing or
 // out-of-enum verdict fails validation. The soft metadata fields are coerced to a
@@ -34,6 +40,9 @@ export const VerdictSchema = z.object({
   // allow null and absent as well as a string — otherwise every confirmed/rumored
   // response fails validation.
   rejection_reason: z.string().nullish(),
+  // Optional: only the golden-eval prompt requests it. An off-list value coerces to
+  // unknown so a stray string never fails the whole verdict.
+  headcount_scope: z.enum(SCOPES).nullish().catch(null),
 });
 
 export type LLMVerdict = z.infer<typeof VerdictSchema>;

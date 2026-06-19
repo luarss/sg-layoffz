@@ -6,11 +6,25 @@
 // Usage:
 //   DEEPSEEK_API_KEY=sk-... npm run eval:llm
 //   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --samples 10  (10 from each category)
+//   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --golden     (frozen curated set, gated)
 
+import fs from 'node:fs';
 import OpenAI from 'openai';
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
 import { LLMVerdict, parseVerdict } from '../src/lib/verdict';
+import { VAGUE_COMPANY, HEDGE_NOTES } from './validate';
+
+// An accept-set row whose own company name is a generic placeholder, or whose
+// notes hedge while marked confirmed, fails the project's own integrity checks —
+// the LLM is SUPPOSED to reject these. Scoring them as gold "accepts" penalises
+// correct behaviour and depresses recall, so we drop them from the accept pool
+// (symmetric to the duplicate-rejection filter on the reject set).
+function isPollutedAccept(e: LayoffEntry): boolean {
+  if (VAGUE_COMPANY.test(e.company || '')) return true;
+  if (e.status === 'confirmed' && HEDGE_NOTES.test(e.notes || '')) return true;
+  return false;
+}
 
 // ---- Eval categories -------------------------------------------------------
 // Each category tests a specific rejection/acceptance signal.
@@ -168,6 +182,14 @@ const SYSTEM_PROMPT = `You are an expert analyst for a Singapore layoff tracking
 ## Allowed Industries
 Tech, Finance, Manufacturing, Retail, F&B, Real Estate, Healthcare, Education, Other
 
+## Headcount Scope
+This tracker counts Singapore jobs only. For headcount_scope, classify the jobs_cut figure:
+- "singapore" — the number is specifically Singapore roles
+- "partial" — a regional/divisional number that includes Singapore among other markets
+- "global" — a worldwide/foreign number (e.g. "18,000 jobs globally", "1,000 jobs in Britain"); Singapore is not the figure's scope
+- "unknown" — no headcount, or scope unclear
+A worldwide or foreign figure must NOT be reported as "singapore".
+
 ## Output
 Return ONLY a valid JSON object (no markdown, no extra text):
 {
@@ -178,6 +200,7 @@ Return ONLY a valid JSON object (no markdown, no extra text):
   "date_announced": "YYYY-MM-DD",
   "jobs_cut": <integer or null>,
   "pct_workforce": <number or null>,
+  "headcount_scope": "singapore" | "partial" | "global" | "unknown",
   "notes": "1–2 sentence reason for your decision",
   "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal> (only when verdict=rejected)"
 }`;
@@ -307,7 +330,180 @@ function pct(n: number, d: number): string {
 }
 
 // ---- Main -------------------------------------------------------------------
+// ---- Golden set (frozen, gated) --------------------------------------------
+// A version-controlled set of hard, hand-labeled cases (data/eval-golden.json).
+// Unlike the sampled CSV eval, this pool never drifts, so its pass/fail is a
+// stable regression signal. It gates on three things the sampled eval can't:
+//   - 3-way verdict accuracy (confirmed/rumored/rejected), not just accept/reject
+//   - tier match, isolating over-confident rumored→confirmed upgrades
+//   - global-figure leakage: a worldwide headcount confirmed AND scoped to SG,
+//     the exact pattern that inflates the site's confirmed-only totalJobsCut
+interface GoldenCase {
+  id: string;
+  company: string;
+  date_announced: string;
+  jobs_cut: number | null;
+  pct_workforce: number | null;
+  source_link: string;
+  notes: string;
+  expected_verdict: 'confirmed' | 'rumored' | 'rejected';
+  category: string;
+  expected_scope: 'singapore' | 'partial' | 'global' | null;
+  global_figure: boolean;
+}
+
+// Gate thresholds. Deliberately conservative — the golden set is small and hard,
+// so these catch a real regression without flapping on one model hiccup.
+const GOLDEN_GATES = {
+  acceptAccuracy: 0.85, // accept-vs-reject
+  verdictAccuracy: 0.8, // 3-way confirmed/rumored/rejected
+  tierMatch: 0.75, // confirmed-vs-rumored among accepted
+  maxScopeLeaks: 0, // global headcount confirmed AND scoped "singapore"
+};
+
+function goldenToEntry(c: GoldenCase): LayoffEntry {
+  return {
+    company: c.company,
+    date_announced: c.date_announced,
+    jobs_cut: c.jobs_cut,
+    pct_workforce: c.pct_workforce,
+    industry: 'Other',
+    source_link: c.source_link,
+    notes: c.notes,
+    status: 'confirmed', // unused by the prompt
+  };
+}
+
+async function runGolden(): Promise<void> {
+  const path = `${process.cwd()}/data/eval-golden.json`;
+  const { cases } = JSON.parse(fs.readFileSync(path, 'utf-8')) as { cases: GoldenCase[] };
+
+  const chain = getProviderChain();
+  console.log(`\nLLM Golden Eval — chain: ${describeChain(chain)}`);
+  console.log(`Frozen set: ${cases.length} curated cases (data/eval-golden.json)\n`);
+
+  type Row = { c: GoldenCase; v: LLMVerdict };
+  const results: Row[] = [];
+  let done = 0;
+
+  async function run(c: GoldenCase) {
+    const v = await evaluateEntry(chain, goldenToEntry(c));
+    results.push({ c, v });
+    done++;
+    process.stdout.write(`\r  Progress: ${done}/${cases.length}`);
+  }
+
+  const tasks = cases.map((c) => () => run(c));
+  const CONCURRENCY = 3;
+  for (let i = 0; i < tasks.length; i += CONCURRENCY) {
+    await Promise.all(tasks.slice(i, i + CONCURRENCY).map((t) => t()));
+  }
+  console.log('\n');
+
+  const accepts = (verdict: string) => verdict === 'confirmed' || verdict === 'rumored';
+
+  // ---- core metrics ----
+  const verdictCorrect = results.filter((r) => r.v.verdict === r.c.expected_verdict).length;
+  const acceptCorrect = results.filter(
+    (r) => accepts(r.v.verdict) === accepts(r.c.expected_verdict)
+  ).length;
+
+  // ---- tier (accepted on both sides) ----
+  const tierRows = results.filter(
+    (r) => accepts(r.c.expected_verdict) && accepts(r.v.verdict)
+  );
+  const tierMatch = tierRows.filter((r) => r.v.verdict === r.c.expected_verdict).length;
+  const overConfident = tierRows.filter(
+    (r) => r.c.expected_verdict === 'rumored' && r.v.verdict === 'confirmed'
+  );
+  const underConfident = tierRows.filter(
+    (r) => r.c.expected_verdict === 'confirmed' && r.v.verdict === 'rumored'
+  );
+
+  // ---- scope (global-figure handling) ----
+  const globalCases = results.filter((r) => r.c.global_figure);
+  const scopeLeaks = globalCases.filter(
+    (r) => r.v.verdict === 'confirmed' && r.v.headcount_scope === 'singapore'
+  );
+  const scopeRecognised = globalCases.filter(
+    (r) => r.v.headcount_scope === 'global' || r.v.headcount_scope === 'partial'
+  );
+  const scopeLabeled = results.filter((r) => r.c.expected_scope != null);
+  const scopeExact = scopeLabeled.filter((r) => r.v.headcount_scope === r.c.expected_scope);
+
+  const n = results.length;
+  console.log('='.repeat(60));
+  console.log('GOLDEN METRICS');
+  console.log('='.repeat(60));
+  console.log(`  Accept/reject accuracy : ${pct(acceptCorrect, n)} (${acceptCorrect}/${n})`);
+  console.log(`  3-way verdict accuracy : ${pct(verdictCorrect, n)} (${verdictCorrect}/${n})`);
+  console.log(`  Tier match (accepted)  : ${pct(tierMatch, tierRows.length)} (${tierMatch}/${tierRows.length})`);
+  console.log(`    over-confident  : ${overConfident.length} (rumored → confirmed)`);
+  console.log(`    under-confident : ${underConfident.length} (confirmed → rumored)`);
+  console.log(`  Scope recognised (global figs) : ${pct(scopeRecognised.length, globalCases.length)} (${scopeRecognised.length}/${globalCases.length})`);
+  console.log(`  Scope exact (all labeled)      : ${pct(scopeExact.length, scopeLabeled.length)} (${scopeExact.length}/${scopeLabeled.length})`);
+  console.log(`  Global-figure leaks (→SG)      : ${scopeLeaks.length}`);
+
+  // ---- per-category ----
+  const cats = [...new Set(results.map((r) => r.c.category))].sort();
+  console.log('\n' + '='.repeat(60));
+  console.log('PER-CATEGORY (3-way verdict accuracy)');
+  console.log('='.repeat(60));
+  for (const cat of cats) {
+    const rows = results.filter((r) => r.c.category === cat);
+    const ok = rows.filter((r) => r.v.verdict === r.c.expected_verdict).length;
+    console.log(`  ${cat.padEnd(22)} ${pct(ok, rows.length).padStart(7)} (${ok}/${rows.length})`);
+  }
+
+  // ---- errors ----
+  const errors = results.filter((r) => r.v.verdict !== r.c.expected_verdict);
+  if (errors.length > 0) {
+    console.log('\n' + '='.repeat(60));
+    console.log('ERRORS');
+    console.log('='.repeat(60));
+    for (const e of errors) {
+      console.log(
+        `  [${e.c.expected_verdict} → ${e.v.verdict}] ${e.c.id}: ${e.c.company.slice(0, 60)}`
+      );
+    }
+  }
+  if (scopeLeaks.length > 0) {
+    console.log('\n  Global-figure leaks (confirmed + scoped Singapore):');
+    for (const r of scopeLeaks) console.log(`    - ${r.c.id}: ${r.c.company.slice(0, 60)}`);
+  }
+
+  // ---- gate ----
+  const acceptAcc = acceptCorrect / n;
+  const verdictAcc = verdictCorrect / n;
+  const tierAcc = tierRows.length ? tierMatch / tierRows.length : 1;
+  const fails: string[] = [];
+  if (acceptAcc < GOLDEN_GATES.acceptAccuracy)
+    fails.push(`accept accuracy ${(acceptAcc * 100).toFixed(1)}% < ${GOLDEN_GATES.acceptAccuracy * 100}%`);
+  if (verdictAcc < GOLDEN_GATES.verdictAccuracy)
+    fails.push(`verdict accuracy ${(verdictAcc * 100).toFixed(1)}% < ${GOLDEN_GATES.verdictAccuracy * 100}%`);
+  if (tierAcc < GOLDEN_GATES.tierMatch)
+    fails.push(`tier match ${(tierAcc * 100).toFixed(1)}% < ${GOLDEN_GATES.tierMatch * 100}%`);
+  if (scopeLeaks.length > GOLDEN_GATES.maxScopeLeaks)
+    fails.push(`${scopeLeaks.length} global-figure leak(s) > ${GOLDEN_GATES.maxScopeLeaks}`);
+
+  console.log('\n' + '='.repeat(60));
+  if (fails.length === 0) {
+    console.log('Golden eval — ✓ PASS');
+  } else {
+    console.log('Golden eval — ✗ FAIL');
+    for (const f of fails) console.log(`  - ${f}`);
+  }
+  console.log('='.repeat(60) + '\n');
+
+  if (fails.length > 0) process.exit(1);
+}
+
 async function main() {
+  if (process.argv.includes('--golden')) {
+    await runGolden();
+    return;
+  }
+
   const samplesArg = process.argv.indexOf('--samples');
   const samplesPerClass = samplesArg !== -1 ? parseInt(process.argv[samplesArg + 1], 10) : 20;
 
@@ -317,6 +513,12 @@ async function main() {
 
   const allLayoffs = readCsv('layoffs.csv') as LayoffEntry[];
   const allRejected = readCsv('rejected.csv') as LayoffEntry[];
+
+  // Drop accept rows the project's own integrity checks would reject (vague/
+  // anonymized company, or confirmed-but-hedging notes) so the recall metric isn't
+  // penalised for the LLM correctly rejecting them.
+  const cleanLayoffs = allLayoffs.filter((e) => !isPollutedAccept(e));
+  const excludedAccepts = allLayoffs.length - cleanLayoffs.length;
 
   // Filter rejected entries that look like real data (not job postings which are obvious)
   const withData = allRejected.filter((e) => e.company && e.source_link);
@@ -331,13 +533,14 @@ async function main() {
   const meaningfulRejected = withData.filter((e) => !isDuplicateRejection(e));
   const excludedDupes = withData.length - meaningfulRejected.length;
 
-  const acceptSample = sample(allLayoffs, samplesPerClass);
+  const acceptSample = sample(cleanLayoffs, samplesPerClass);
   const rejectSample = sampleStratified(meaningfulRejected, samplesPerClass);
 
   const chain = getProviderChain();
   const total = acceptSample.length + rejectSample.length;
   console.log(`\nLLM Eval — chain: ${describeChain(chain)} (seed: ${seed})`);
   console.log(`Samples: ${acceptSample.length} from layoffs.csv, ${rejectSample.length} from rejected.csv`);
+  console.log(`Excluded ${excludedAccepts} polluted accepts (vague company / contradictory verdict) from accept pool`);
   console.log(`Excluded ${excludedDupes} duplicate-rejections from reject pool (not LLM-detectable)\n`);
 
   type EvalRow = {
