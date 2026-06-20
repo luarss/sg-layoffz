@@ -2,8 +2,8 @@ name: Scheduled Scrape
 
 on:
   schedule:
-    # Daily at 08:00 UTC (4pm SGT)
-    - cron: '0 8 * * *'
+    # Daily at 18:00 UTC (2am SGT)
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 concurrency:
