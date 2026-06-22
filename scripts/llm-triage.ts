@@ -112,6 +112,12 @@ const SYSTEM_PROMPT = `You are an expert analyst for a Singapore layoff tracking
 **RUMORED** — same as confirmed but:
 - Planned, anticipated, or reported as likely ("plans to cut", "expected to retrench", "may lay off")
 
+**Closures count as layoff events.** A Singapore business, store, outlet, or branch
+closure that implies job losses IS a layoff event — even when the headcount is unstated
+and even when it is a single outlet of a continuing chain. Classify it CONFIRMED if it has
+already closed or is actively closing, RUMORED if it is an announced or future closure. Do
+NOT reject a Singapore closure as "not a layoff" or as having "no Singapore nexus".
+
 **REJECTED** — reject if ANY applies:
 - Commentary, opinion, analysis, or market overview about layoffs in general
 - Labour market statistics (MOM data, employment surveys, percentage reports)

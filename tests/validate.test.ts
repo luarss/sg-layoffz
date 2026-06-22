@@ -4,6 +4,7 @@ import {
   HEDGE_NOTES,
   validateEntry,
   checkIntegrity,
+  checkCrossFileContradictions,
 } from '../scripts/validate';
 import { LayoffEntry } from '../src/lib/types';
 
@@ -109,11 +110,68 @@ describe('checkIntegrity', () => {
     expect(w.some((x) => x.type === 'contradictory-verdict')).toBe(true);
   });
 
+  it('flags same-company confirmed pairs weeks apart as a possible double-count', () => {
+    // Regression: BioNTech's SG plant closure carried two confirmed dates 29 days
+    // apart and slipped past the old 7-day window.
+    const w = checkIntegrity([
+      entry({ company: 'BioNTech', date_announced: '2026-04-06' }),
+      entry({ company: 'BioNTech', date_announced: '2026-05-05' }),
+    ]);
+    expect(w.some((x) => x.type === 'double-count')).toBe(true);
+  });
+
+  it('does not double-count confirmed entries more than a month apart', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Acme', date_announced: '2026-01-01', source_link: 'https://www.straitstimes.com/a' }),
+      entry({ company: 'Acme', date_announced: '2026-06-01', source_link: 'https://www.straitstimes.com/b' }),
+    ]);
+    expect(w.some((x) => x.type === 'double-count')).toBe(false);
+  });
+
   it('is quiet on a clean, distinct, well-sourced dataset', () => {
     const w = checkIntegrity([
       entry({ company: 'Grab', date_announced: '2026-01-10', source_link: 'https://www.straitstimes.com/grab' }),
       entry({ company: 'Shopee', date_announced: '2026-03-20', source_link: 'https://www.straitstimes.com/shopee' }),
     ]);
+    expect(w).toHaveLength(0);
+  });
+});
+
+describe('checkCrossFileContradictions', () => {
+  it('flags an event kept in layoffs.csv that is also substantively rejected (same URL)', () => {
+    // Regression: Lou Shang was kept (confirmed/rumored) while the same article sat in
+    // rejected.csv as "not-sg". Wayback prefixes are stripped before comparison.
+    const active = [entry({ company: 'Lou Shang', status: 'rumored', source_link: 'https://www.straitstimes.com/loushang' })];
+    const rejected = [entry({
+      company: 'Lou Shang',
+      status: 'rumored',
+      source_link: 'https://web.archive.org/web/20260101000000/https://www.straitstimes.com/loushang',
+      notes: '[LLM rejected: not-sg] single cafe closure, not a layoff',
+    })];
+    const w = checkCrossFileContradictions(active, rejected);
+    expect(w.some((x) => x.type === 'cross-file-contradiction')).toBe(true);
+  });
+
+  it('matches on the [gn:...] fingerprint when the wrapper URL differs', () => {
+    const active = [entry({ company: 'Acme', source_link: 'https://news.google.com/rss/articles/AAA', notes: 'kept [gn:acme cuts jobs]' })];
+    const rejected = [entry({ company: 'Acme', source_link: 'https://news.google.com/rss/articles/BBB', notes: '[LLM rejected: commentary] [gn:acme cuts jobs]' })];
+    const w = checkCrossFileContradictions(active, rejected);
+    expect(w.some((x) => x.type === 'cross-file-contradiction')).toBe(true);
+  });
+
+  it('ignores duplicate-suppression rows that mirror a kept entry on purpose', () => {
+    // A rejected row logged as "duplicate of existing entry" deliberately shares the
+    // kept entry's URL to block re-scraping — it agrees, it does not contradict.
+    const active = [entry({ company: 'Meta', source_link: 'https://web.archive.org/web/20260520135241/https://finance.yahoo.com/news/meta-8000' })];
+    const rejected = [entry({ company: 'Meta', source_link: 'https://finance.yahoo.com/news/meta-8000', notes: 'Duplicate of existing Meta entry' })];
+    const w = checkCrossFileContradictions(active, rejected);
+    expect(w).toHaveLength(0);
+  });
+
+  it('does not flag distinct sources for the same event', () => {
+    const active = [entry({ company: 'Shopee', source_link: 'https://www.straitstimes.com/shopee' })];
+    const rejected = [entry({ company: 'Shopee', source_link: 'https://www.hcamag.com/shopee', notes: '[rejected: duplicate] already confirmed' })];
+    const w = checkCrossFileContradictions(active, rejected);
     expect(w).toHaveLength(0);
   });
 });

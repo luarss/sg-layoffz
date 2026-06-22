@@ -9,9 +9,20 @@ const COMPANY_ALIASES: Record<string, string> = {
   'sea limited': 'Sea',
   'sea group': 'Sea',
   'sea (shopee)': 'Shopee',
+  // Shopee's June-2026 developer cuts were reported under several name variants that
+  // the generic paren-strip below can't safely collapse (stripping "(Shopee)" off
+  // "Sea Limited (Shopee)" would land on the 'sea limited' → Sea alias, splitting the
+  // event off Shopee). Pin the parenthetical forms explicitly — checked before the strip.
+  'shopee (sea)': 'Shopee',
+  'sea limited (shopee)': 'Shopee',
+  "sea's shopee division": 'Shopee',
+  'shopee (sea limited)': 'Shopee',
   'shopee singapore': 'Shopee',
   "yeo's": 'Yeo Hiap Seng',
   'ninja van': 'Ninja Van',
+  // "Loushang" and "Lou Shang" are the same HDB-themed cafe; the spacing variant
+  // dodged dedup and produced contradictory confirmed/rumored/rejected rows.
+  'loushang': 'Lou Shang',
   'gxs bank': 'GXS Bank',
   'mediacorp pte ltd': 'Mediacorp',
   'mediacorp singapore': 'Mediacorp',
@@ -52,9 +63,19 @@ const SUFFIXES = [
 export function normalizeCompany(raw: string): string {
   let name = raw.trim();
 
-  // Check known aliases first
+  // Check known aliases first (exact lowercased match, parenthetical forms included).
   const lower = name.toLowerCase();
   if (COMPANY_ALIASES[lower]) return COMPANY_ALIASES[lower];
+
+  // Strip a trailing parenthetical qualifier ("Shopee (Sea)" → "Shopee") so brand
+  // variants collapse to one key. Runs AFTER the alias check, so explicitly-pinned
+  // forms like "Sea Limited (Shopee)" resolve to their canonical brand first. Re-check
+  // aliases on the stripped form to catch e.g. "DBS Bank (Singapore)" → "DBS".
+  const deparen = name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  if (deparen && deparen !== name) {
+    name = deparen;
+    if (COMPANY_ALIASES[name.toLowerCase()]) return COMPANY_ALIASES[name.toLowerCase()];
+  }
 
   // Strip suffixes
   for (const suffix of SUFFIXES) {

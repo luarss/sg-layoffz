@@ -1,6 +1,7 @@
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
 import { normalizeCompany } from './normalize';
+import { extractGnFingerprint } from './deduplicate';
 
 interface ValidationError {
   row: number;
@@ -19,7 +20,8 @@ interface IntegrityWarning {
     | 'vague-company'
     | 'duplicate-source'
     | 'global-figure'
-    | 'contradictory-verdict';
+    | 'contradictory-verdict'
+    | 'cross-file-contradiction';
   message: string;
 }
 
@@ -166,9 +168,13 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
             type: 'duplicate',
             message: `Duplicate: "${a.entry.company}" and "${b.entry.company}" both on ${a.entry.date_announced}`,
           });
-        } else if (days <= 7 && a.entry.status === 'confirmed' && b.entry.status === 'confirmed') {
-          // Two confirmed entries for the same company within a fortnight often
-          // reflect the same event covered in two articles (e.g. IBM Tampines).
+        } else if (days <= 31 && a.entry.status === 'confirmed' && b.entry.status === 'confirmed') {
+          // Two confirmed entries for the same company within a month often reflect the
+          // same event covered in two articles dated days/weeks apart (e.g. BioNTech's SG
+          // plant closure carried 2026-04-06, 2026-05-05). This is a review warning, not a
+          // hard failure — genuinely separate rounds a few weeks apart are flagged for a
+          // human to confirm rather than auto-merged (dedup-layoffs.ts keeps its tighter
+          // 7-day auto-delete window to avoid collapsing real distinct rounds).
           warnings.push({
             rows: [a.idx + 1, b.idx + 1],
             type: 'double-count',
@@ -268,6 +274,53 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
   return warnings;
 }
 
+// Cross-file consistency: an event kept in layoffs.csv (confirmed/rumored) must not
+// also sit in rejected.csv. The same real-world article surfacing in both files means
+// the pipeline gave one event two opposite verdicts — exactly the Lou Shang failure
+// (kept confirmed AND rumored while also rejected as "not-sg"). Matched on normalized
+// source URL and on the [gn:...] Google-News fingerprint, so a re-wrapped RSS URL still
+// links the two. Distinct sources for the same event (a deliberate dedup-suppression
+// row pointing at a different outlet) don't collide and aren't flagged.
+export function checkCrossFileContradictions(
+  active: LayoffEntry[],
+  rejected: LayoffEntry[]
+): IntegrityWarning[] {
+  const warnings: IntegrityWarning[] = [];
+
+  const rejectedUrls = new Map<string, number>();
+  const rejectedFps = new Map<string, number>();
+  for (let i = 0; i < rejected.length; i++) {
+    const notes = String(rejected[i].notes ?? '');
+    // Skip duplicate-suppression rows: a rejected row logged as a "duplicate" of a kept
+    // entry deliberately mirrors that entry's URL/fingerprint to block re-scraping — it
+    // agrees with the verdict rather than contradicting it. Only substantive rejections
+    // (not-sg, commentary, not-layoff, personal, …) constitute a real contradiction.
+    if (/duplicate/i.test(notes)) continue;
+    const u = normalizeUrl(String(rejected[i].source_link ?? ''));
+    if (u && !rejectedUrls.has(u)) rejectedUrls.set(u, i + 1);
+    const fp = extractGnFingerprint(notes);
+    if (fp && !rejectedFps.has(fp)) rejectedFps.set(fp, i + 1);
+  }
+
+  for (let i = 0; i < active.length; i++) {
+    const e = active[i];
+    const u = normalizeUrl(String(e.source_link ?? ''));
+    const fp = extractGnFingerprint(String(e.notes ?? ''));
+    const hit =
+      (u && rejectedUrls.has(u) && { by: 'source URL', row: rejectedUrls.get(u)! }) ||
+      (fp && rejectedFps.has(fp) && { by: 'gn-fingerprint', row: rejectedFps.get(fp)! });
+    if (hit) {
+      warnings.push({
+        rows: [i + 1],
+        type: 'cross-file-contradiction',
+        message: `"${e.company}" (${e.date_announced}, ${e.status}) shares its ${hit.by} with rejected.csv row ${hit.row} — same event kept and rejected`,
+      });
+    }
+  }
+
+  return warnings;
+}
+
 export function validateCsv(filename: string): { valid: boolean; errors: ValidationError[]; warnings: IntegrityWarning[] } {
   const entries = readCsv(filename);
   const allErrors: ValidationError[] = [];
@@ -278,6 +331,16 @@ export function validateCsv(filename: string): { valid: boolean; errors: Validat
   }
 
   const warnings = checkIntegrity(entries);
+
+  // When validating the active dataset, also cross-check against rejected.csv.
+  if (filename === 'layoffs.csv') {
+    try {
+      const rejected = readCsv('rejected.csv');
+      warnings.push(...checkCrossFileContradictions(entries, rejected));
+    } catch {
+      // rejected.csv is optional — skip the cross-check if it isn't present.
+    }
+  }
 
   if (allErrors.length === 0 && warnings.length === 0) {
     console.log(`✅ ${filename}: All ${entries.length} entries valid.`);

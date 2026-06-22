@@ -41,6 +41,25 @@ describe('normalizeCompany — alias collapse (regression: split-event dedup bug
     expect(key('Bar Holdings')).toBe(key('Bar'));
   });
 
+  it('collapses Shopee/Sea brand variants to one key (regression: June-2026 split)', () => {
+    // These June-2026 developer-cut variants slipped past dedup and produced four
+    // separate rows (two confirmed, one rumored) for a single event.
+    expect(key('Shopee (Sea)')).toBe(key('Shopee'));
+    expect(key('Sea Limited (Shopee)')).toBe(key('Shopee'));
+    expect(key("Sea's Shopee Division")).toBe(key('Shopee'));
+  });
+
+  it('bridges the "Loushang"/"Lou Shang" spacing variant (regression: triple verdict)', () => {
+    // The spacing variant dodged dedup and let the same cafe closure land as
+    // confirmed AND rumored AND rejected at once.
+    expect(key('Loushang')).toBe(key('Lou Shang'));
+  });
+
+  it('strips an unknown trailing parenthetical qualifier to the base name', () => {
+    expect(key('Acme (Singapore)')).toBe(key('Acme'));
+    expect(key('Acme (SEA)')).toBe(key('Acme'));
+  });
+
   it('does not collapse genuinely distinct companies', () => {
     expect(key('DBS')).not.toBe(key('OCBC'));
     expect(key('Grab')).not.toBe(key('Shopee'));
