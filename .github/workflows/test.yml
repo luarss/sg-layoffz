@@ -6,6 +6,7 @@ on:
       - 'scripts/**'
       - 'src/**'
       - 'tests/**'
+      - 'data/**'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
@@ -34,3 +35,6 @@ jobs:
 
       - name: Unit tests
         run: npm test
+
+      - name: Validate data integrity
+        run: npm run validate

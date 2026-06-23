@@ -62,10 +62,13 @@ jobs:
         if: steps.llm_triage.outcome == 'success'
         run: npm run dedup
 
+      # Gate the auto-commit on validation. If the data has hard errors (bad status,
+      # malformed rows, missing required fields), fail the job rather than committing
+      # corruption to main. Integrity *warnings* (possible double-counts, unarchived
+      # sources) do not fail validate, so they won't block legitimate updates.
       - name: Validate data integrity
         id: validate
         if: steps.llm_triage.outcome == 'success'
-        continue-on-error: true
         run: npm run validate
 
       - name: Read triage results

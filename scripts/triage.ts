@@ -7,7 +7,7 @@
 
 import fs from 'node:fs';
 import Papa from 'papaparse';
-import { readCsv } from '../src/lib/csv';
+import { readCsv, ensureTrailingNewline } from '../src/lib/csv';
 import { LayoffEntry, CSV_HEADERS, INDUSTRIES } from '../src/lib/types';
 import { normalizeCompany } from './normalize';
 import {
@@ -384,6 +384,7 @@ function appendRows(filename: string, rows: LayoffEntry[]): void {
     { newline: '\n' }
   );
   if (fileExists) {
+    ensureTrailingNewline(path);
     fs.appendFileSync(path, csv + '\n');
   } else {
     fs.writeFileSync(path, (CSV_HEADERS as string[]).join(',') + '\n' + csv + '\n');
