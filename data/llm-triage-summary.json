@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-07-03",
+  "run_date": "2026-07-04",
   "providers": [
     {
       "name": "deepseek",
@@ -10,21 +10,21 @@
       "model": "openrouter/owl-alpha"
     }
   ],
-  "total": 88,
-  "confirmed": 31,
-  "rumored": 18,
-  "rejected": 21,
-  "needs_review": 18,
-  "remaining_queue": 18,
+  "total": 75,
+  "confirmed": 30,
+  "rumored": 20,
+  "rejected": 12,
+  "needs_review": 13,
+  "remaining_queue": 13,
   "rows": [
     {
       "original_company": "Lazada Joins Growing List Of Firms",
-      "llm_company": "Lazada",
+      "llm_company": "Lazada Joins Growing List Of Firms",
       "source_link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQdW51VXJYS0xSZEJvR19sNjItU29Fc0xkSVhWQnc5QWpQQ2d0QldTRU9GMXlWMnVIMkZqdXVubDJQQ3VEWkZ5OHl5RDhzdFlweGF5Y2pzaDRKXzM3Qmw2MzNwR05tVHpXZExYb2dZLUFxM0xpbzV6bFBqRWthQnR6T28wbEJzcW03ak5kekNPS2d5cFhydWVUeGs0NDRKV2JzU3NWMVRqbw?oc=5",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
-      "notes": "The headline suggests Lazada is joining a list of firms conducting layoffs, but the snippet is too brief to confirm details or whether it is an actual announcement."
+      "notes": ""
     },
     {
       "original_company": "Cafe-grocer Curly’s At Dempsey To Undergo Rebranding After Just 7 Months - Cna Lifestyle",
@@ -36,83 +36,291 @@
       "notes": ""
     },
     {
-      "original_company": "Exxonmobil To",
-      "llm_company": "ExxonMobil",
-      "source_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNOHg5R29aSVN0NDhWcHdZOERCRnVqenJfZ05sRUNhYnZENzFRS3RZdUdlZk1kaktrSWVnWXZhRm9TREZXNl9oQ2l0RnJYMzFZalNIU1lGaE90ODZnbFNUbUJtZWpOVjdheEVVXzFSb0d0V0tuN0FLRFVtZXdxYi1uVWZFVnY2bjlxZUh6VlBFQUF5TUh6RmlSdzNzTzE3LWxpOExlNnExRUpPcVF2dWc?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "ExxonMobil announced plans to cut 2,000 jobs, but it is a future plan, not yet implemented."
-    },
-    {
       "original_company": "‘like An Apocalypse’: Bare Shelves At Esso Stations Greet Shoppers Ahead Of Fairprice Exit | The Straits Times",
-      "llm_company": "‘like An Apocalypse’: Bare Shelves At Esso Stations Greet Shoppers Ahead Of Fairprice Exit | The Straits Times",
+      "llm_company": "NTUC Fairprice",
       "source_link": "https://www.straitstimes.com/business/like-an-apocalypse-bare-shelves-at-esso-stations-greet-shoppers-ahead-of-fairprice-exit",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Microsoft Layoffs Loom Again, And This Time Xbox Is Not The Only Target - Invezz",
-      "llm_company": "Microsoft",
-      "source_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQOTQ5SFppakd0YUR0TzNBQWdkdWVIaFRidTRUUkZNMzljbnZ5c0hIb2s3anVPYkFpcEEtSVZhQ1c4aGF6S1dva1dObWVGYzZNSlNXQUloRFcxSnpvdDQ4cXpKblJqTjEzM0Rvdmk2SjVjMkxTeTlHSGlHanRtOHlNMFVEMk9FZHM5THFkQ0N6RzM2MXdLeUtlUXdxQjVvc0hDVG9wVF9DT2Z3cW5DUUE?oc=5",
-      "verdict": "rejected",
+      "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "No clear Singapore nexus; article is about global Microsoft layoffs without specific mention of Singapore operations.",
-      "rejection_reason": "not-sg"
+      "notes": "Article reports Fairprice exiting Esso station outlets, causing bare shelves. This is a planned closure of retail spaces at multiple stations, implying future job losses."
     },
     {
       "original_company": "Shopee Job",
-      "llm_company": "Shopee Job",
+      "llm_company": "Shopee",
       "source_link": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE96emZaZ2FKd1BUbzRUSkFwbHlXOVBfMGQxS2NMaFJsZWtHM28xZVRMR0s4NHAtMEc1RFRTSWhVemR2X0c4N3l0amVRVFBIZnlfbW1IWXNCai05RFY4cEE?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Biontech To Close Sites In Germany, Singapore Affecting 1,860 Staff - Reuters",
-      "llm_company": "Biontech",
-      "source_link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQbTFuMXNucV9WS2VicENMQnNMTjhod3dHSDhvUERjbjYzU1FVQW5JTU1kb2ZsX0ItZDJlRzN1UTZ4c1VWNktWaURYaUlYcGZjNTAxaVQ2bmJRTVFzRmVIVjFpd19PdkxuQVJWQ25YOVhPSEFqTXpNYkdzMWVpZ1dOQ2lncmhYbHVnekFReDZhcC1nOXNmNC1YcG9tZUw5QUlyU3VFOC1yWVZFa1N2OGlIUktR?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Biontech announced closures of sites in Germany and Singapore affecting 1,860 staff. Reported by Reuters, credible source."
-    },
-    {
-      "original_company": "Foundation Healthcare Seeks Up To $242 Million In Singapore Ipo | The Straits Times",
-      "llm_company": "Foundation Healthcare",
-      "source_link": "https://www.straitstimes.com/business/companies-markets/temasek-backed-foundation-healthcare-lodges-singapore-ipo-prospectus",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about an IPO, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "E-commerce Company Lazada",
-      "llm_company": "E-commerce Company Lazada",
-      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNdU5iZVZqX1RWbWZ4cDREOF9BVGRxYmpNcXQ3YkpHM2p1WngyNnB0QnBJelBzVGV3WmpwYUNYb0hucWRfNk5mWkxLT2FWMFhldUZzaEdtLWlfZGZhVUtDWmJHWUYwbGIxSnVwbnU1dF9KaGlScFY4VkxVWnJfaFF4ZVR4Si1iRUMxeXg1aGZKOEp3SHNBYm96NXBDYzh4dnVmYzdqM1BBUHN4NThyUGpXb2tGOHZlZw?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"needs_review\",\n  \"confidence\": \"low\",\n  \"company\": \"Lazada\",\n  \") | openrouter: 404 No endpoints found for openrouter/owl-alpha."
-    },
-    {
-      "original_company": "Standard Chartered To",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQd3B3WkxQU2dQNmlZdjJnUFR3SGthYkZSbnU5VGxwdTRpb3JfVW1DRHdwS1J3a3ZCQUlHZGJBYWZQVXZwLWhPT09jcjMtY1liQmlqY0VXMFR2Zk5OemRzb1FPQzhjc294TE0xZ1p6bVRGRnpJd0Q3X3JnNXRWa2pUWE1hUmFzcmZ6X25GYUpMbjRhd2VQcVpoYw?oc=5",
       "verdict": "rumored",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "The headline indicates Standard Chartered plans to cut over 7,000 jobs, but the snippet is incomplete and the date is in the future, suggesting it is a planned or anticipated event."
+      "notes": "Article snippet indicates Shopee job cuts affecting hundreds, but no confirmation of timing or whether already occurring."
+    },
+    {
+      "original_company": "E-commerce Company Lazada",
+      "llm_company": "Lazada",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNdU5iZVZqX1RWbWZ4cDREOF9BVGRxYmpNcXQ3YkpHM2p1WngyNnB0QnBJelBzVGV3WmpwYUNYb0hucWRfNk5mWkxLT2FWMFhldUZzaEdtLWlfZGZhVUtDWmJHWUYwbGIxSnVwbnU1dF9KaGlScFY4VkxVWnJfaFF4ZVR4Si1iRUMxeXg1aGZKOEp3SHNBYm96NXBDYzh4dnVmYzdqM1BBUHN4NThyUGpXb2tGOHZlZw?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "News article reports Lazada cuts 5 jobs, indicating a confirmed layoff event."
     },
     {
       "original_company": "Citi",
       "llm_company": "Citi",
       "source_link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQbGkxbVgyMzE1NVFRSEtwemtNMjlYZ1h0bko3Z2ctM293T2dQRmEwd3Jxai1tbElwZnVKLUY5RkhJb0lwYTBVVW9sY2VmY19TSVhSNlAwU2FwbmZNV1pWMktKclNEbC1GNXBVZkl6RGpjVzJ0ZDlvUHNsLVRMdUpKYnRyRmI0T1RKZnlfczdWYnN6WWRTa3Fma0xMQ3VtX1VqUE5IdFdZN0NoaS1XeGhrSXYwcHVydEl3cTdGajgwZ0tHT1JDTnc?oc=5",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Lazada",
+      "llm_company": "Lazada",
+      "source_link": "https://www.hcamag.com/asia/specialisation/change-management/lazada-lays-off-5-of-employees-in-southeast-asia/580102",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Lazada announced layoff of 5% of its employees in Southeast Asia. Company is Singapore-based e-commerce platform."
+    },
+    {
+      "original_company": "Sheikh Haikel Allegedly Given A Month To Vacate Shophouse, Forced To Relocate Chicken Rice Shop Hai Ge Ji, Singapore News - Asiaone",
+      "llm_company": "Hai Ge Ji",
+      "source_link": "https://www.asiaone.com/singapore/sheikh-haikel-allegedly-given-month-vacate-shophouse-forced-relocate-chicken-rice-shop-hai-ge-ji",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "The article reports that Sheikh Haikel has been allegedly given a month to vacate his shophouse, forcing the relocation of his chicken rice shop Hai Ge Ji. This is an announced future closure, so it is classified as rumored."
+    },
+    {
+      "original_company": "Exclusive: Expeditors Restructures Core Apac Operations - The Loadstar",
+      "llm_company": "Exclusive: Expeditors Restructures Core Apac Operations - The Loadstar",
+      "source_link": "https://theloadstar.com/exclusive-expeditors-restructures-core-apac-operations/",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Standard Chartered To",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE51WXgzbG5MWHRWRmExQl9ZeTJNQ3JrMElqd3hOU2tGY1JiSFNrT3I5UzdvZUZFNUx4MzFJc2ItVjFmSUZZMXRBa3IwMVlUTTA0YVloajBYX1BVZw?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Standard Chartered reportedly plans to cut thousands of jobs globally, including Singapore operations. The article is marked as a potential duplicate and the date is in the future, indicating a planned layoff."
+    },
+    {
+      "original_company": "‘lower-value Human’: Standard Chartered Ceo’s Remark Sparks Outrage As Bank Plans Job",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMikwJBVV95cUxPNDFIb3QxMnVuVE9zMHUtc29rajR5T3E2S1B2WDlPYWdoMHZ4NWdRSllya1prU0F4N3pVWmdWaURBZjFYaDFHeEU2UVJKeENOVDZoTm4tWEREb25FTjluRjd6Z2JwRkl0YmN3WmZHS0N2ZVNWNk5HR1VlY3VMUHc4UFA5X1JXZXM2a1ZmVldSa0hOU2xfOWh2RkNGWHVqWDg5Z25ickZLcWtFRlBsYjVTQTFsbFpLSkM0bXBzaldRN3JUX1V5Y1MxTHpVUFZ2Q2pSY05rb00zSEIxZXJCMG53UndJY0stZzV0RXVCaDFVMkNYb1NSYjFUanZvWlFOX1oxVmVmUm9kbndHTXdPRWJBeUFpd9IBmAJBVV95cUxQR2pYN2dqYUxJWXdYUlE4aS1qX19UMUNILW0xZ2dwWWxsbkhHN0hHZE5ndEQtUndQbDVoNWNzZE5aRVRJaTBzMndwQWJJdmp0SHV5QV93LWJCZ1o5Tng4SlZRN3RQV0k5SXgtN1RRSVM5SFpvbER6QzBhQ0xDbk5tNGFTMzNLZ3JWUHY1NWpPVjJEOXlzUTVCZXhGcngxcllOb2RfUkt5REM0MjlWWHNOSVRFV3oydDRXRU4ySEg3VW85aHZjMzVGTzRETGNVTFZrNGZ0ZUNobEZsZHBpZTZTZ2RVLTVRa3ZjWEFaa0pVcXRwb0lDOHdzU0tGOFpfX1pLZDVUajMyMTM2UkU3TUx4OFRjQTVCay1U?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Standard Chartered CEO's remark about 'lower-value human' sparks outrage as bank plans job cuts. Planned layoffs not yet specified. Singapore operations may be affected."
+    },
+    {
+      "original_company": "Lazada",
+      "llm_company": "Lazada",
+      "source_link": "https://www.asiaone.com/singapore/lazada-singapore-job-cuts",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Lazada Singapore retrenched 5 staff as reported by AsiaOne, but the date (2026) suggests possible duplicate or error. Verified manually if needed."
+    },
+    {
+      "original_company": "Yealink Picks Singapore For Global Operations Hq | Singapore Business Review",
+      "llm_company": "Yealink",
+      "source_link": "https://sbr.com.sg/information-technology/news/yealink-picks-singapore-global-operations-hq",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is about Yealink selecting Singapore for a global operations headquarters, not about layoffs or closures.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Global Dairy Trade Relocates Headquarters To Singapore As Global Dairy Markets Expand",
+      "llm_company": "Global Dairy Trade Relocates Headquarters To Singapore As Global Dairy Markets Expand",
+      "source_link": "https://www.procurementresource.com/news-and-articles/global-dairy-trade-relocates-headquarters-to-singapore",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Retail Workers Uncertain About Their Future As Plaza Singapura Starts ..",
+      "llm_company": "Plaza Singapura",
+      "source_link": "https://www.channelnewsasia.com/singapore/plaza-singapura-revamp-retail-workers-uncertainty-6227641",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses worker uncertainty due to a revamp, not a confirmed or planned layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Gv To Close Plaza Singapura Outlet Amid Mall Revamp | The Straits Times",
+      "llm_company": "Golden Village",
+      "source_link": "https://www.straitstimes.com/life/entertainment/golden-village-to-close-plaza-singapura-outlet-after-28-years-amid-mall-revamp",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Closure of GV Plaza Singapura outlet due to mall revamp; constitutes a layoff event as it implies job losses."
+    },
+    {
+      "original_company": "Plaza Singapura Major Revamp Till Late 2028, Future Of Some Retail Workers Uncertain: Cna - Mothership.sg - News From Singapore, Asia And Around The World",
+      "llm_company": "Plaza Singapura",
+      "source_link": "https://mothership.sg/2026/07/plaza-singapura-major-revamp/",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Article reports major revamp of Plaza Singapura until late 2028, leaving future of some retail workers uncertain, implying potential but not confirmed layoffs."
+    },
+    {
+      "original_company": "7 Stalls In Eunos Canteen Told To Leave, Including Stall That Spent S$100,000 6 Months Ago To Move In - Mothership.sg - News From Singapore, Asia And Around The World",
+      "llm_company": "7 Stalls In Eunos Canteen Told To Leave, Including Stall That Spent S$100,000 6 Months Ago To Move In - Mothership.sg - News From Singapore, Asia And Around The World",
+      "source_link": "https://mothership.sg/2026/07/7-stalls-eunos-canteen/",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Tiktok Slashes Content Moderation Teams Globally; Singapore Among Markets Affected - The Business Times",
+      "llm_company": "TikTok",
+      "source_link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOWE5FWkp2aEpYeUF3Q3VrWEpja2staEg1Rk15TTZuWVhvTUoydC1pNDZKNl9YVnU4cDQ2QXotNEVVZDVVSnV2QmxGd2llVnpGYVpfMG5TNlplM0V5MmtKTV9CeEJQbHpyRzg3TzluUVF5ZWc0c0djTk1hQVhzR3hfMW51R25XcUhfOU5VeGk4QmR5UHVVSEd2TXg0U1ZLeGQ3VEhFVF9rU3d2WlEwaF9ibG82SGY5bnNfNXBhQVhEcXRpbHhuUWlzUmdXSk4?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "TikTok reportedly slashing content moderation teams globally, with Singapore among affected markets."
+    },
+    {
+      "original_company": "Tiktok Confirms Layoffs In Singapore Amid Global Restructuring - Vulcan Post",
+      "llm_company": "TikTok",
+      "source_link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE4xWHlGcVJxMnBBYTdjM29YbjF3WnFsQ3FBZUFzak5jR0VaWFBXeXBVbkY5NHBaMzZETzB5QlNoaXRYXzJ4c1B0YkhscnU0SDlwYmdrU1VFbUhLTlA3SVpDU0l0OWNRWG9ibjB1cQ?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "TikTok confirmed layoffs in Singapore as part of global restructuring, reported by Vulcan Post."
+    },
+    {
+      "original_company": "Tiktok Confirms Layoffs In Singapore And Three Other Cities In One Day - Startup Fortune",
+      "llm_company": "TikTok",
+      "source_link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQem9uTGRvUVhvSzMtS3BwSmNtQ0VTd0lTNWhIdlBmbkpTOUZiZXVXYmp1N0FRQWxyMGt5bjRHVnFNT3NEekhnaWNCajV3VTlmT1A1Ni0tSGZKNnFnRHdSVUlXUXAzRjZISmFYMlY4cUZrbjRVZnA0ZkRFQmphMXRmTXhKaENvSkUya0FjRF9tRklzU2NBdjFndmlIVnVEWkU?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "TikTok confirmed layoffs in Singapore as part of a broader restructuring across multiple cities."
+    },
+    {
+      "original_company": "Shopee Trims 8% Of Developer Roles Globally Amid Growing Ai Push - People Matters Global",
+      "llm_company": "Shopee",
+      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPdWpKOGFDOVBrVUFDZTZPNnZvcVgtc2hIM29ubUNWeGVMY2FUMTBGNHAyRmxKLTF0N19wWmJmV2hPWUFfVVRBSVB2RFV1QW4tbl9GQmFaam94X053eVp1THlRQXhIeE4yYzlpdlc5UE1RUTMxYTdyQk91dl9RaUtoWHlRUkYxd09tbVpTM2s0MmM2azNvQ2RxUU5UbXV0MEM2Wkp5MHJpZ2xDQm01Uy0zanp4ZjRYYS1VdGdRTjIzVGdCdw?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Shopee is trimming 8% of its developer roles globally, indicating a confirmed layoff event with a specific percentage, though exact headcount is not provided. The company is Singapore-based with global operations, establishing clear Singapore nexus."
+    },
+    {
+      "original_company": "Lazada Preps Layoffs In Singapore As Sea Tech",
+      "llm_company": "Lazada",
+      "source_link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxOVnNXV2pyVURrdTlOXzNDNjRRTWdIRkVyTG9SakhQeHhROXBrWjlEQVBNbFF2djRoRXk5UlNocGRVekJFSkl5QUV0NThTR3REQmlmaFBFLVZnQ0ZZTWc3N1dwMFJNUDJqZTlTWmtOdkdyLVRJNkpVSnBSV18xQ1d0LV80V1UxVGktc2E0d1c3WQ?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Article indicates Lazada is preparing layoffs in Singapore, suggesting planned but not yet executed cuts."
+    },
+    {
+      "original_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
+      "llm_company": "Gardenia",
+      "source_link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOalhfSWs5SGt5cGxkdDVPVVFKYUozaWV6LUVPakgzSkVRU3FiR3VmczNOazlpbTA2VnVFNVVqTGpvM2dnOFM0YlBRbXY3TmNxVTZCNVpiTEc4cllwWlBSR0YwTVduSDYwYzMyczRqV0oyeTA3Q0MtQTFlNTBiTjlCZ0Nhb2c1TVdqbjAxdVpKV05OeGhYaEJfUHBRNGRfN0lWcWVQa1FtMzlaaXM?oc=5",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Gardenia announced plans to shift bakery production to Malaysia, resulting in 141 employee layoffs. The event is planned and not yet executed."
+    },
+    {
+      "original_company": "The Big Story: Meta Layoffs Hit Singapore As Tech Giant",
+      "llm_company": "Meta",
+      "source_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNYThZaUZ0R09fZmM2M3JuVkphZ3RwZkRlWXdWN1d4UFBDTGxraDFBSzF4dzFodjhrY1JacUVsMk1TcGhDNG1NNnBGM19weDRScDZOdVR1MjVidEhQWTFocGdNdXF4czEtRUJFU3kyQk9FWndZXzQwbV9OdHNtTlc2R0FyOUVEUnpiRVJ1Yjc3eWtyR1ZYS3daOWtRX29melo4QjFuM2NiUnRJTmVXX2c5enhXQXAyX3QwN21JXw?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Meta announced global layoffs of 11,000 employees, affecting its Singapore office."
+    },
+    {
+      "original_company": "Twelve Cupcakes’",
+      "llm_company": "Twelve Cupcakes",
+      "source_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNRWYzT2NxbVpyb2FDaEE3ZGg4SGpmdjlwMXFsNFZiNExLekNmTk5XcEtnZ0tjVTkxVmgtX0xJcVF2aGhvQWlia194RUFEU2V5Qk9GcXZndmF5cWR3SHFGOG9sTDBobFZKR3hrOWEycXdDMEFIMnVPRFN3YjMtZ2liVFVyMFk1MTV4SGp4ejJPREVIRUFYR2RaV1pJODJoSU5XVkRWck05b3lQZjNVQzI5dVc5b0Z6RDV5QmhiYlZpWGo1UGY1Q0hveHFsUQ?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Article reports retrenchment at Twelve Cupcakes, a Singapore-based bakery chain. No specific headcount provided."
+    },
+    {
+      "original_company": "Biontech To Close Germany, Singapore Sites",
+      "llm_company": "BioNTech",
+      "source_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQWjRXWUJ6d0JYUFVlNlNIUmNfTnVnTEo3WDJKd0FpRFR5S1VQczM1eVh5VlpNSEdjX0paN1JEZmJQTTVkM2JOaFFieExPemk4MUhvdDd0NDlVV3JUS1o3dW1aTzdOY09sdzRuai15Rk1mcVpVN1dFY1Z2dVA3NEhPb0p0ZHlwalZ0RUdKNzc3MGZJVEI5cGdwSEJxVmd3c1RlVmJz?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "BioNTech announced plans to close its Germany and Singapore sites, which qualifies as a future closure implying job losses."
+    },
+    {
+      "original_company": "Standard Chartered Is",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNWkRVWjhLN2xOQjVadjZ6SlIwQVEzUHMwNFJ5U2hiNmdZc3hpNkR4UU9HWmpTdXFRbThHNzhJNVFQNmpEQldwUVMxMWpiWGVqdDZzNTZkQzVsNjE4RHplT0Nib2tyMU14eDlnYXJWTUtXOTI1Z0toVmhxVUlhSjg1NTlpZFZvVXFHQnRHdXU1OHlRZHdhY1ktWTlVenVFTVA1ODFPRHVoQWZHUWRK?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Standard Chartered is reportedly cutting jobs in Singapore, as indicated by the news snippet. This is a confirmed layoff event with a clear Singapore nexus."
+    },
+    {
+      "original_company": "Electrolux To Close Singapore Regional Office, Relocate Leadership Team To Bangkok - Cna",
+      "llm_company": "Electrolux",
+      "source_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPcEgxZ3hZMUl3MkRNbW01WElDS3FBTzU4MzNpTHV1cTJ1Zi1JalNkcVl2bnoybmhnRkk2T3UtU3FNMlV1RDY4VkdGclhHT0dIVWlwQXVuOGM4UFNpSkdhclotamFpOVJDNVB6Qlk3UDNvaTlJVHdPMUtzZHBoTDVjN1JfVmUwVU1aYUNIRUdQQkV4Q3pENV9sZWxjcm5YS184QmlwQXZmb2wweGxFV29NVk5ZN0w5bG5XMWgwMg?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Electrolux announced closure of its Singapore regional office, relocating leadership team to Bangkok, implying job losses."
+    },
+    {
+      "original_company": "130 Jobs At Risk As Dwp Announces Plans To Close Torquay Offices - Torbay Weekly",
+      "llm_company": "DWP",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOSU9PWXBjZlZlRmR6UWZFcVZxOVowOW9zR1ZKbWJQa2FtTEtNTUMtMEFEWXVfSkdIbmQxNHNiRE9aYWEwbkFtclZhVnZVTkczQWVFVkowUlFJUENscF9RQXkzZGk5Qkw4XzVRa3FudlE5Si1peWVKU0hRTkNIZjRRbGlqZEkyZHFyTGlQbWRSNmtEYkpvRFNnZlc2R1dTR3RDMTY2SzAwYXFTMUVTRHRJMENta1Nmdw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article concerns UK's Department for Work and Pensions closing offices in Torquay, England; no Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Ubs Said To",
+      "llm_company": "UBS",
+      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPb2ZCeDVjeGhrRFcxakdVdlktdzF2N0g1WWpVbFhMUGdNWnRIUlZRMkhoWl9wZnljaFFYak0wcUhwM0drZWVDLXFYRGFEZWlENkJoSm5pc0Vvd1dhZXAzVUtsQkRaZ1ZCaXJmamNLaTJOUDQ2dnIycUZLZEl6SmxYTGhsVFU5WnRJcllrWjE0b3NBb3MzWXg3cW9lWlpNNkc3Y1ZKSXBwemc1dlRJaTM2WElPa2ZPVjhFRkhn?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "UBS reportedly plans to reduce Asia ESG roles, potentially affecting Singapore operations."
+    },
+    {
+      "original_company": "Hsbc Mulls Deep Job",
+      "llm_company": "HSBC",
+      "source_link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9GVi1NSVdEUzNjMlN5UGdNYkl1bzJ1MklxWWsxRTdtazRsa2tJbkRoSkl4M0I4SUZCenZPZXpveU53MU1rR1pIS3NsNU1oSGRYS09Ta0dUMEN3bUNycmVhd083YWZZdWlaQ1BNNTA5aXk4M3RKbWdEMk42NGd6Zw?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "The title indicates HSBC is considering deep job cuts; 'mulls' suggests planning stage with no confirmed implementation."
+    },
+    {
+      "original_company": "Standard Chartered To Axe Thousands Of Jobs Due To Ai Adoption | Daily Sabah - Daily Sabah",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPOC0xa3pzQVFzWFFfdmI3VnY4bUZHU1pLbHBlNmVCcXhEV1Q4RE1YWmllZms1VXFmMjJlN0tQNWlQT3ZCOFhIc0ROOWhWaXQtNEFJU1FSM3c5Y2tCRjB5ZW82WE5ZTjJXaUhsdXdvV0QyRFBqTE13UTdVLWN4UW5EZ1JMMWdzWWQ5R3g0ODA1dTRzMTNkcjNLakI5VU9WQUxOR3dfMHRqUUZqd9IBrwFBVV95cUxNVmd6R3k1eWc5MGVUR1R1eFE3NkpHbGN0NER3cEthR1M4SWQyRlZEZkl3eVBjdXRnQXdfN28tV28zb0V4MElYalZKa01xeDJ5YWJUZEtmUENWOGVjUzBxT3ItRXJvVk9yMHVpcHE1TzBmUnhBRzVEUE1NdXR3N3BSMEFLV1U3UF95djE2NzItN1lNWGJfbXJIQ2VsT0wxVzY1V3lORkVtQUJFcnl1NWtN?oc=5",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Standard Chartered plans to cut thousands of jobs due to AI adoption, according to a report."
+    },
+    {
+      "original_company": "Standard Chartered To",
+      "llm_company": "Standard Chartered To",
+      "source_link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQd3B3WkxQU2dQNmlZdjJnUFR3SGthYkZSbnU5VGxwdTRpb3JfVW1DRHdwS1J3a3ZCQUlHZGJBYWZQVXZwLWhPT09jcjMtY1liQmlqY0VXMFR2Zk5OemRzb1FPQzhjc294TE0xZ1p6bVRGRnpJd0Q3X3JnNXRWa2pUWE1hUmFzcmZ6X25GYUpMbjRhd2VQcVpoYw?oc=5",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
@@ -125,321 +333,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article reports that Standard Chartered's Singapore jobs are affected as the bank aims to return $1.5 billion to investors, indicating layoffs."
-    },
-    {
-      "original_company": "Ibm To Shut Down Tampines Manufacturing Plant",
-      "llm_company": "IBM",
-      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQa1BxQnR2UU5mazFlSTFONW1pc0JmMHJJcFZ1MXFrRHhNUkJOREtfSzB1Ujl5S09fbFlQOW1ZRF9SWWpUb2JZcDlxWllObnc5WlZMYWZ5OWVXdmJPdnZ4UFA4MERFeUFReUtlRXlEZWg5WWZ2bXBhUWxyTmFnbDFlMVBNa1FPQ0lyb3pXaXdKako0bS0wekJVeFlWd24zX19tRUE0clJxMUtVczFCaDZJcEQwVENpdEQ1RGI3eHM2WQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "IBM is shutting down its Tampines manufacturing plant in Singapore, which constitutes a confirmed layoff event due to the closure of the facility."
-    },
-    {
-      "original_company": "Ibm To",
-      "llm_company": "IBM",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOX1Y0SWFTTTNxUFJpT082aUNwX1g5TmZxODNCOE5oeXUxdktxOVdzRGJWc0lMWC00eF8tLWRfRUoyTTBtdENSZTRPT1lQeEh0YVk1TjJza0V3ZHc4R1d0VVBta2xMWHhvMXJhSmVnVVU2d1E2MUh5UWZ4NlBsTnFXcXBnOF8wanVXbWhfMGdIUHprV0lDbnFvQUZDMTRnQm1JTm1GeWVvY1BWZVR6Q2ZVaUdtUmgxZ3c4Nlhr?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "News snippet indicates IBM plans to lay off all staff in Singapore, but lacks details and confirmation from a credible source."
-    },
-    {
-      "original_company": "Lazada",
-      "llm_company": "Lazada",
-      "source_link": "https://www.straitstimes.com/business/lazada-cuts-5-of-south-east-asia-workforce-including-roles-in-singapore",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Reported by Straits Times, confirmed layoff event in Singapore involving 5% of Southeast Asia workforce."
-    },
-    {
-      "original_company": "Lazada Trims 5% Of Southeast Asia Workforce In Restructuring Move",
-      "llm_company": "Lazada",
-      "source_link": "https://www.businesstoday.com.my/2026/06/23/lazada-trims-5-of-southeast-asia-workforce-in-restructuring-move/",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Lazada announced a 5% workforce reduction across Southeast Asia, including Singapore operations, as part of a restructuring move."
-    },
-    {
-      "original_company": "Lazada",
-      "llm_company": "Lazada",
-      "source_link": "https://www.hcamag.com/asia/specialisation/change-management/lazada-lays-off-5-of-employees-in-southeast-asia/580102",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"confirmed\",\n  \"confidence\": \"high\",\n  \"company\": \"Lazada\",\n  \"in) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
-    },
-    {
-      "original_company": "Sheikh Haikel Allegedly Given A Month To Vacate Shophouse, Forced To Relocate Chicken Rice Shop Hai Ge Ji, Singapore News - Asiaone",
-      "llm_company": "Sheikh Haikel Allegedly Given A Month To Vacate Shophouse, Forced To Relocate Chicken Rice Shop Hai Ge Ji, Singapore News - Asiaone",
-      "source_link": "https://www.asiaone.com/singapore/sheikh-haikel-allegedly-given-month-vacate-shophouse-forced-relocate-chicken-rice-shop-hai-ge-ji",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Exclusive: Expeditors Restructures Core Apac Operations - The Loadstar",
-      "llm_company": "Exclusive: Expeditors Restructures Core Apac Operations - The Loadstar",
-      "source_link": "https://theloadstar.com/exclusive-expeditors-restructures-core-apac-operations/",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Uncanny Creative Co-founder Exits Agency | Marketing-interactive",
-      "llm_company": "Uncanny Creative",
-      "source_link": "https://production.marketing-interactive.com/uncanny-creative-co-founder-exits-agency",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article about a co-founder exiting the agency, not a layoff event. No mention of job cuts or retrenchment.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Tiktok Confirms Layoffs In S'pore - Mothership",
-      "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQZE9GZGRsVjg4Q2lEZnVLb1pIWGo1cXExRGFOOHZSZ1FvQklqY1hsTFdnNHVycmdnUlF1c19sXzBiYVNzYzFLSlFHcEF4NWdLY1N4R0FzWlZPSUE4VGVpaFI1UERfbE8xR3hLM3Z4dHVDZW1OWUJMaVVJOE5SYTJyNmxPUndxYjdS?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "TikTok has confirmed layoffs in Singapore."
-    },
-    {
-      "original_company": "Tiktok",
-      "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPeDFoeGdBd3lrTENNNE1nUU9TOFJZb05kaVZWWmNTU3ZhZmFUY0FmU19ZNXRFcUtxMHoyWTltMUl5S3ExckRXSzhOcU16VWdrd1draXlJTXNsVlVGb25JeTNnZDR6QURULVhHRFR1TUQ5YkJHT2JRZEkzOVFYNW92V1YxV1FLdTBvcTRRNmthRGJjS2FLdzJ4dWYzeDA?oc=5",
-      "verdict": "rumored",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": "Article snippet indicates TikTok cuts trust and safety jobs, but date is in the future and details are unclear; likely a planned or anticipated event."
-    },
-    {
-      "original_company": "Tiktok Slashes Content Moderation Teams Globally; Singapore Among Markets Affected - The Business Times",
-      "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOWE5FWkp2aEpYeUF3Q3VrWEpja2staEg1Rk15TTZuWVhvTUoydC1pNDZKNl9YVnU4cDQ2QXotNEVVZDVVSnV2QmxGd2llVnpGYVpfMG5TNlplM0V5MmtKTV9CeEJQbHpyRzg3TzluUVF5ZWc0c0djTk1hQVhzR3hfMW51R25XcUhfOU5VeGk4QmR5UHVVSEd2TXg0U1ZLeGQ3VEhFVF9rU3d2WlEwaF9ibG82SGY5bnNfNXBhQVhEcXRpbHhuUWlzUmdXSk4?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "TikTok is reducing content moderation teams globally, with Singapore among the affected markets. The announcement was made on 2026-07-03 as reported by The Business Times."
-    },
-    {
-      "original_company": "Tiktok Confirms Layoffs In Singapore Amid Global Restructuring - Vulcan Post",
-      "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE4xWHlGcVJxMnBBYTdjM29YbjF3WnFsQ3FBZUFzak5jR0VaWFBXeXBVbkY5NHBaMzZETzB5QlNoaXRYXzJ4c1B0YkhscnU0SDlwYmdrU1VFbUhLTlA3SVpDU0l0OWNRWG9ibjB1cQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "TikTok confirms layoffs in Singapore as part of global restructuring, as reported by Vulcan Post."
-    },
-    {
-      "original_company": "Lazada Preps Layoffs In Singapore As Sea Tech",
-      "llm_company": "Lazada",
-      "source_link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxOVnNXV2pyVURrdTlOXzNDNjRRTWdIRkVyTG9SakhQeHhROXBrWjlEQVBNbFF2djRoRXk5UlNocGRVekJFSkl5QUV0NThTR3REQmlmaFBFLVZnQ0ZZTWc3N1dwMFJNUDJqZTlTWmtOdkdyLVRJNkpVSnBSV18xQ1d0LV80V1UxVGktc2E0d1c3WQ?oc=5",
-      "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Lazada is reportedly preparing layoffs in Singapore, based on a news article from June 24, 2026. No official confirmation or specific numbers are provided, so it is classified as rumored."
-    },
-    {
-      "original_company": "What",
-      "llm_company": "Unknown",
-      "source_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQMllUcFZTNU9IRk1OWV9yN1F2Uk5jSGdMU1NFTTVsUWViaHJ0LXViNkJ5blpHMTk4VGlEdjRIanN6Q0IxT3EwYUVaQ3Z1TGdhdDJSRWZlMkdKbFlwQ1BDYlI2YWlDaXJPUy1NdUNYT2htSnprcHhTcnpmeHJCVnVOTG9wUkJXYnZXZFdjc2dWWGNCZw?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This appears to be a personal narrative about retrenchment, not a specific layoff event.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "‘can They Do This To Me?’: Singaporean Seeks Help After Being Asked To Sign",
-      "llm_company": "‘can They Do This To Me?’: Singaporean Seeks Help After Being Asked To Sign",
-      "source_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNNmJlVl94T1Y2eF9NRFFlYkVlRWV2UzlhWk5fOUo4bUR5aGlwMDFUZWVjWTlIdF9MLTFTRGZPRml6QWxIdXl4ckdlbWlUb0NqVGxUU0tFanQ1Q01EdVUyaFhvcFNiYkxyV1Z6TFZ2QTVxMGt4dHdoN0RJb2ZFSmZoM1lvQkFJZnRqanZaRHpreUJxMmdDNlRXV1luNVdoYUxNel93X3R0VTNsQ054QUpYeXlvQ204VmU2cFFadmR2UjFoUnR3b3UzcFZNYy1haHRF?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article is a personal anecdote about an individual seeking help after being asked to sign something, not a company layoff announcement.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Tribunal Rules Section 45 Of Employment Act Creates No Statutory Right To",
-      "llm_company": "Tribunal Rules Section 45 Of Employment Act Creates No Statutory Right To",
-      "source_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQVlRDcFVfZ0hYNUQwQkxnMVZ6R1BLZ1FyejEtTXVaMUVGWWVMakdra3FuV0ItVW1OQmlnYWt4Q3hSYTB6N2R6X0d4ZklLN2ltWnFuWmVYM1h1RUpNclV0RnMwSlZLQV9hME10OGJ5N0Qtbng0OFQ3MWZReEVickVKbE84bXdlb1BORUZMSWVEOS1Ed2daMzlnN3NvTXpGM18tWDBRVVR6TS1hdmptd3hsbV9JaDRhZnRIbmU5Q2lCaU9PYVV3TUdyMzBEZDRmMlhy?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Legal ruling on Section 45 of Employment Act, not a layoff event.",
-      "rejection_reason": "legal"
-    },
-    {
-      "original_company": "Gardenia To Shift Bakery Production To Malaysia, 141 Employees To Be",
-      "llm_company": "Gardenia",
-      "source_link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOalhfSWs5SGt5cGxkdDVPVVFKYUozaWV6LUVPakgzSkVRU3FiR3VmczNOazlpbTA2VnVFNVVqTGpvM2dnOFM0YlBRbXY3TmNxVTZCNVpiTEc4cllwWlBSR0YwTVduSDYwYzMyczRqV0oyeTA3Q0MtQTFlNTBiTjlCZ0Nhb2c1TVdqbjAxdVpKV05OeGhYaEJfUHBRNGRfN0lWcWVQa1FtMzlaaXM?oc=5",
-      "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Planned shift of bakery production to Malaysia, resulting in 141 employees being affected."
-    },
-    {
-      "original_company": "Tiktok Confirms Layoffs In Singapore And Three Other Cities In One Day - Startup Fortune",
-      "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQem9uTGRvUVhvSzMtS3BwSmNtQ0VTd0lTNWhIdlBmbkpTOUZiZXVXYmp1N0FRQWxyMGt5bjRHVnFNT3NEekhnaWNCajV3VTlmT1A1Ni0tSGZKNnFnRHdSVUlXUXAzRjZISmFYMlY4cUZrbjRVZnA0ZkRFQmphMXRmTXhKaENvSkUya0FjRF9tRklzU2NBdjFndmlIVnVEWkU?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article explicitly states TikTok confirms layoffs in Singapore, indicating a confirmed event."
-    },
-    {
-      "original_company": "Shopee Trims 8% Of Developer Roles Globally Amid Growing Ai Push - People Matters Global",
-      "llm_company": "Shopee",
-      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPdWpKOGFDOVBrVUFDZTZPNnZvcVgtc2hIM29ubUNWeGVMY2FUMTBGNHAyRmxKLTF0N19wWmJmV2hPWUFfVVRBSVB2RFV1QW4tbl9GQmFaam94X053eVp1THlRQXhIeE4yYzlpdlc5UE1RUTMxYTdyQk91dl9RaUtoWHlRUkYxd09tbVpTM2s0MmM2azNvQ2RxUU5UbXV0MEM2Wkp5MHJpZ2xDQm01Uy0zanp4ZjRYYS1VdGdRTjIzVGdCdw?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Shopee announced a trim of 8% of developer roles globally, which includes Singapore operations. The article is a credible report of an ongoing layoff."
-    },
-    {
-      "original_company": "The Big Story: Meta Layoffs Hit Singapore As Tech Giant",
-      "llm_company": "Meta",
-      "source_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNYThZaUZ0R09fZmM2M3JuVkphZ3RwZkRlWXdWN1d4UFBDTGxraDFBSzF4dzFodjhrY1JacUVsMk1TcGhDNG1NNnBGM19weDRScDZOdVR1MjVidEhQWTFocGdNdXF4czEtRUJFU3kyQk9FWndZXzQwbV9OdHNtTlc2R0FyOUVEUnpiRVJ1Yjc3eWtyR1ZYS3daOWtRX29melo4QjFuM2NiUnRJTmVXX2c5enhXQXAyX3QwN21JXw?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Meta announced layoffs affecting 11,000 employees globally, including staff in Singapore."
-    },
-    {
-      "original_company": "Biontech To Close Germany, Singapore Sites",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQWjRXWUJ6d0JYUFVlNlNIUmNfTnVnTEo3WDJKd0FpRFR5S1VQczM1eVh5VlpNSEdjX0paN1JEZmJQTTVkM2JOaFFieExPemk4MUhvdDd0NDlVV3JUS1o3dW1aTzdOY09sdzRuai15Rk1mcVpVN1dFY1Z2dVA3NEhPb0p0ZHlwalZ0RUdKNzc3MGZJVEI5cGdwSEJxVmd3c1RlVmJz?oc=5",
-      "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "BioNTech announced plans to close its Germany and Singapore sites, indicating a future layoff event in Singapore."
-    },
-    {
-      "original_company": "Deliveroo Workers Receive Support After Singapore Closure - Hcamag.com",
-      "llm_company": "Deliveroo",
-      "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOSVJVWUNMNGdfM0ZpdHdmdlNPT0dHLUh3YmlvV1NSQ3Utd3ZTZ2lkLTZybmFqMkNkSFhGNnJ2UkJndUJhZmNrNnZNLWM2V2ZQdFRwSUdsOGtWYldFVTlySm9rQmtwNXVwdjQwY1kxMjFrZUZpT1hsWTVsMDg2aElqeWZvT0x0NE9iTnRDMDItSGdicXBYc1FXUDdsZ242X05RWUN2OWh5Uk1Ba3ZTaTNwcEFqZnRkT2ZvTi01dEtnRTlKYmNwYjlV?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Deliveroo has closed its Singapore operations, resulting in job losses for workers, as reported by Hcamag.com."
-    },
-    {
-      "original_company": "Exxon Expects",
-      "llm_company": "ExxonMobil",
-      "source_link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNOGVzbWhTOTNHN3dSMEJZeEJhTHNlWUxJWVNad016c2RJV1JWbFBNZzVnSjE2UVJEc3ZLWi1FejU0OXk2dUVEcW5yS0FjNDdVTnY1X044UjNOTk0zOGJ5djZlcW10YzVuVFJLWnYzZ3JVMk9yaVRsaUduTjBnY3dSSE9DYmVNNlRONnViclRhWkNuZ1dpc1VMdjdNSGFpZ3ZUM0RUcVlobmNmUzVlNk1IOVNzUQ?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Exxon expects to cut jobs, but no specific Singapore layoff confirmed yet. Article date provided but event not confirmed."
-    },
-    {
-      "original_company": "Cdp Closes Indonesia, India And Colombia Offices - Eco-business",
-      "llm_company": "CDP",
-      "source_link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPOUdMajZTSzlmVVRSRWZOMmlma3JKTmdEeUhhQ3dmakNDT1VuZ2dnUklSeHZrUVd3NzB4Y3FORUotSXJVQkdiNmZXcElsVjVzaDNUMVNndURMLUF1MHkxZ1liX1VjYXBsMncyc1U3a3Y1T0U1NnBHdXMwdklCdVdBMFZSQlVqdTRhTWc?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article reports CDP closing offices in Indonesia, India, and Colombia, with no mention of Singapore operations.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Ntt Sets Up Apac Head Office In S'pore, Now Hiring For Automation And Cybersecurity Roles - Vulcan Post",
-      "llm_company": "NTT",
-      "source_link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8xMjQ4T3RDUXNjSS03V3ozN1V3N2x1eHoxSnE4VGxwNVJMRXp1YkNpeU90Ykc1dmttYmVwcXdYRHZpeks2WkZUNHhudVF4ZERwYjA3ZDNBRV9ZejRhRTJpZkJVaVd1X3M?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about NTT setting up an APAC head office in Singapore and hiring for new roles, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Tudor Said To Close Singapore Trading Desk Amid Global Job",
-      "llm_company": "Tudor Investment Corporation",
-      "source_link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxOXzdfYXRqaHVXZ1pZTktZT0JOWS1sWWlLZ0d6ZDhhdTBPOHZkbkFpRVduSF9CUWpkbk5OXzJnU0UxdElJTXlSWEZoRjNkOGRCeFQzQzdyWGJfN21ZbzZWSWhlbkVrUHl1MzJaSC1LQjJGdm9tV283MUNkRXhMVzJvcHNZTmp3LWRscXpsRHlDWVh0MlMtblNmS2E0Wk40V2kxTmw2NDVkbWxwOHJzXzhLUHFhWXdFWUZFUVFsU2Z2MXo3VTNNdXc?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Reported closure of Singapore trading desk indicates potential job cuts, but not officially confirmed."
-    },
-    {
-      "original_company": "Fedex To Close Dallas, Texas-area Facility, Impacting 856 Jobs - World Socialist Web Site",
-      "llm_company": "FedEx",
-      "source_link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBfR0Nzc1plM3BPN0MxR2tPVlRQd1dTUjFQTFZkbHNvYVhDUGJVOU5iNGZXY18tMFlNSTF4aEJnbUhWRjdSRWtKV3lWNklsSzR0ZlRqUFlnc2ozOHVaSnV4WHJmNHdVTUFI?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Facility closure is in Dallas, Texas, USA with no Singapore operations mentioned. No Singapore nexus.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Singapore-headquartered Dyson To Axe 1,000 Jobs In Britain - The Straits Times",
-      "llm_company": "Dyson",
-      "source_link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxOS0RkTzNaU0pqT2dHUENDRHR6c29FZ0dGVHAxc1RuWUY0bG9rYnI0cHRsR3d6MUsybU1pS0NkbTJIUUVQZFAwcE1EcXZsdDJDUEI1OEZwUS1wRE1YdzhrQ3c1YUFZYjVPVTBHQTBBdjZqTjdoNkdmNG9hZHpFREUyVTh4Vm1LUUFpQk0yM0ZtWDNYdXJfUnBITUFiZGg?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The layoff of 1,000 jobs is in Britain, not Singapore. Although Dyson is headquartered in Singapore, the event does not involve Singapore operations or employees.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Ubs Said To",
-      "llm_company": "UBS",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPb2ZCeDVjeGhrRFcxakdVdlktdzF2N0g1WWpVbFhMUGdNWnRIUlZRMkhoWl9wZnljaFFYak0wcUhwM0drZWVDLXFYRGFEZWlENkJoSm5pc0Vvd1dhZXAzVUtsQkRaZ1ZCaXJmamNLaTJOUDQ2dnIycUZLZEl6SmxYTGhsVFU5WnRJcllrWjE0b3NBb3MzWXg3cW9lWlpNNkc3Y1ZKSXBwemc1dlRJaTM2WElPa2ZPVjhFRkhn?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "The article snippet indicates UBS is said to cut Asia ESG roles, suggesting potential layoffs. No official confirmation, and the date appears suspiciously in the future."
-    },
-    {
-      "original_company": "Hsbc Mulls Deep Job",
-      "llm_company": "HSBC",
-      "source_link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9GVi1NSVdEUzNjMlN5UGdNYkl1bzJ1MklxWWsxRTdtazRsa2tJbkRoSkl4M0I4SUZCenZPZXpveU53MU1rR1pIS3NsNU1oSGRYS09Ta0dUMEN3bUNycmVhd083YWZZdWlaQ1BNNTA5aXk4M3RKbWdEMk42NGd6Zw?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "HSBC is reportedly planning deep job cuts, but no confirmation or details on Singapore impact."
-    },
-    {
-      "original_company": "Standard Chartered To",
-      "llm_company": "Standard Chartered To",
-      "source_link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE51WXgzbG5MWHRWRmExQl9ZeTJNQ3JrMElqd3hOU2tGY1JiSFNrT3I5UzdvZUZFNUx4MzFJc2ItVjFmSUZZMXRBa3IwMVlUTTA0YVloajBYX1BVZw?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "Standard Chartered To Axe Thousands Of Jobs Due To Ai Adoption | Daily Sabah - Daily Sabah",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPOC0xa3pzQVFzWFFfdmI3VnY4bUZHU1pLbHBlNmVCcXhEV1Q4RE1YWmllZms1VXFmMjJlN0tQNWlQT3ZCOFhIc0ROOWhWaXQtNEFJU1FSM3c5Y2tCRjB5ZW82WE5ZTjJXaUhsdXdvV0QyRFBqTE13UTdVLWN4UW5EZ1JMMWdzWWQ5R3g0ODA1dTRzMTNkcjNLakI5VU9WQUxOR3dfMHRqUUZqd9IBrwFBVV95cUxNVmd6R3k1eWc5MGVUR1R1eFE3NkpHbGN0NER3cEthR1M4SWQyRlZEZkl3eVBjdXRnQXdfN28tV28zb0V4MElYalZKa01xeDJ5YWJUZEtmUENWOGVjUzBxT3ItRXJvVk9yMHVpcHE1TzBmUnhBRzVEUE1NdXR3N3BSMEFLV1U3UF95djE2NzItN1lNWGJfbXJIQ2VsT0wxVzY1V3lORkVtQUJFcnl1NWtN?oc=5",
-      "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Standard Chartered announces plans to cut thousands of jobs due to AI adoption. The event is planned and has not yet occurred."
-    },
-    {
-      "original_company": "Standard Chartered Is",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNWkRVWjhLN2xOQjVadjZ6SlIwQVEzUHMwNFJ5U2hiNmdZc3hpNkR4UU9HWmpTdXFRbThHNzhJNVFQNmpEQldwUVMxMWpiWGVqdDZzNTZkQzVsNjE4RHplT0Nib2tyMU14eDlnYXJWTUtXOTI1Z0toVmhxVUlhSjg1NTlpZFZvVXFHQnRHdXU1OHlRZHdhY1ktWTlVenVFTVA1ODFPRHVoQWZHUWRK?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article indicates Standard Chartered is cutting jobs in Singapore, classified as a confirmed layoff event."
-    },
-    {
-      "original_company": "‘lower-value Human’: Standard Chartered Ceo’s Remark Sparks Outrage As Bank Plans Job",
-      "llm_company": "‘lower-value Human’: Standard Chartered Ceo’s Remark Sparks Outrage As Bank Plans Job",
-      "source_link": "https://news.google.com/rss/articles/CBMikwJBVV95cUxPNDFIb3QxMnVuVE9zMHUtc29rajR5T3E2S1B2WDlPYWdoMHZ4NWdRSllya1prU0F4N3pVWmdWaURBZjFYaDFHeEU2UVJKeENOVDZoTm4tWEREb25FTjluRjd6Z2JwRkl0YmN3WmZHS0N2ZVNWNk5HR1VlY3VMUHc4UFA5X1JXZXM2a1ZmVldSa0hOU2xfOWh2RkNGWHVqWDg5Z25ickZLcWtFRlBsYjVTQTFsbFpLSkM0bXBzaldRN3JUX1V5Y1MxTHpVUFZ2Q2pSY05rb00zSEIxZXJCMG53UndJY0stZzV0RXVCaDFVMkNYb1NSYjFUanZvWlFOX1oxVmVmUm9kbndHTXdPRWJBeUFpd9IBmAJBVV95cUxQR2pYN2dqYUxJWXdYUlE4aS1qX19UMUNILW0xZ2dwWWxsbkhHN0hHZE5ndEQtUndQbDVoNWNzZE5aRVRJaTBzMndwQWJJdmp0SHV5QV93LWJCZ1o5Tng4SlZRN3RQV0k5SXgtN1RRSVM5SFpvbER6QzBhQ0xDbk5tNGFTMzNLZ3JWUHY1NWpPVjJEOXlzUTVCZXhGcngxcllOb2RfUkt5REM0MjlWWHNOSVRFV3oydDRXRU4ySEg3VW85aHZjMzVGTzRETGNVTFZrNGZ0ZUNobEZsZHBpZTZTZ2RVLTVRa3ZjWEFaa0pVcXRwb0lDOHdzU0tGOFpfX1pLZDVUajMyMTM2UkU3TUx4OFRjQTVCay1U?oc=5",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rumored\",\n  \"confidence\": \"medium\",\n  \"company\": \"Standard Chart) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
+      "notes": "News article reports Standard Chartered's Singapore jobs affected as part of cost-saving measures to return US$1.5b to investors. Specific headcount not provided."
     },
     {
       "original_company": "Dbs Plans 4,000 Job",
@@ -448,7 +342,7 @@
       "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "DBS announced plans to cut 4,000 jobs, as reported on February 25, 2025. This is a planned layoff, not yet implemented."
+      "notes": "DBS announced plans to cut 4,000 jobs, as reported on February 25, 2025."
     },
     {
       "original_company": "Biontech To Shut Down Vaccine Manufacturing Facility In Singapore By 2027 - Bioprocess",
@@ -457,7 +351,7 @@
       "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "BioNTech announced plans to shut down its vaccine manufacturing facility in Singapore by 2027, which implies future job losses."
+      "notes": "BioNTech announced plans to shut down its vaccine manufacturing facility in Singapore by 2027, which is a future closure with unstated headcount impact."
     },
     {
       "original_company": "Biontech To Close Vaccine Manufacturing Plant In Singapore By 2027 - Cna",
@@ -466,16 +360,16 @@
       "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "BioNTech announced plans to close its vaccine manufacturing plant in Singapore by 2027, which constitutes a future layoff event."
+      "notes": "BioNTech announced plans to close its vaccine manufacturing plant in Singapore by 2027, which will result in job losses. This is a future planned closure."
     },
     {
-      "original_company": "Si Group Announces Plans To Close Manufacturing Site In Singapore - Pr Newswire",
-      "llm_company": "Si Group",
-      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPb0Faa2ZycDdtNlBnU3hlTG5vSUZwOHZaVWZSOEE4TkVJcHZzWDNqN3JIZzhFbnR3Q1RkeTJpSUktSkM2N0JoTFpwSXhfaERZYmFCeHExRVRNRHhhdGMyTnllWW5mdGlmOGxSTWFNUElQdlN4MnpiWkFzTHNVZEtWVlFBQnZQUWZ5ak5TT0h1R2liNlB0c2RFNExiXzBrU1hMcGpXQkdHNmVwNFhzdUZDajhkNDZ5WEJLR0taazZMcWV6QQ?oc=5",
+      "original_company": "Biontech To Close Sites In Germany, Singapore Affecting 1,860 Staff - Reuters",
+      "llm_company": "BioNTech",
+      "source_link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQbTFuMXNucV9WS2VicENMQnNMTjhod3dHSDhvUERjbjYzU1FVQW5JTU1kb2ZsX0ItZDJlRzN1UTZ4c1VWNktWaURYaUlYcGZjNTAxaVQ2bmJRTVFzRmVIVjFpd19PdkxuQVJWQ25YOVhPSEFqTXpNYkdzMWVpZ1dOQ2lncmhYbHVnekFReDZhcC1nOXNmNC1YcG9tZUw5QUlyU3VFOC1yWVZFa1N2OGlIUktR?oc=5",
       "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Si Group announced plans to close its manufacturing site in Singapore, indicating a future closure. No headcount details provided."
+      "notes": "BioNTech announced plans to close sites in Germany and Singapore, affecting 1,860 staff overall. Singapore-specific headcount not provided. This is a planned closure still in the future."
     },
     {
       "original_company": "Biontech Starts Shuttering Singapore Mrna Manufacturing Site Amid Pipeline Pivot - Biospace",
@@ -484,16 +378,34 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "BioNTech is shutting down its mRNA manufacturing site in Singapore, which implies job losses. The closure is actively underway."
+      "notes": "BioNTech is shuttering its Singapore mRNA manufacturing site, implying job losses at the facility. This is a closure event with a clear Singapore nexus and is actively underway."
+    },
+    {
+      "original_company": "Si Group Announces Plans To Close Manufacturing Site In Singapore - Pr Newswire",
+      "llm_company": "Si Group",
+      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPb0Faa2ZycDdtNlBnU3hlTG5vSUZwOHZaVWZSOEE4TkVJcHZzWDNqN3JIZzhFbnR3Q1RkeTJpSUktSkM2N0JoTFpwSXhfaERZYmFCeHExRVRNRHhhdGMyTnllWW5mdGlmOGxSTWFNUElQdlN4MnpiWkFzTHNVZEtWVlFBQnZQUWZ5ak5TT0h1R2liNlB0c2RFNExiXzBrU1hMcGpXQkdHNmVwNFhzdUZDajhkNDZ5WEJLR0taazZMcWV6QQ?oc=5",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Si Group announced plans to close its manufacturing site in Singapore, which will result in job cuts. The closure is planned, not yet executed."
+    },
+    {
+      "original_company": "Oatly To Close Singapore Facility As Cost",
+      "llm_company": "Oatly",
+      "source_link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9iZzYxU1BpYVJjZGYweTNWVEM3S2hGRWpGYlNfUEwwVGdrMThnUVB2azV4STczTDI2RHNFWTZTWlNVMGRONmlnOE5nci14ZWlDRkVmRXpJdXlQaV9NT2FOVVlTX2RNaXRvbnIwQkxKQ2xNd2M?oc=5",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Oatly announced plans to close its Singapore facility as part of cost-cutting measures, which will result in job losses. Since the closure is planned but not yet executed, it is classified as rumored."
     },
     {
       "original_company": "Swedish Oat Milk Producer Oatly To Shut Down Its Singapore Facility - The Straits Times",
       "llm_company": "Oatly",
       "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxORmhIZW5EV1BJUzdiVW1JRlBtTjFWTGhDdmN0c0ZzNEtWbXNPVm5RRVlkWkFVUXFSZFhhRXB4b0tYdnR2VjBqRkR2eXdXRUI2aXlnclBTN1hkby1HWG10aUhRV2V0ZnNVcnBLQUh1STBfaTM4Z1llZkJ2OHA5dlI4TWlQcnVtbkpNNDBKb3ZDTW9qcDV6LVRwejRpd0c0SnBXQllpVEszNmxUZw?oc=5",
-      "verdict": "confirmed",
+      "verdict": "rumored",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Oatly announced the closure of its Singapore facility, resulting in job losses. The Straits Times reports the shutdown."
+      "notes": "Swedish oat milk producer Oatly announced it will shut down its Singapore facility, leading to job losses. The closure is a future event, so classified as rumored."
     },
     {
       "original_company": "59 Workers, Including 25 From Yeo’s, To Be Laid Off Due To Oatly Singapore Plant Closure - The Straits Times",
@@ -502,7 +414,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Oatly Singapore plant closure resulted in layoffs of 59 workers, including 25 from Yeo's."
+      "notes": "59 workers laid off due to Oatly Singapore plant closure, including 25 from Yeo's."
     },
     {
       "original_company": "Oatly Shuts Singapore Factory, Affecting 59 Workers, And Deepens China Focus - Green Queen Media",
@@ -511,7 +423,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Oatly shut its Singapore factory, affecting 59 workers, as part of a strategy to deepen focus on China."
+      "notes": "Oatly shuts its Singapore factory, affecting 59 workers, as part of deeper China focus."
     },
     {
       "original_company": "Dyson Kills Singapore Electric Car Project With Closure Of Auto Division - The Business Times",
@@ -520,7 +432,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Dyson announced the closure of its electric car project in Singapore, resulting in layoffs. This is a confirmed layoff event with a clear Singapore nexus."
+      "notes": "Dyson confirmed closure of its Singapore electric car project and auto division, leading to job losses in Singapore."
     },
     {
       "original_company": "Si Group To Close Alkylphenol Production In Singapore - Rubber News",
@@ -529,7 +441,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Si Group announced the closure of its alkylphenol production in Singapore, which implies job losses. The source is credible and the event is confirmed."
+      "notes": "Si Group announced closure of alkylphenol production in Singapore, resulting in job losses."
     },
     {
       "original_company": "Oatly Announces Closure Of Singapore Facility To Further Streamline Operations - Vegconomist - The Vegan Business Magazine",
@@ -538,7 +450,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Oatly announced the closure of its Singapore facility, which implies job losses. The event is confirmed as per the announcement."
+      "notes": "Oatly announced the closure of its Singapore facility, which implies job losses. The closure is a confirmed event."
     },
     {
       "original_company": "Tetra Pak Shutters Singapore Facility Amid Regional Consolidation Plans - Packaging Insights",
@@ -547,7 +459,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Tetra Pak is closing its Singapore facility as part of regional consolidation, resulting in job losses."
+      "notes": "Tetra Pak is shutting down its Singapore facility as part of regional consolidation, resulting in job losses."
     },
     {
       "original_company": "Employees Affected By Ibm Manufacturing Hub Closure; Union Silent On Petition Against Termination Conditions - The Online Citizen",
@@ -556,7 +468,17 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "IBM confirmed closure of its manufacturing hub in Singapore, affecting employees. Union silence on petition indicates ongoing layoff event."
+      "notes": "IBM manufacturing hub closure in Singapore affecting employees, with union silent on petition regarding termination conditions."
+    },
+    {
+      "original_company": "Tyre Maker Goodyear To Close Manufacturing Plant In Malaysia - The Straits Times",
+      "llm_company": "Goodyear",
+      "source_link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPN0dsZzY5d2lKZWNqU0hFWkcxNk9yTlhfcXB1QmxBLUw1UDVqMXVrU3k0U2NSQ1pfbUJiNC1KV0FHek13X0RiRk0weUtqeVBZeEQzckQzd05wM0VjUEFrSWxnamhMOXNEbjY0ZFBoT0lLc3dGYVB1TDdPeE9zUTZ5WUJTd2FTbEJvQ1F4UGt2RlNpM3AtVk5IWEpuR0dzMEZ3dnVWVg?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The article is about a plant closure in Malaysia, not Singapore. No Singapore nexus.",
+      "rejection_reason": "not-sg"
     },
     {
       "original_company": "Oatly To Close S’pore Facility, 34 Employees Affected - Mothership",
@@ -565,26 +487,34 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Oatly announced closure of its Singapore facility, affecting 34 employees. This is a confirmed closure with job losses."
+      "notes": "Oatly announced closure of its Singapore facility, affecting 34 employees."
+    },
+    {
+      "original_company": "Ibm To",
+      "llm_company": "IBM",
+      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOX1Y0SWFTTTNxUFJpT082aUNwX1g5TmZxODNCOE5oeXUxdktxOVdzRGJWc0lMWC00eF8tLWRfRUoyTTBtdENSZTRPT1lQeEh0YVk1TjJza0V3ZHc4R1d0VVBta2xMWHhvMXJhSmVnVVU2d1E2MUh5UWZ4NlBsTnFXcXBnOF8wanVXbWhfMGdIUHprV0lDbnFvQUZDMTRnQm1JTm1GeWVvY1BWZVR6Q2ZVaUdtUmgxZ3c4Nlhr?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Reported layoffs at IBM Singapore based on Google News RSS snippet."
+    },
+    {
+      "original_company": "Ibm To Shut Down Tampines Manufacturing Plant",
+      "llm_company": "IBM",
+      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQa1BxQnR2UU5mazFlSTFONW1pc0JmMHJJcFZ1MXFrRHhNUkJOREtfSzB1Ujl5S09fbFlQOW1ZRF9SWWpUb2JZcDlxWllObnc5WlZMYWZ5OWVXdmJPdnZ4UFA4MERFeUFReUtlRXlEZWg5WWZ2bXBhUWxyTmFnbDFlMVBNa1FPQ0lyb3pXaXdKako0bS0wekJVeFlWd24zX19tRUE0clJxMUtVczFCaDZJcEQwVENpdEQ1RGI3eHM2WQ?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "IBM is shutting down its Tampines manufacturing plant in Singapore, leading to job losses."
     },
     {
       "original_company": "Exxonmobil To Shut Singapore Steam Cracker By June 2026 - Egypt Oil & Gas",
       "llm_company": "ExxonMobil",
       "source_link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPN3pEVHNNb0pQb2poaUVrVzUwY1pyTDlpMXJ0bl9LQmhiOEpUcjRKNkE4MWxuUmd4MXRvMlhYRTJxZldORG9GV3F6QUtGTjFTOGNSZmdpdERBNmJNU29kZWRpNHhLcnNBMkxlWnlLY3pWVG51emhaQVlPYWtIN21zM3F4aDFhY21KTmJCaGgxOA?oc=5",
       "verdict": "rumored",
-      "confidence": "high",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": "ExxonMobil announced plans to shut its Singapore steam cracker by June 2026, resulting in job losses."
-    },
-    {
-      "original_company": "Second Time Lucky? Vaniday Relaunches - Tnglobal",
-      "llm_company": "Vaniday",
-      "source_link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFA4eTBZM19RLVU1a09yQkJRTmVxVlM0SG1URmtUYnFnSHJmOXZjREY2aVNRVTJ5X2lVM3J2LVBvd2R2N2VhcVp0aXhIaDR4V09pUGNmNlFLVUpFRS1TR05vS1JGbE4?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses a company relaunch, not a layoff event.",
-      "rejection_reason": "commentary"
+      "notes": "ExxonMobil plans to shut its Singapore steam cracker by June 2026, implying job losses. The closure is announced but not yet underway."
     },
     {
       "original_company": "Local Food Waste Startup Uglyfood Closes As It Is 'unable To Raise The Funds' To Continue Operations - Mothership",
@@ -593,7 +523,7 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Singapore-based food waste startup Uglyfood has closed operations due to inability to raise funds."
+      "notes": "Local food waste startup closes due to inability to raise funds, resulting in job losses."
     },
     {
       "original_company": "S'pore Startup Smove Hits A Speed Bump: Exits Car-sharing Market, Now Under Liquidation - Vulcan Post",
@@ -602,25 +532,43 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Singapore car-sharing startup Smove has ceased operations and is under liquidation, resulting in job losses."
+      "notes": "Smove, a Singapore car-sharing startup, is under liquidation, indicating a closure with job losses."
     },
     {
       "original_company": "Lazada",
       "llm_company": "Lazada",
-      "source_link": "https://www.asiaone.com/singapore/lazada-singapore-job-cuts",
+      "source_link": "https://www.straitstimes.com/business/lazada-cuts-5-of-south-east-asia-workforce-including-roles-in-singapore",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
       "notes": ""
     },
     {
+      "original_company": "Tiktok Confirms Layoffs In S'pore - Mothership.sg",
+      "llm_company": "TikTok",
+      "source_link": "https://mothership.sg/2026/07/tiktok-layoffs-singapore-malaysia-indonesia-dublin/",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "TikTok officially confirmed layoffs in Singapore as reported by Mothership.sg."
+    },
+    {
+      "original_company": "Tiktok",
+      "llm_company": "TikTok",
+      "source_link": "https://www.straitstimes.com/business/tiktok-cuts-trust-and-safety-jobs-for-second-straight-year",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The Straits Times reports TikTok is cutting trust and safety jobs for the second consecutive year. The company has a Singapore office, confirming Singapore nexus."
+    },
+    {
       "original_company": "Lazada Job",
       "llm_company": "Lazada",
       "source_link": "https://hrsea.economictimes.indiatimes.com/news/industry/lazada-cuts-jobs-amid-singapores-widespread-retrenchment-wave/131954125",
       "verdict": "confirmed",
-      "confidence": "medium",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": "Lazada has cut jobs as part of Singapore's retrenchment wave, confirmed by credible source."
+      "notes": "Article reports Lazada cutting jobs in Singapore amid a retrenchment wave, indicating a confirmed layoff event."
     },
     {
       "original_company": "Lazada Trims Workforce In Singapore, Other Southeast Asia Markets | Singapore Business Review",
@@ -629,206 +577,132 @@
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Lazada announced workforce reduction in Singapore and other Southeast Asian markets, confirmed by Singapore Business Review."
+      "notes": "Lazada announced workforce reduction in Singapore and other Southeast Asian markets."
     },
     {
-      "original_company": "H&m Southeast Asia Hq Moves To Malaysia: Job",
-      "llm_company": "H&M",
-      "source_link": "https://leadbookingsystem.com/article/h-m-southeast-asia-hq-moves-to-malaysia-job-cuts-in-singapore",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "H&M is moving its Southeast Asia headquarters from Singapore to Malaysia, which will result in job cuts in Singapore. The move is planned for the future, so it's classified as rumored."
-    },
-    {
-      "original_company": "Yealink Picks Singapore For Global Operations Hq | Singapore Business Review",
-      "llm_company": "Yealink Picks Singapore For Global Operations Hq | Singapore Business Review",
-      "source_link": "https://sbr.com.sg/information-technology/news/yealink-picks-singapore-global-operations-hq",
+      "original_company": "H&m Job",
+      "llm_company": "H&m Job",
+      "source_link": "https://trustingodagain.com/article/h-m-job-cuts-in-singapore-hq-moves-to-malaysia-what-it-means-for-employees-retail",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
       "notes": ""
     },
     {
-      "original_company": "Global Dairy Trade Relocates Headquarters To Singapore As Global Dairy Markets Expand",
-      "llm_company": "Global Dairy Trade Relocates Headquarters To Singapore As Global Dairy Markets Expand",
-      "source_link": "https://www.procurementresource.com/news-and-articles/global-dairy-trade-relocates-headquarters-to-singapore",
-      "verdict": "needs_review",
-      "confidence": "low",
+      "original_company": "Why Are Companies Leaving Singapore? Rising Costs & Regional Alternatives Explained",
+      "llm_company": "Why Are Companies Leaving Singapore? Rising Costs & Regional Alternatives Explained",
+      "source_link": "https://viagradix.com/article/why-are-companies-leaving-singapore-rising-costs-regional-alternatives-explained",
+      "verdict": "rejected",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": ""
+      "notes": "Article is a general commentary on companies leaving Singapore due to rising costs, not a specific layoff event.",
+      "rejection_reason": "commentary"
     },
     {
-      "original_company": "Ohmyhome Dumps Failing Real Estate Agency Business For A Symbolic Us$1 - Singapore Property News",
+      "original_company": "Ohmyhome Restructuring: Owners Still Owe Shareholders An Explanation | The Straits Times",
       "llm_company": "Ohmyhome",
-      "source_link": "https://sgpropertynews.com/ohmyhome-dumps-failing-real-estate-agency-for-1-usd/",
-      "verdict": "confirmed",
+      "source_link": "https://www.straitstimes.com/business/ohmyhome-restructuring-business-as-usual-but-owners-owe-shareholders-an-explanation",
+      "verdict": "rejected",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Article reports Ohmyhome is selling its failing real estate agency business for US$1, implying closure or divestiture that likely results in job losses. Specific headcount not provided."
-    },
-    {
-      "original_company": "Bytedance",
-      "llm_company": "ByteDance",
-      "source_link": "https://careeraheadonline.com/bytedance-reduces-450-tech-positions-at-tokopedia-amid-global-restructuring/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "No Singapore nexus; layoffs at Tokopedia in Indonesia, not Singapore.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Retail Workers Uncertain About Their Future As Plaza Singapura Starts ..",
-      "llm_company": "Retail Workers Uncertain About Their Future As Plaza Singapura Starts ..",
-      "source_link": "https://www.channelnewsasia.com/singapore/plaza-singapura-revamp-retail-workers-uncertainty-6227641",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rejected\",\n  \"confidence\": \"high\",\n  \"company\": \"Plaza Singapura) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
-    },
-    {
-      "original_company": "Gv To Close Plaza Singapura Outlet Amid Mall Revamp | The Straits Times",
-      "llm_company": "Gv To Close Plaza Singapura Outlet Amid Mall Revamp | The Straits Times",
-      "source_link": "https://www.straitstimes.com/life/entertainment/golden-village-to-close-plaza-singapura-outlet-after-28-years-amid-mall-revamp",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rumored\",\n  \"confidence\": \"high\",\n  \"company\": \") | openrouter: 404 No endpoints found for openrouter/owl-alpha."
-    },
-    {
-      "original_company": "Cotton On Shuts Velocity Store; Nex Outlet To Close As Well | The Straits Times - Newspaper - Read This Story On Magzter.com",
-      "llm_company": "Cotton On",
-      "source_link": "https://www.magzter.com/stories/newspaper/The-Straits-Times/COTTON-ON-SHUTS-VELOCITY-STORE-NEX-OUTLET-TO-CLOSE-AS-WELL",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports closure of two Singapore stores (Velocity and Nex), implying job losses. One store already shut, the other to close soon."
-    },
-    {
-      "original_company": "Plaza Singapura Major Revamp Till Late 2028, Future Of Some Retail Workers Uncertain: Cna - Mothership.sg - News From Singapore, Asia And Around The World",
-      "llm_company": "Plaza Singapura Major Revamp Till Late 2028, Future Of Some Retail Workers Uncertain: Cna - Mothership.sg - News From Singapore, Asia And Around The World",
-      "source_link": "https://mothership.sg/2026/07/plaza-singapura-major-revamp/",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "7 Stalls In Eunos Canteen Told To Leave, Including Stall That Spent S$100,000 6 Months Ago To Move In - Mothership.sg - News From Singapore, Asia And Around The World",
-      "llm_company": "7 Stalls In Eunos Canteen Told To Leave, Including Stall That Spent S$100,000 6 Months Ago To Move In - Mothership.sg - News From Singapore, Asia And Around The World",
-      "source_link": "https://mothership.sg/2026/07/7-stalls-eunos-canteen/",
-      "verdict": "needs_review",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": ""
-    },
-    {
-      "original_company": "'completely Stunned': Eunos Coffee Shop Closure Leaves Vendors Scrambling, Singapore News - Asiaone",
-      "llm_company": "Unnamed Eunos Coffee Shop",
-      "source_link": "https://www.asiaone.com/singapore/coffee-shop-eunos-closes-vendors-stalls-fnb",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Closure of a coffee shop in Eunos, Singapore, resulting in job losses for vendors. Classified as a confirmed layoff event per closure rules."
-    },
-    {
-      "original_company": "Coffee Shop Closure Leaves Vendors Scrambling To Find New Locations | Business",
-      "llm_company": "Unnamed Coffee Shop",
-      "source_link": "https://sg.headtopics.com/news/coffee-shop-closure-leaves-vendors-scrambling-to-find-new-85187357",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Article reports a coffee shop closure in Singapore affecting vendors, implying job losses. Company name not provided in snippet but identifiable from article."
-    },
-    {
-      "original_company": "Sheikh Haikel's Halal Chicken Rice Shop To Reopen | The Straits Times",
-      "llm_company": "Sheikh Haikel's Halal Chicken Rice Shop",
-      "source_link": "https://www.straitstimes.com/life/food/local-rapper-sheikh-haikels-halal-chicken-rice-shop-to-reopen-in-bussorah-street",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is about a shop reopening, not a layoff event.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Straits Mega-hubs",
-      "llm_company": "Straits Mega-hubs",
-      "source_link": "https://breakbulk.news/straits-mega-hubs-shed-5-of-connectivity-as-lines-reroute-relay-cargo-to-india-and-middle-east/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses reduction in connectivity percentage, not employee layoffs.",
+      "notes": "Article title suggests commentary/opinion about restructuring, not a confirmed layoff event.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Sea-intelligence: Plsci Data Indicates Mega-hub",
-      "llm_company": "Sea-intelligence: Plsci Data Indicates Mega-hub",
-      "source_link": "https://container-news.com/sea-intelligence-plsci-data-indicates-mega-hub-retrenchment/",
+      "original_company": "Why Singapore’s Mid-market Retailers Are Running Out Of Room - Inside Retail Australia",
+      "llm_company": "Why Singapore’s Mid-market Retailers Are Running Out Of Room - Inside Retail Australia",
+      "source_link": "https://insideretail.com.au/business/why-singapores-mid-market-retailers-are-running-out-of-room-202606",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article appears to discuss shipping data analysis and market commentary, not a specific layoff event.",
+      "notes": "The article appears to be a market analysis or commentary on mid-market retailers in Singapore, not a specific layoff announcement.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Biontech Builds In Australia Even As It",
-      "llm_company": "BioNTech",
-      "source_link": "https://www.newscase.com/biontech-builds-in-australia-even-as-it-cuts-jobs-and-sheds-factories/",
+      "original_company": "Opening A Restaurant In Singapore 2026: Cost, Licences, Profit & Why So Many Fail · Sgai Studio",
+      "llm_company": "Opening A Restaurant In Singapore 2026: Cost, Licences, Profit & Why So Many Fail · Sgai Studio",
+      "source_link": "https://www.sgai.sg/en/intelligence/singapore-restaurant-2026",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article discusses BioNTech's job cuts and factory shedding in Australia, with no mention of Singapore operations or impact.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Adc Therapeutics",
-      "llm_company": "ADC Therapeutics",
-      "source_link": "https://www.rttnews.com/3662556/adc-therapeutics-cuts-workforce-to-advance-zynlonta-portfolio-in-b-cell-lymphoma.aspx",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "No clear Singapore nexus; ADC Therapeutics is a Swiss company and the article does not mention any Singapore operations or employees.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Singapore Healthcare Workforce Redesign And App Consolidation Initiative | Healthcare",
-      "llm_company": "Singapore Healthcare Workforce Redesign And App Consolidation Initiative | Healthcare",
-      "source_link": "https://sg.headtopics.com/news/singapore-healthcare-workforce-redesign-and-app-85157207",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "No specific company identified; article is an aggregator piece on workforce redesign, likely commentary or policy discussion, not a confirmed layoff event.",
+      "notes": "Article is a guide/analysis about opening a restaurant in Singapore, not a layoff or closure announcement.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Verastem’s Kras G12d Vision; Adc Therapeutics Reorganizes",
-      "llm_company": "Verastem / ADC Therapeutics",
-      "source_link": "https://endpoints.news/verastems-kras-g12d-vision-adc-therapeutics-reorganizes-lays-off-17-of-staff/",
+      "original_company": "Life Sciences Job At Msd In Singapore | Associate Specialist Role",
+      "llm_company": "MSD",
+      "source_link": "https://www.biotecnika.com/life-sciences-job-msd-singapore/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Both companies appear to be US-based biotech firms; no Singapore nexus indicated in the headline or snippet.",
-      "rejection_reason": "not-sg"
+      "notes": "This is a job posting for a hire, not a layoff announcement.",
+      "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Gen Z Perspectives: Agency Exit, Kind Deeds And Award Season | Marketing-interactive",
-      "llm_company": "Gen Z Perspectives: Agency Exit, Kind Deeds And Award Season | Marketing-interactive",
-      "source_link": "https://production.marketing-interactive.com/gen-z-perspectives-agency-exit-kind-deeds-and-award-season",
+      "original_company": "Foundation Healthcare Ipo Sees Strong Demand | The Straits Times",
+      "llm_company": "Foundation Healthcare",
+      "source_link": "https://www.straitstimes.com/business/temasek-backed-foundation-healthcares-242m-ipo-sees-strong-demand-ahead-of-sgx-listing",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article is a commentary piece about Gen Z perspectives and agency exits, not a specific layoff announcement.",
+      "notes": "Article is about IPO demand, not layoffs.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Immutable Ditches Game Development To Prioritize New Ai Marketing Platform - Crypto Games",
+      "original_company": "Immutable",
       "llm_company": "Immutable",
-      "source_link": "https://cryptogames.gg/immutable-ditches-game-development-to-prioritize-new-ai-marketing-platform/",
-      "verdict": "rejected",
-      "confidence": "medium",
+      "source_link": "https://play2moon.com/immutable-layoffs-guild-of-guardians-maintenance-mode-ai-marketing-pivot-june-2026/",
+      "verdict": "needs_review",
+      "confidence": "low",
       "provider": "deepseek",
-      "notes": "No clear Singapore nexus; Immutable is an Australian company and the article does not mention any Singapore operations.",
+      "notes": ""
+    },
+    {
+      "original_company": "Australian Crypto Unicorn Immutable Scales Back Game Development In Ai Pivot",
+      "llm_company": "Immutable",
+      "source_link": "https://cryptonews.com.au/news/australian-crypto-unicorn-immutable-scales-back-game-development-in-ai-pivot-134092/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "No Singapore nexus; article about an Australian company with no mention of Singapore operations.",
       "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Surbana Jurong Group Ceo Sean Chiao To Step Down; Search For Successor Under Way - The Business Times",
+      "llm_company": "Surbana Jurong Group Ceo Sean Chiao To Step Down; Search For Successor Under Way - The Business Times",
+      "source_link": "https://www.businesstimes.com.sg/companies-markets/surbana-jurong-group-ceo-sean-chiao-steps-down-search-successor-under-way",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": ""
+    },
+    {
+      "original_company": "Temasek-owned Surbana Jurong Launches Yet Another Global Search For Next Leader As Latest Ceo Also Retires",
+      "llm_company": "Temasek-owned Surbana Jurong Launches Yet Another Global Search For Next Leader As Latest Ceo Also Retires",
+      "source_link": "https://theindependent.sg/temasek-owned-surbana-jurong-launches-yet-another-global-search-for-next-leader-as-latest-ceo-also-retires/",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "none",
+      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rejected\",\n  \"confidence\": \"high) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
+    },
+    {
+      "original_company": "Construction Firms Adjust To ‘new Normal’ Of Higher Material Costs After Middle East Conflict - Cna",
+      "llm_company": "Construction Firms Adjust To ‘new Normal’ Of Higher Material Costs After Middle East Conflict - Cna",
+      "source_link": "https://www.channelnewsasia.com/singapore/construction-materials-higher-costs-middle-east-conflict-6212916",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article discusses construction firms adjusting to higher material costs, not a specific layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Ntuc & Mwc Roll Out Financial Aid, Job Support For Around 400 Migrant Workers Affected By Alleged Unpaid Wages | Human Resources Online",
+      "llm_company": "Ntuc & Mwc Roll Out Financial Aid, Job Support For Around 400 Migrant Workers Affected By Alleged Unpaid Wages | Human Resources Online",
+      "source_link": "https://www.humanresourcesonline.net/ntuc-mwc-roll-out-financial-aid-job-support-for-around-400-migrant-workers-affected-by-alleged-unpaid-wages",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "none",
+      "notes": "All providers failed: deepseek: JSON parse error (raw: {\n  \"verdict\": \"rejected) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
     }
   ]
 }
