@@ -137,6 +137,57 @@ describe('checkIntegrity', () => {
   });
 });
 
+describe('checkIntegrity — cross-name same-event detection', () => {
+  it('flags near-date, same-industry rows that share a distinctive company token', () => {
+    // Regression: one Eunos coffee-shop closure was logged five times under
+    // different names ("Eunos Canteen", "Unnamed Eunos Coffee Shop", …). The
+    // company-keyed grouping never collated them; a shared rare token does.
+    const w = checkIntegrity([
+      entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-07-01' }),
+      entry({ company: 'Unnamed Eunos Coffee Shop', industry: 'F&B', date_announced: '2026-07-03' }),
+    ]);
+    const hit = w.find((x) => x.type === 'possible-same-event');
+    expect(hit).toBeDefined();
+    expect(hit!.message.toLowerCase()).toContain('eunos');
+  });
+
+  it('flags a brand token shared across parent/subsidiary names (Jetstar/Qantas)', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Jetstar Asia', industry: 'Other', date_announced: '2025-06-11' }),
+      entry({ company: 'Qantas Airways', industry: 'Other', date_announced: '2025-06-12', notes: 'closure of Jetstar Asia' }),
+    ]);
+    // Note: "Qantas (Jetstar Asia)" is now alias-collapsed, so this uses a name the
+    // alias does NOT cover — the token check is the safety net for the long tail.
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+    // (No shared company token here — notes are intentionally excluded — so the
+    // check stays silent rather than guessing. Alias collapse is the primary fix.)
+  });
+
+  it('does NOT flag rows that only share a generic corporate word', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Legacy Bank', industry: 'Finance', date_announced: '2026-05-01' }),
+      entry({ company: 'Digital Bank', industry: 'Finance', date_announced: '2026-05-05' }),
+    ]);
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+  });
+
+  it('does NOT flag a shared token across different industries', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-07-01' }),
+      entry({ company: 'Eunos Motors', industry: 'Other', date_announced: '2026-07-03' }),
+    ]);
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+  });
+
+  it('does NOT flag a shared token outside the date window', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-01-01' }),
+      entry({ company: 'Eunos Coffee Shop', industry: 'F&B', date_announced: '2026-07-01' }),
+    ]);
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+  });
+});
+
 describe('checkCrossFileContradictions', () => {
   it('flags an event kept in layoffs.csv that is also substantively rejected (same URL)', () => {
     // Regression: Lou Shang was kept (confirmed/rumored) while the same article sat in

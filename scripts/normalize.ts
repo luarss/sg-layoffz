@@ -23,7 +23,20 @@ const COMPANY_ALIASES: Record<string, string> = {
   // "Loushang" and "Lou Shang" are the same HDB-themed cafe; the spacing variant
   // dodged dedup and produced contradictory confirmed/rumored/rejected rows.
   'loushang': 'Lou Shang',
+  // "YGG" is the ticker/short form of Yield Guild Games; the July-2026 Web3-arm
+  // shutdown (35 jobs) was scraped under both names and double-counted because the
+  // acronym shares no tokens with the full name.
+  'ygg': 'Yield Guild Games',
+  'yield guild games (ygg)': 'Yield Guild Games',
   'gxs bank': 'GXS Bank',
+  // Same June-2025 Jetstar Asia shutdown was scraped as both "Jetstar Asia" and
+  // "Qantas (Jetstar Asia)" (parent). The paren-strip would land the latter on
+  // "Qantas", splitting the event — pin it to Jetstar Asia before the strip.
+  'qantas (jetstar asia)': 'Jetstar Asia',
+  // Oatly's Dec-2024 SG plant closure reported under the legal name too.
+  'oatly group ab': 'Oatly',
+  // Coca-Cola's 2015 Tuas plant closure reported under the SG bottler name.
+  'coca-cola singapore beverages': 'Coca-Cola',
   'mediacorp pte ltd': 'Mediacorp',
   'mediacorp singapore': 'Mediacorp',
   'singtel': 'Singtel',

@@ -21,7 +21,8 @@ interface IntegrityWarning {
     | 'duplicate-source'
     | 'global-figure'
     | 'contradictory-verdict'
-    | 'cross-file-contradiction';
+    | 'cross-file-contradiction'
+    | 'possible-same-event';
   message: string;
 }
 
@@ -50,6 +51,58 @@ export const HEDGE_NOTES = /\bplans? to\b|\bexpected to\b|\bmay (?:lay|cut)\b|no
 // Singapore, affecting 1,860 staff").
 const GLOBAL_FIGURE =
   /\bglobal(?:ly)?\b|worldwide|across (?:divisions|the group)|sg office potentially|sites?\s+in\s+.+\s+and\s+|multiple (?:countries|markets|regions|sites)/i;
+
+// Cross-name same-event detection (see checkIntegrity). Two articles about ONE
+// event often arrive under different surface company names — "Eunos Canteen",
+// "Unnamed Eunos Coffee Shop", "友诺士咖啡店业者" — so the company-keyed grouping
+// never collates them. We instead look for a shared *rare* content token (e.g. a
+// location or brand) between near-date entries. These stopwords are the generic
+// layoff/closure vocabulary that co-occurs across unrelated events and must never
+// be treated as a shared-event signal.
+const SAME_EVENT_STOPWORDS = new Set([
+  'singapore', 'singaporean', 'singaporeans', 'company', 'companies', 'staff',
+  'employee', 'employees', 'worker', 'workers', 'jobs', 'role', 'roles',
+  'layoff', 'layoffs', 'retrench', 'retrenched', 'retrenchment', 'cuts', 'cut',
+  'cutting', 'closure', 'close', 'closing', 'closed', 'shut', 'shuts', 'cease',
+  'ceased', 'ceases', 'business', 'businesses', 'report', 'reported', 'reports',
+  'article', 'confirmed', 'rumored', 'event', 'events', 'loss', 'losses', 'losing',
+  'affected', 'affecting', 'operations', 'office', 'offices', 'store', 'stores',
+  'outlet', 'outlets', 'workforce', 'headcount', 'restructuring', 'reorganising',
+  'announced', 'announces', 'announce', 'plans', 'planned', 'future', 'implying',
+  'implies', 'imply', 'result', 'resulting', 'results', 'source', 'credible',
+  'news', 'coffee', 'shop', 'shops', 'stall', 'stalls', 'vendor', 'vendors',
+  'canteen', 'restaurant', 'eatery', 'hawker', 'lease', 'operator', 'operators',
+  'vacate', 'renew', 'renewal', 'month', 'months', 'located', 'nexus', 'classified',
+  'rules', 'given', 'their', 'that', 'this', 'with', 'from', 'have', 'been', 'will',
+  'more', 'than', 'over', 'also', 'into', 'part', 'amid', 'about', 'were', 'told',
+  'move', 'moving', 'forced', 'making', 'company', 'per', 'not', 'and', 'the',
+  'unnamed', 'undisclosed', 'specified', 'provided', 'identifiable', 'snippet',
+  // Generic corporate/industry words that recur across unrelated company names.
+  'bank', 'banks', 'group', 'holding', 'holdings', 'global', 'international',
+  'platforms', 'technologies', 'technology', 'services', 'solutions', 'capital',
+  'ventures', 'labs', 'studios', 'digital', 'mobile', 'house', 'centre', 'center',
+  'asia', 'pacific', 'financial', 'systems', 'media', 'partners', 'industries',
+]);
+
+// A significant token appearing in at most this many entries is treated as
+// distinctive enough (a location, brand, or unusual word) that two near-date
+// entries sharing it likely describe the same event.
+const SAME_EVENT_RARE_DF_MAX = 5;
+const SAME_EVENT_WINDOW_DAYS = 21;
+
+// Extract distinctive lowercase word tokens (≥4 letters, minus stopwords) from an
+// entry's company name — the one surface where a shared token is a genuine brand or
+// location signal ("jetstar", "oatly", "eunos"). The source URL (news-site section
+// slugs, Google-News base64) and the LLM `notes` prose are deliberately excluded:
+// both are full of incidental mid-frequency words that produce false matches.
+function significantTokens(entry: LayoffEntry): Set<string> {
+  const text = String(entry.company ?? '').toLowerCase();
+  const out = new Set<string>();
+  for (const tok of text.split(/[^a-z]+/)) {
+    if (tok.length >= 4 && !SAME_EVENT_STOPWORDS.has(tok)) out.add(tok);
+  }
+  return out;
+}
 
 // Normalise a source URL for duplicate detection: drop the Wayback prefix, tracking
 // query strings, and trailing slashes so the same underlying article matches.
@@ -191,6 +244,56 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
           });
         }
       }
+    }
+  }
+
+  // Cross-name same-event double-count: the company-keyed loop above only catches
+  // repeats under the *same* normalized name. This pass catches one event scraped
+  // under different names (e.g. the Eunos coffee-shop closure logged five times as
+  // "Eunos Canteen" / "Unnamed Eunos Coffee Shop" / "友诺士咖啡店业者"). Signal: two
+  // near-date, same-industry entries with different companies that share a token
+  // rare across the whole dataset (a location/brand, not generic layoff vocab).
+  const tokenSets = entries.map(significantTokens);
+  const tokenDf = new Map<string, number>();
+  for (const set of tokenSets) {
+    for (const t of set) tokenDf.set(t, (tokenDf.get(t) ?? 0) + 1);
+  }
+  const seenPair = new Set<string>();
+  for (let i = 0; i < entries.length; i++) {
+    const a = entries[i];
+    if (a.status === 'reference') continue;
+    for (let j = i + 1; j < entries.length; j++) {
+      const b = entries[j];
+      if (b.status === 'reference') continue;
+      if (a.industry !== b.industry) continue;
+      if (
+        normalizeCompany(a.company).toLowerCase() ===
+        normalizeCompany(b.company).toLowerCase()
+      ) {
+        continue; // same-company repeats are handled by the loop above
+      }
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const da = new Date(a.date_announced).getTime();
+      const db = new Date(b.date_announced).getTime();
+      if (!Number.isFinite(da) || !Number.isFinite(db)) continue;
+      if (Math.abs(db - da) > SAME_EVENT_WINDOW_DAYS * msPerDay) continue;
+
+      const shared: string[] = [];
+      for (const t of tokenSets[i]) {
+        if (tokenSets[j].has(t) && (tokenDf.get(t) ?? 0) <= SAME_EVENT_RARE_DF_MAX) {
+          shared.push(t);
+        }
+      }
+      if (shared.length === 0) continue;
+
+      const pairKey = `${i}|${j}`;
+      if (seenPair.has(pairKey)) continue;
+      seenPair.add(pairKey);
+      warnings.push({
+        rows: [i + 1, j + 1],
+        type: 'possible-same-event',
+        message: `Possible same event under different names: "${a.company}" (${a.date_announced}) and "${b.company}" (${b.date_announced}) share distinctive token(s) [${shared.join(', ')}]`,
+      });
     }
   }
 
@@ -369,5 +472,11 @@ export function validateCsv(filename: string): { valid: boolean; errors: Validat
 // imported by another script (e.g. scripts/llm-evals.ts reuses the predicates).
 if (process.argv[1]?.endsWith('validate.ts')) {
   const file = process.argv[3] || 'layoffs.csv';
-  validateCsv(file);
+  const { valid } = validateCsv(file);
+  // Exit non-zero on hard errors so CI actually gates on this. The scheduled-scrape
+  // workflow uses `npm run validate` as its only pre-commit data check (it does not
+  // run the test suite), so without this a corrupted row would log an error but the
+  // job would still succeed and auto-commit it to main. Integrity *warnings* leave
+  // `valid` true and do not block — they stay advisory by design.
+  if (!valid) process.exit(1);
 }

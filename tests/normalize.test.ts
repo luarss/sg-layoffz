@@ -60,6 +60,20 @@ describe('normalizeCompany — alias collapse (regression: split-event dedup bug
     expect(key('Acme (SEA)')).toBe(key('Acme'));
   });
 
+  it('collapses the "YGG" acronym to Yield Guild Games (regression: July-2026 double-count)', () => {
+    // "Ygg" and "Yield Guild Games" were both scraped for the same 35-job Web3-arm
+    // shutdown; the acronym shares no tokens with the full name, so it slipped dedup.
+    expect(key('Ygg')).toBe(key('Yield Guild Games'));
+    expect(key('YGG')).toBe(key('Yield Guild Games'));
+  });
+
+  it('bridges brand/parent/legal-name variants of one event to a single key', () => {
+    // Each of these pairs was double-counted in layoffs.csv under two names.
+    expect(key('Qantas (Jetstar Asia)')).toBe(key('Jetstar Asia'));
+    expect(key('Oatly Group AB')).toBe(key('Oatly'));
+    expect(key('Coca-Cola Singapore Beverages')).toBe(key('Coca-Cola'));
+  });
+
   it('does not collapse genuinely distinct companies', () => {
     expect(key('DBS')).not.toBe(key('OCBC'));
     expect(key('Grab')).not.toBe(key('Shopee'));
