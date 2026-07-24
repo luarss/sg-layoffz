@@ -20,7 +20,8 @@ const DATE_WINDOW_DAYS = 7;
 function score(entry: LayoffEntry): number {
   let s = 0;
   if (entry.status === 'confirmed') s += 3;
-  if (entry.jobs_cut != null && entry.jobs_cut !== 0) s += 2;
+  const jobs = entry.jobs_cut_sg ?? entry.jobs_cut_global;
+  if (jobs != null && jobs !== 0) s += 2;
   if (entry.pct_workforce != null && entry.pct_workforce !== 0) s += 1;
   if (entry.source_link?.includes('web.archive.org')) s += 2;
   if (entry.source_link && !entry.source_link.includes('news.google.com')) s += 1;

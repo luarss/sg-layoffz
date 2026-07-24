@@ -152,12 +152,16 @@ function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
     review_id: `src-${Date.now()}-${index}`,
     company: normalizeCompany(c.title.split(/cuts?|lays? off|retrench|sheds?/i)[0] || c.title),
     date_announced: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
-    jobs_cut: extractJobsFromText(combined),
+    date_reported: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
+    // Scraped headcount is unscoped at ingestion; default to SG, re-scoped by triage.
+    jobs_cut_sg: extractJobsFromText(combined),
+    jobs_cut_global: null,
     pct_workforce: null,
     industry: 'Other',
     source_link: c.url,
     notes: `From ${c.source} [gn:${titleFingerprint(c.title)}]`,
     status: 'rumored',
+    event_id: '',
     candidate_urls: c.url,
     snippet: c.snippet.slice(0, 300),
   };

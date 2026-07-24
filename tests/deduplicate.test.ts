@@ -6,12 +6,15 @@ function entry(over: Partial<LayoffEntry> = {}): LayoffEntry {
   return {
     company: 'Grab',
     date_announced: '2026-05-01',
-    jobs_cut: null,
+    date_reported: '2026-05-01',
+    jobs_cut_sg: null,
+    jobs_cut_global: null,
     pct_workforce: null,
     industry: 'Tech',
     source_link: 'https://www.example.com/a',
     notes: '',
     status: 'confirmed',
+    event_id: 'grab-2026-05',
     ...over,
   };
 }

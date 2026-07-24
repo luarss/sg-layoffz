@@ -18,10 +18,13 @@ function displayEntry(entry: ReviewEntry, index: number, total: number) {
   console.log(`Entry #${index + 1} of ${total}`);
   console.log(`${'─'.repeat(70)}`);
   console.log(`  Company:      ${entry.company}`);
-  console.log(`  Date:         ${entry.date_announced}`);
-  console.log(`  Jobs cut:     ${entry.jobs_cut ?? 'Unknown'}`);
+  console.log(`  Date announced: ${entry.date_announced}`);
+  console.log(`  Date reported:  ${entry.date_reported ?? 'Unknown'}`);
+  console.log(`  Jobs cut (SG):  ${entry.jobs_cut_sg ?? 'Unknown'}`);
+  console.log(`  Jobs cut (global): ${entry.jobs_cut_global ?? 'Unknown'}`);
   console.log(`  % Workforce:  ${entry.pct_workforce ?? 'Unknown'}`);
   console.log(`  Industry:     ${entry.industry}`);
+  console.log(`  Event id:     ${entry.event_id || '(none)'}`);
   console.log(`  Source:       ${entry.source_link}`);
   console.log(`  Snippet:      ${entry.snippet?.slice(0, 200) || 'N/A'}`);
   if (entry.notes) {
@@ -42,12 +45,22 @@ async function editEntry(
     { key: 'company', label: 'Company' },
     {
       key: 'date_announced',
-      label: 'Date (YYY-MM-DD)',
+      label: 'Date announced (YYYY-MM-DD)',
       validate: (v: string) => /^\d{4}-\d{2}-\d{2}$/.test(v),
     },
     {
-      key: 'jobs_cut',
-      label: 'Jobs cut',
+      key: 'date_reported',
+      label: 'Date reported (YYYY-MM-DD)',
+      validate: (v: string) => v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v),
+    },
+    {
+      key: 'jobs_cut_sg',
+      label: 'Jobs cut (Singapore)',
+      validate: (v: string) => v === '' || !isNaN(Number(v)),
+    },
+    {
+      key: 'jobs_cut_global',
+      label: 'Jobs cut (global)',
       validate: (v: string) => v === '' || !isNaN(Number(v)),
     },
     {
@@ -67,6 +80,7 @@ async function editEntry(
       label: 'Status (rumored/confirmed/reference)',
       validate: (v: string) => ['rumored', 'confirmed', 'reference'].includes(v),
     },
+    { key: 'event_id', label: 'Event id (kebab-case)' },
   ];
 
   for (const field of fields) {
@@ -85,11 +99,11 @@ async function editEntry(
   }
 
   // Convert numeric fields
-  if (updated.jobs_cut !== null && updated.jobs_cut !== undefined) {
-    updated.jobs_cut = Number(updated.jobs_cut);
-  }
-  if (updated.pct_workforce !== null && updated.pct_workforce !== undefined) {
-    updated.pct_workforce = Number(updated.pct_workforce);
+  for (const k of ['jobs_cut_sg', 'jobs_cut_global', 'pct_workforce'] as const) {
+    const v = updated[k];
+    if (v !== null && v !== undefined && (v as any) !== '') {
+      (updated as any)[k] = Number(v);
+    }
   }
 
   return updated;

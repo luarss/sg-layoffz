@@ -32,9 +32,18 @@ export const VerdictSchema = z.object({
   confidence: z.enum(CONFIDENCES).catch('low'),
   company: z.string().catch(''),
   industry: z.enum(INDUSTRIES).catch('Other'),
+  // Event date (when it happened / was announced by the company) vs report date
+  // (article publication date). Both coerce to '' so a missing field never fails.
   date_announced: z.string().catch(''),
-  jobs_cut: z.number().nullable().catch(null),
+  date_reported: z.string().catch(''),
+  // Singapore vs global headcount, explicitly separated. A worldwide/foreign figure
+  // MUST go in jobs_cut_global (or null), never jobs_cut_sg.
+  jobs_cut_sg: z.number().nullable().catch(null),
+  jobs_cut_global: z.number().nullable().catch(null),
   pct_workforce: z.number().nullable().catch(null),
+  // Kebab-case slug for the underlying event; the model reuses an existing entry's
+  // event_id when the story matches, else proposes a new one.
+  event_id: z.string().catch(''),
   notes: z.string().catch(''),
   // Models emit `rejection_reason: null` on accept verdicts (not just omit it), so
   // allow null and absent as well as a string — otherwise every confirmed/rumored
@@ -82,8 +91,14 @@ export function coerceVerdict(raw: string, entry: LayoffEntry): LLMVerdict {
     date_announced: /^\d{4}-\d{2}-\d{2}$/.test(p.date_announced || '')
       ? p.date_announced!
       : entry.date_announced,
-    jobs_cut: typeof p.jobs_cut === 'number' ? p.jobs_cut : entry.jobs_cut,
+    date_reported: /^\d{4}-\d{2}-\d{2}$/.test(p.date_reported || '')
+      ? p.date_reported!
+      : entry.date_reported,
+    jobs_cut_sg: typeof p.jobs_cut_sg === 'number' ? p.jobs_cut_sg : entry.jobs_cut_sg,
+    jobs_cut_global:
+      typeof p.jobs_cut_global === 'number' ? p.jobs_cut_global : entry.jobs_cut_global,
     pct_workforce: typeof p.pct_workforce === 'number' ? p.pct_workforce : entry.pct_workforce,
+    event_id: typeof p.event_id === 'string' && p.event_id ? p.event_id : entry.event_id,
     notes: typeof p.notes === 'string' && p.notes ? p.notes : '',
     rejection_reason: p.rejection_reason,
   };

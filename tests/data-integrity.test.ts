@@ -18,7 +18,7 @@ describe('committed data integrity', () => {
     expect(errors).toEqual([]);
   });
 
-  it('every row in layoffs.csv and rejected.csv has exactly 8 fields', () => {
+  it('every row in layoffs.csv and rejected.csv has exactly 11 fields', () => {
     // A missing trailing newline on append glues the next row's first field onto the
     // previous row's last field, producing a row with too many or too few columns.
     // Parse raw (header:false) so a merged row surfaces as a field-count mismatch.

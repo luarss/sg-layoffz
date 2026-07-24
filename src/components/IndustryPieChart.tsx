@@ -57,7 +57,7 @@ export default function IndustryPieChart({ data }: IndustryPieChartProps) {
           label: (ctx: any) => {
             const idx = ctx.dataIndex;
             const d = data[idx];
-            return `${d.industry}: ${d.jobs.toLocaleString()} jobs (${d.count} ${d.count === 1 ? 'company' : 'companies'})`;
+            return `${d.industry}: ${d.jobs.toLocaleString()} SG jobs (${d.count} ${d.count === 1 ? 'event' : 'events'})`;
           },
         },
       },

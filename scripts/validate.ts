@@ -162,9 +162,21 @@ export function validateEntry(entry: LayoffEntry, rowIndex: number): ValidationE
     errors.push({ row: r, field: 'date_announced', message: 'Date must be YYYY-MM-DD' });
   }
 
-  if (entry.jobs_cut !== null && entry.jobs_cut !== undefined) {
-    if (typeof entry.jobs_cut !== 'number' || entry.jobs_cut < 0) {
-      errors.push({ row: r, field: 'jobs_cut', message: 'Must be a positive number or empty' });
+  if (
+    entry.date_reported !== null &&
+    entry.date_reported !== undefined &&
+    String(entry.date_reported).trim() !== '' &&
+    !/^\d{4}-\d{2}-\d{2}$/.test(String(entry.date_reported))
+  ) {
+    errors.push({ row: r, field: 'date_reported', message: 'Date must be YYYY-MM-DD or empty' });
+  }
+
+  for (const field of ['jobs_cut_sg', 'jobs_cut_global'] as const) {
+    const v = entry[field];
+    if (v !== null && v !== undefined && v !== ('' as any)) {
+      if (typeof v !== 'number' || v < 0) {
+        errors.push({ row: r, field, message: 'Must be a positive number or empty' });
+      }
     }
   }
 
@@ -185,6 +197,10 @@ export function validateEntry(entry: LayoffEntry, rowIndex: number): ValidationE
 
   if (!entry.source_link || String(entry.source_link).trim() === '') {
     errors.push({ row: r, field: 'source_link', message: 'Source link is required' });
+  }
+
+  if (!entry.event_id || String(entry.event_id).trim() === '') {
+    errors.push({ row: r, field: 'event_id', message: 'Event id is required' });
   }
 
   return errors;
@@ -210,6 +226,15 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
       for (let j = i + 1; j < group.length; j++) {
         const a = group[i];
         const b = group[j];
+        // Rows that deliberately share an event_id are follow-up coverage of ONE
+        // event (that is what event_id records), so they are not a double-count.
+        if (
+          a.entry.event_id &&
+          b.entry.event_id &&
+          a.entry.event_id === b.entry.event_id
+        ) {
+          continue;
+        }
         const msPerDay = 1000 * 60 * 60 * 24;
         const days = Math.round(
           (new Date(b.entry.date_announced).getTime() - new Date(a.entry.date_announced).getTime()) / msPerDay
@@ -272,6 +297,8 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
       ) {
         continue; // same-company repeats are handled by the loop above
       }
+      // Cross-name rows sharing an event_id are an intentionally-linked single event.
+      if (a.event_id && b.event_id && a.event_id === b.event_id) continue;
       const msPerDay = 1000 * 60 * 60 * 24;
       const da = new Date(a.date_announced).getTime();
       const db = new Date(b.date_announced).getTime();
@@ -363,13 +390,19 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
       });
     }
 
-    // Confirmed entry carrying a global headcount — inflates totalJobsCut, which is
-    // SG-specific. Flag so the figure can be cleared or scoped to Singapore.
-    if (e.status === 'confirmed' && e.jobs_cut != null && e.jobs_cut >= 1000 && GLOBAL_FIGURE.test(notes)) {
+    // Confirmed entry whose SG headcount looks like a global/worldwide figure —
+    // jobs_cut_sg feeds totalJobsCut, so a worldwide number parked in that column
+    // inflates the SG headline. (A global figure belongs in jobs_cut_global.)
+    if (
+      e.status === 'confirmed' &&
+      e.jobs_cut_sg != null &&
+      e.jobs_cut_sg >= 1000 &&
+      GLOBAL_FIGURE.test(notes)
+    ) {
       warnings.push({
         rows: [i + 1],
         type: 'global-figure',
-        message: `Global figure on confirmed entry: "${e.company}" jobs_cut=${e.jobs_cut} reads as worldwide — counted into SG totalJobsCut`,
+        message: `Global figure in jobs_cut_sg: "${e.company}" jobs_cut_sg=${e.jobs_cut_sg} reads as worldwide — move to jobs_cut_global`,
       });
     }
   }

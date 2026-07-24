@@ -196,6 +196,12 @@ This tracker counts Singapore jobs only. For headcount_scope, classify the jobs_
 - "unknown" — no headcount, or scope unclear
 A worldwide or foreign figure must NOT be reported as "singapore".
 
+## Headcount split (Singapore vs global)
+Split the headcount into two fields. A worldwide/foreign figure MUST go in
+jobs_cut_global (never jobs_cut_sg):
+- "jobs_cut_sg" — Singapore roles only, else null.
+- "jobs_cut_global" — the worldwide/foreign/regional figure the source gave, else null.
+
 ## Output
 Return ONLY a valid JSON object (no markdown, no extra text):
 {
@@ -204,8 +210,11 @@ Return ONLY a valid JSON object (no markdown, no extra text):
   "company": "Company Name",
   "industry": "<one of the allowed industries>",
   "date_announced": "YYYY-MM-DD",
-  "jobs_cut": <integer or null>,
+  "date_reported": "YYYY-MM-DD",
+  "jobs_cut_sg": <integer or null>,
+  "jobs_cut_global": <integer or null>,
   "pct_workforce": <number or null>,
+  "event_id": "kebab-case-slug",
   "headcount_scope": "singapore" | "partial" | "global" | "unknown",
   "notes": "1–2 sentence reason for your decision",
   "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal> (only when verdict=rejected)"
@@ -217,7 +226,8 @@ function buildUserPrompt(entry: LayoffEntry): string {
     `Date: ${entry.date_announced}`,
     `Source URL: ${entry.source_link}`,
   ];
-  if (entry.jobs_cut != null) lines.push(`Jobs cut (scraped): ${entry.jobs_cut}`);
+  if (entry.jobs_cut_sg != null) lines.push(`Jobs cut SG (scraped): ${entry.jobs_cut_sg}`);
+  if (entry.jobs_cut_global != null) lines.push(`Jobs cut global (scraped): ${entry.jobs_cut_global}`);
   if (entry.pct_workforce != null) lines.push(`% workforce (scraped): ${entry.pct_workforce}`);
   if (entry.notes) lines.push(`Notes/snippet: ${entry.notes}`);
   return lines.join('\n');
@@ -263,8 +273,11 @@ async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promi
     company: entry.company,
     industry: 'Other',
     date_announced: entry.date_announced,
-    jobs_cut: null,
+    date_reported: entry.date_reported,
+    jobs_cut_sg: null,
+    jobs_cut_global: null,
     pct_workforce: null,
+    event_id: '',
     notes: 'All providers failed',
   };
 }
@@ -368,15 +381,21 @@ const GOLDEN_GATES = {
 };
 
 function goldenToEntry(c: GoldenCase): LayoffEntry {
+  // The golden fixture carries a single jobs_cut plus a global_figure flag. Feed it to
+  // the model as the scraped value on the correct side of the SG/global split so the
+  // input mirrors what production triage sees.
   return {
     company: c.company,
     date_announced: c.date_announced,
-    jobs_cut: c.jobs_cut,
+    date_reported: c.date_announced,
+    jobs_cut_sg: c.global_figure ? null : c.jobs_cut,
+    jobs_cut_global: c.global_figure ? c.jobs_cut : null,
     pct_workforce: c.pct_workforce,
     industry: 'Other',
     source_link: c.source_link,
     notes: c.notes,
     status: 'confirmed', // unused by the prompt
+    event_id: '',
   };
 }
 

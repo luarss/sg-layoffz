@@ -39,6 +39,7 @@ export default function Home({ entries, years, latestYear, globalLatestDate }: H
           <Headline
             jobsCut={stats.totalJobsCut}
             companies={stats.totalCompanies}
+            undisclosedEvents={stats.undisclosedEvents}
             year={filters.year}
             years={years}
             onYearChange={(year) => setFilters({ ...filters, year })}

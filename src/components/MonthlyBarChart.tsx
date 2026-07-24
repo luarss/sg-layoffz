@@ -68,11 +68,11 @@ export default function MonthlyBarChart({ data, metric = 'jobs' }: MonthlyBarCha
           label: (ctx: any) => {
             const n = ctx.parsed.y;
             if (isCompanies) {
-              return `${ctx.dataset.label}: ${n} ${n === 1 ? 'company' : 'companies'}`;
+              return `${ctx.dataset.label}: ${n} ${n === 1 ? 'event' : 'events'}`;
             }
             const idx = ctx.dataIndex;
             const d = data[idx];
-            return `${d.jobs.toLocaleString()} jobs (${d.count} ${d.count === 1 ? 'company' : 'companies'})`;
+            return `${d.jobs.toLocaleString()} SG jobs (${d.count} ${d.count === 1 ? 'event' : 'events'})`;
           },
         },
       },

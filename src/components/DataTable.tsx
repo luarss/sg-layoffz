@@ -8,18 +8,52 @@ import {
   SortingState,
   flexRender,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { LayoffEntry } from '@/lib/types';
 
 interface DataTableProps {
   entries: LayoffEntry[];
 }
 
-const COLUMNS: ColumnDef<LayoffEntry>[] = [
+// Rows sharing an event_id are follow-up coverage of one event. Given the visible
+// rows, return the set of row identities that are NOT the primary (earliest by
+// date_announced) row of their event, so the table can badge them as follow-ups.
+function computeFollowUps(entries: LayoffEntry[]): Set<LayoffEntry> {
+  const byEvent = new Map<string, LayoffEntry[]>();
+  for (const e of entries) {
+    if (!e.event_id) continue;
+    if (!byEvent.has(e.event_id)) byEvent.set(e.event_id, []);
+    byEvent.get(e.event_id)!.push(e);
+  }
+  const followUps = new Set<LayoffEntry>();
+  for (const rows of byEvent.values()) {
+    if (rows.length < 2) continue;
+    const sorted = [...rows].sort((a, b) =>
+      String(a.date_announced).localeCompare(String(b.date_announced))
+    );
+    for (const r of sorted.slice(1)) followUps.add(r);
+  }
+  return followUps;
+}
+
+function buildColumns(followUps: Set<LayoffEntry>): ColumnDef<LayoffEntry>[] {
+  return [
   {
     accessorKey: 'company',
     header: 'Company',
-    cell: (info) => <span className="font-semibold text-gray-900">{info.getValue<string>()}</span>,
+    cell: (info) => (
+      <span className="inline-flex items-center gap-2">
+        <span className="font-semibold text-gray-900">{info.getValue<string>()}</span>
+        {followUps.has(info.row.original) && (
+          <span
+            className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500"
+            title={`Follow-up coverage of event "${info.row.original.event_id}"`}
+          >
+            follow-up
+          </span>
+        )}
+      </span>
+    ),
   },
   {
     accessorKey: 'date_announced',
@@ -27,11 +61,25 @@ const COLUMNS: ColumnDef<LayoffEntry>[] = [
     cell: (info) => info.getValue<string>(),
   },
   {
-    accessorKey: 'jobs_cut',
-    header: 'Jobs Cut',
+    accessorKey: 'jobs_cut_sg',
+    header: 'Jobs Cut (SG)',
     cell: (info) => {
-      const v = info.getValue<number | null>();
-      return v ? v.toLocaleString() : <span className="text-gray-400">—</span>;
+      const sg = info.getValue<number | null>();
+      const global = info.row.original.jobs_cut_global;
+      return (
+        <span>
+          {sg != null ? (
+            <span className="tabular-nums">{sg.toLocaleString()}</span>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+          {global != null && (
+            <span className="ml-1 text-xs text-gray-400">
+              ({global.toLocaleString()} global)
+            </span>
+          )}
+        </span>
+      );
     },
   },
   {
@@ -96,14 +144,18 @@ const COLUMNS: ColumnDef<LayoffEntry>[] = [
       );
     },
   },
-];
+  ];
+}
 
 export default function DataTable({ entries }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const followUps = useMemo(() => computeFollowUps(entries), [entries]);
+  const columns = useMemo(() => buildColumns(followUps), [followUps]);
+
   const table = useReactTable({
     data: entries,
-    columns: COLUMNS,
+    columns,
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

@@ -12,12 +12,15 @@ function entry(over: Partial<LayoffEntry> = {}): LayoffEntry {
   return {
     company: 'Acme',
     date_announced: '2026-05-01',
-    jobs_cut: null,
+    date_reported: '2026-05-01',
+    jobs_cut_sg: null,
+    jobs_cut_global: null,
     pct_workforce: null,
     industry: 'Tech',
     source_link: 'https://www.straitstimes.com/example',
     notes: '',
     status: 'confirmed',
+    event_id: '', // empty by default so duplicate/double-count checks are not skipped
     ...over,
   };
 }
@@ -54,18 +57,29 @@ describe('HEDGE_NOTES', () => {
 
 describe('validateEntry', () => {
   it('accepts a well-formed entry', () => {
-    expect(validateEntry(entry(), 0)).toHaveLength(0);
+    expect(validateEntry(entry({ event_id: 'acme-2026-05' }), 0)).toHaveLength(0);
   });
 
-  it('rejects missing company, bad date, and bad status', () => {
+  it('rejects missing company, bad date, bad status, and missing event_id', () => {
     const errs = validateEntry(
-      entry({ company: '', date_announced: '2026/05/01', status: 'bogus' as any }),
+      entry({ company: '', date_announced: '2026/05/01', status: 'bogus' as any, event_id: '' }),
       0
     );
     const fields = errs.map((e) => e.field);
     expect(fields).toContain('company');
     expect(fields).toContain('date_announced');
     expect(fields).toContain('status');
+    expect(fields).toContain('event_id');
+  });
+
+  it('rejects a negative or non-numeric jobs_cut_sg / jobs_cut_global', () => {
+    const errs = validateEntry(
+      entry({ jobs_cut_sg: -5 as any, jobs_cut_global: 'lots' as any, event_id: 'x' }),
+      0
+    );
+    const fields = errs.map((e) => e.field);
+    expect(fields).toContain('jobs_cut_sg');
+    expect(fields).toContain('jobs_cut_global');
   });
 });
 
@@ -82,16 +96,26 @@ describe('checkIntegrity', () => {
     // Regression: BioNTech Singapore + BioNTech on the same date must collapse.
     const w = checkIntegrity([
       entry({ company: 'BioNTech Singapore', date_announced: '2026-05-05' }),
-      entry({ company: 'BioNTech', date_announced: '2026-05-05', jobs_cut: 1860 }),
+      entry({ company: 'BioNTech', date_announced: '2026-05-05', jobs_cut_global: 1860 }),
     ]);
     expect(w.some((x) => x.type === 'duplicate')).toBe(true);
   });
 
-  it('flags a confirmed multi-site headcount as a global figure', () => {
+  it('does NOT flag two rows that deliberately share an event_id as a double-count', () => {
+    // event_id records that these are follow-up coverage of ONE event.
+    const w = checkIntegrity([
+      entry({ company: 'BioNTech', date_announced: '2026-04-02', event_id: 'biontech-2026-04', source_link: 'https://www.straitstimes.com/a' }),
+      entry({ company: 'BioNTech', date_announced: '2026-05-05', event_id: 'biontech-2026-04', source_link: 'https://www.straitstimes.com/b' }),
+    ]);
+    expect(w.some((x) => x.type === 'double-count')).toBe(false);
+    expect(w.some((x) => x.type === 'duplicate')).toBe(false);
+  });
+
+  it('flags a confirmed multi-site headcount parked in jobs_cut_sg as a global figure', () => {
     const w = checkIntegrity([
       entry({
         company: 'BioNTech',
-        jobs_cut: 1860,
+        jobs_cut_sg: 1860,
         notes: 'closure of sites in Germany and Singapore, affecting 1,860 staff',
       }),
     ]);
@@ -99,7 +123,7 @@ describe('checkIntegrity', () => {
   });
 
   it('flags a confirmed entry with a vague company name', () => {
-    const w = checkIntegrity([entry({ company: 'Another Legacy Bank', jobs_cut: 777 })]);
+    const w = checkIntegrity([entry({ company: 'Another Legacy Bank', jobs_cut_sg: 777 })]);
     expect(w.some((x) => x.type === 'vague-company')).toBe(true);
   });
 

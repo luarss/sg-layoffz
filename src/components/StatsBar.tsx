@@ -17,20 +17,20 @@ export default function StatsBar({ stats }: StatsBarProps) {
   return (
     <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
-        label="Total Jobs Cut"
+        label="SG Jobs Cut (confirmed)"
         value={stats.totalJobsCut.toLocaleString()}
       />
       <StatCard
-        label="Companies Tracked"
+        label="Companies"
         value={stats.totalCompanies.toLocaleString()}
       />
       <StatCard
-        label="Confirmed Entries"
+        label="Confirmed Events"
         value={stats.totalConfirmed.toLocaleString()}
       />
       <StatCard
-        label="Latest Entry"
-        value={stats.latestEntryDate || '—'}
+        label="Undisclosed Events"
+        value={stats.undisclosedEvents.toLocaleString()}
       />
     </dl>
   );

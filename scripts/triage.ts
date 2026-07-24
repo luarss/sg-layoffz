@@ -22,12 +22,15 @@ import { checkIntegrity } from './validate';
 type ResolvedRow = {
   company: string;
   date_announced: string;
-  jobs_cut: number | null;
+  date_reported: string;
+  jobs_cut_sg: number | null;
+  jobs_cut_global: number | null;
   pct_workforce: number | null;
   industry: string;
   source_link: string;
   notes: string;
   status: string;
+  event_id: string;
   canonical_url: string;
 };
 
@@ -40,10 +43,13 @@ type Override = Partial<{
   verdict: Verdict;
   company: string;
   industry: string;
-  jobs_cut: number;
+  jobs_cut_sg: number;
+  jobs_cut_global: number;
   pct_workforce: number;
   notes: string;
   date_announced: string;
+  date_reported: string;
+  event_id: string;
 }>;
 
 // Load canonical entries from layoffs.csv — used both as clustering anchors
@@ -357,13 +363,31 @@ function preClassify(row: ResolvedRow, idx: number): PreClassification {
   };
 }
 
+// Derive a kebab-case event_id from the (canonical) company + event month. Used only
+// when neither the resolved row nor a manual override supplies one — new events get a
+// fresh slug; reuse of an existing event_id happens upstream (LLM triage / overrides).
+function eventIdFor(company: string, date: string): string {
+  const slug = normalizeCompany(company || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const month = (date || '').slice(0, 7);
+  return `${slug || 'event'}-${month || 'unknown'}`;
+}
+
 function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): LayoffEntry {
   const industry = (override.industry as string) || row.industry || 'Other';
   const finalIndustry = (INDUSTRIES as readonly string[]).includes(industry) ? industry : 'Other';
+  const company = override.company ?? row.company;
+  const date_announced = override.date_announced ?? row.date_announced;
+  const event_id = override.event_id || row.event_id || eventIdFor(company, date_announced);
   return {
-    company: override.company ?? row.company,
-    date_announced: override.date_announced ?? row.date_announced,
-    jobs_cut: override.jobs_cut ?? (row.jobs_cut == null ? null : Number(row.jobs_cut)),
+    company,
+    date_announced,
+    date_reported: override.date_reported ?? row.date_reported ?? row.date_announced,
+    jobs_cut_sg: override.jobs_cut_sg ?? (row.jobs_cut_sg == null ? null : Number(row.jobs_cut_sg)),
+    jobs_cut_global:
+      override.jobs_cut_global ?? (row.jobs_cut_global == null ? null : Number(row.jobs_cut_global)),
     pct_workforce: override.pct_workforce ?? (row.pct_workforce == null ? null : Number(row.pct_workforce)),
     industry: finalIndustry,
     source_link: row.canonical_url || row.source_link,
@@ -372,6 +396,7 @@ function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): 
       verdict === 'rejected' || verdict === 'queue'
         ? ((row.status as LayoffEntry['status']) || 'rumored')
         : (verdict as LayoffEntry['status']),
+    event_id,
   };
 }
 
@@ -429,7 +454,7 @@ function main() {
     date_announced: r.date_announced || '',
     url: r.canonical_url || r.source_link || '',
     notes: r.notes || '',
-    jobs_cut: r.jobs_cut == null ? null : Number(r.jobs_cut),
+    jobs_cut: r.jobs_cut_sg != null ? Number(r.jobs_cut_sg) : r.jobs_cut_global != null ? Number(r.jobs_cut_global) : null,
     eventRuleMatched: preClass[idx].eventRuleMatched,
     brokenUrl: /BROKEN URL/i.test(r.notes || ''),
   }));

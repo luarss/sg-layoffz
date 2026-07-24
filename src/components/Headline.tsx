@@ -3,6 +3,7 @@
 interface HeadlineProps {
   jobsCut: number;
   companies: number;
+  undisclosedEvents: number;
   year: string;
   years: number[];
   onYearChange: (year: string) => void;
@@ -11,6 +12,7 @@ interface HeadlineProps {
 export default function Headline({
   jobsCut,
   companies,
+  undisclosedEvents,
   year,
   years,
   onYearChange,
@@ -21,7 +23,7 @@ export default function Headline({
         <span className="text-3xl sm:text-4xl font-bold text-sky-500 tabular-nums">
           {jobsCut.toLocaleString()}
         </span>{' '}
-        <span className="text-gray-600">employees laid off</span>
+        <span className="text-gray-600">confirmed Singapore jobs cut</span>
       </span>
       <span className="text-gray-400" aria-hidden>
         ·
@@ -30,8 +32,21 @@ export default function Headline({
         <span className="text-3xl sm:text-4xl font-bold text-sky-500 tabular-nums">
           {companies.toLocaleString()}
         </span>{' '}
-        <span className="text-gray-600">companies w/ layoffs</span>
+        <span className="text-gray-600">companies</span>
       </span>
+      {undisclosedEvents > 0 && (
+        <>
+          <span className="text-gray-400" aria-hidden>
+            ·
+          </span>
+          <span className="text-gray-500 text-sm sm:text-base">
+            <span className="font-semibold text-gray-600 tabular-nums">
+              {undisclosedEvents.toLocaleString()}
+            </span>{' '}
+            more events with undisclosed headcount
+          </span>
+        </>
+      )}
       <span className="text-gray-400" aria-hidden>
         ·
       </span>

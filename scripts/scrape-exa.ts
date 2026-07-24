@@ -176,12 +176,16 @@ function resultToReviewEntry(r: ExaResult, index: number): ReviewEntry {
     review_id: `exa-${Date.now()}-${index}`,
     company,
     date_announced: parseDate(r.publishedDate || '') || new Date().toISOString().slice(0, 10),
-    jobs_cut: extractJobsFromText(combined),
+    date_reported: parseDate(r.publishedDate || '') || new Date().toISOString().slice(0, 10),
+    // Scraped headcount is unscoped at ingestion; default to SG, re-scoped by triage.
+    jobs_cut_sg: extractJobsFromText(combined),
+    jobs_cut_global: null,
     pct_workforce: null,
     industry: 'Other',
     source_link: r.url,
     notes: `From Exa [gn:${titleFingerprint(title)}]`,
     status: 'rumored',
+    event_id: '',
     candidate_urls: r.url,
     snippet: text.slice(0, 300),
   };

@@ -246,7 +246,7 @@ export function anchorsFromLayoffs(rows: LayoffEntry[]): ClusterNode[] {
     date_announced: r.date_announced || '',
     url: r.source_link || '',
     notes: r.notes || '',
-    jobs_cut: r.jobs_cut == null ? null : Number(r.jobs_cut),
+    jobs_cut: r.jobs_cut_sg != null ? Number(r.jobs_cut_sg) : r.jobs_cut_global != null ? Number(r.jobs_cut_global) : null,
   }));
 }
 

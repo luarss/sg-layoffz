@@ -25,6 +25,18 @@ import OpenAI from 'openai';
 import { readCsv, appendCsv, writeCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
 import { LLMVerdict, coerceVerdict } from '../src/lib/verdict';
+import { normalizeCompany } from './normalize';
+
+// Derive a kebab-case event_id from company + event month, used when the model does
+// not propose one (or proposes a blank).
+function eventIdFor(company: string, date: string): string {
+  const slug = normalizeCompany(company || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const month = (date || '').slice(0, 7);
+  return `${slug || 'event'}-${month || 'unknown'}`;
+}
 
 interface ProviderConfig {
   name: string;
@@ -144,6 +156,26 @@ NOT reject a Singapore closure as "not a layoff" or as having "no Singapore nexu
 ## Allowed Industries
 Tech, Finance, Manufacturing, Retail, F&B, Real Estate, Healthcare, Education, Other
 
+## Headcount Scope — Singapore vs global
+This tracker counts SINGAPORE jobs only. Split the headcount into two fields:
+- "jobs_cut_sg" — number of SINGAPORE roles cut (only when the figure is specifically
+  Singapore staff). Otherwise null.
+- "jobs_cut_global" — the worldwide/foreign/regional figure the source gave (e.g.
+  "18,000 jobs globally", "1,000 jobs in Britain", "8,000 back-office roles"). Otherwise null.
+A worldwide or foreign figure MUST go in jobs_cut_global, NEVER jobs_cut_sg. If the
+number is Singapore-specific, use jobs_cut_sg and leave jobs_cut_global null. If no
+headcount is disclosed, both are null.
+
+## Event date vs report date
+- "date_announced" — when the layoff event happened / was announced by the company.
+- "date_reported" — the article's publication date (may be later; follow-up coverage).
+
+## Event id
+"event_id" is a kebab-case slug identifying the underlying layoff EVENT (e.g.
+"standard-chartered-2026-ai"). If this story is follow-up coverage of an event that
+already appears in the "Existing events for this company" list below, REUSE that exact
+event_id. Only mint a new slug (company-YYYY-MM) when it is a genuinely new event.
+
 ## Output
 Return ONLY a valid JSON object (no markdown, no extra text):
 {
@@ -152,21 +184,54 @@ Return ONLY a valid JSON object (no markdown, no extra text):
   "company": "Company Name",
   "industry": "<one of the allowed industries>",
   "date_announced": "YYYY-MM-DD",
-  "jobs_cut": <integer or null>,
+  "date_reported": "YYYY-MM-DD",
+  "jobs_cut_sg": <integer or null>,
+  "jobs_cut_global": <integer or null>,
   "pct_workforce": <number or null>,
+  "event_id": "kebab-case-slug",
   "notes": "1–2 sentence reason for your decision",
   "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal> (only when verdict=rejected)"
 }`;
 
-function buildUserPrompt(entry: LayoffEntry): string {
+// Existing events per normalized company — lets the model reuse an event_id when the
+// queue row is follow-up coverage of an already-tracked event.
+type EventHint = { event_id: string; date_announced: string; company: string };
+function buildEventIndex(layoffs: LayoffEntry[]): Map<string, EventHint[]> {
+  const byCompany = new Map<string, Map<string, EventHint>>();
+  for (const e of layoffs) {
+    if (!e.event_id) continue;
+    const key = normalizeCompany(e.company || '').toLowerCase();
+    if (!byCompany.has(key)) byCompany.set(key, new Map());
+    const seen = byCompany.get(key)!;
+    if (!seen.has(e.event_id)) {
+      seen.set(e.event_id, { event_id: e.event_id, date_announced: e.date_announced, company: e.company });
+    }
+  }
+  const out = new Map<string, EventHint[]>();
+  for (const [k, m] of byCompany) out.set(k, [...m.values()]);
+  return out;
+}
+
+function buildUserPrompt(entry: LayoffEntry, eventIndex: Map<string, EventHint[]>): string {
   const lines: string[] = [
     `Title/Company: ${entry.company}`,
     `Date: ${entry.date_announced}`,
     `Source URL: ${entry.source_link}`,
   ];
-  if (entry.jobs_cut != null) lines.push(`Jobs cut (scraped): ${entry.jobs_cut}`);
+  const sg = entry.jobs_cut_sg;
+  const global = entry.jobs_cut_global;
+  if (sg != null) lines.push(`Jobs cut SG (scraped): ${sg}`);
+  if (global != null) lines.push(`Jobs cut global (scraped): ${global}`);
   if (entry.pct_workforce != null) lines.push(`% workforce (scraped): ${entry.pct_workforce}`);
   if (entry.notes) lines.push(`Notes/snippet: ${entry.notes}`);
+
+  const hints = eventIndex.get(normalizeCompany(entry.company || '').toLowerCase());
+  if (hints && hints.length > 0) {
+    lines.push('Existing events for this company (reuse an event_id if this is follow-up coverage):');
+    for (const h of hints.slice(0, 12)) {
+      lines.push(`  - ${h.event_id} (${h.date_announced})`);
+    }
+  }
   return lines.join('\n');
 }
 
@@ -174,7 +239,8 @@ function buildUserPrompt(entry: LayoffEntry): string {
 // Returns the verdict and which provider ultimately succeeded.
 async function evaluateEntry(
   chain: ProviderConfig[],
-  entry: LayoffEntry
+  entry: LayoffEntry,
+  eventIndex: Map<string, EventHint[]>
 ): Promise<{ verdict: LLMVerdict; provider: string }> {
   const errors: string[] = [];
 
@@ -184,7 +250,7 @@ async function evaluateEntry(
         model: provider.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(entry) },
+          { role: 'user', content: buildUserPrompt(entry, eventIndex) },
         ],
         temperature: 0,
         max_tokens: 512,
@@ -214,8 +280,11 @@ async function evaluateEntry(
       company: entry.company,
       industry: 'Other',
       date_announced: entry.date_announced,
-      jobs_cut: entry.jobs_cut,
+      date_reported: entry.date_reported,
+      jobs_cut_sg: entry.jobs_cut_sg,
+      jobs_cut_global: entry.jobs_cut_global,
       pct_workforce: entry.pct_workforce,
+      event_id: entry.event_id,
       notes: `All providers failed: ${errors.join(' | ')}`,
     },
     provider: 'none',
@@ -238,6 +307,10 @@ async function main() {
     return;
   }
 
+  // Existing events index, so the model can reuse an event_id for follow-up coverage.
+  const existingLayoffs = readCsv('layoffs.csv') as LayoffEntry[];
+  const eventIndex = buildEventIndex(existingLayoffs);
+
   const chain = getProviderChain();
   const providerNames = chain.map((p) => `${p.name}(${p.model})`).join(' → ');
   console.log(`LLM triage: ${queue.length} entr${queue.length === 1 ? 'y' : 'ies'}`);
@@ -252,7 +325,7 @@ async function main() {
     const entry = queue[i];
     process.stdout.write(`  [${i + 1}/${queue.length}] ${entry.company.slice(0, 50).padEnd(50)} `);
 
-    const { verdict, provider } = await evaluateEntry(chain, entry);
+    const { verdict, provider } = await evaluateEntry(chain, entry, eventIndex);
     console.log(`→ ${verdict.verdict} (${verdict.confidence}) [${provider}]`);
 
     summaryRows.push({
@@ -266,10 +339,13 @@ async function main() {
       rejection_reason: verdict.rejection_reason ?? undefined,
     });
 
+    const date_announced = verdict.date_announced || entry.date_announced;
     const layoffEntry: LayoffEntry = {
       company: verdict.company,
-      date_announced: verdict.date_announced,
-      jobs_cut: verdict.jobs_cut,
+      date_announced,
+      date_reported: verdict.date_reported || entry.date_reported || entry.date_announced,
+      jobs_cut_sg: verdict.jobs_cut_sg,
+      jobs_cut_global: verdict.jobs_cut_global,
       pct_workforce: verdict.pct_workforce,
       industry: verdict.industry,
       source_link: entry.source_link,
@@ -277,6 +353,7 @@ async function main() {
       status: (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored')
         ? verdict.verdict
         : (entry.status as LayoffEntry['status']) || 'rumored',
+      event_id: verdict.event_id || entry.event_id || eventIdFor(verdict.company, date_announced),
     };
 
     if (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored') {
