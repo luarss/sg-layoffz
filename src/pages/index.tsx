@@ -1,12 +1,14 @@
 import { GetStaticProps } from 'next';
 import { readCsv } from '@/lib/csv';
 import { computeStats } from '@/lib/stats';
+import { loadMomBenchmark, buildBenchmarkComparison, BenchmarkComparisonRow } from '@/lib/momBenchmark';
 import { LayoffEntry } from '@/lib/types';
 import Layout from '@/components/Layout';
 import Headline from '@/components/Headline';
 import FiltersBar, { Filters, EMPTY_FILTERS, applyFilters } from '@/components/FiltersBar';
 import DataTable from '@/components/DataTable';
 import ChartsSection from '@/components/ChartsSection';
+import MomBenchmark from '@/components/MomBenchmark';
 import { useMemo, useState } from 'react';
 
 interface HomeProps {
@@ -14,9 +16,10 @@ interface HomeProps {
   years: number[];
   latestYear: number | null;
   globalLatestDate: string;
+  momComparison: BenchmarkComparisonRow[];
 }
 
-export default function Home({ entries, years, latestYear, globalLatestDate }: HomeProps) {
+export default function Home({ entries, years, latestYear, globalLatestDate, momComparison }: HomeProps) {
   const [filters, setFilters] = useState<Filters>({
     ...EMPTY_FILTERS,
     year: latestYear !== null ? String(latestYear) : 'all',
@@ -52,6 +55,12 @@ export default function Home({ entries, years, latestYear, globalLatestDate }: H
           </div>
         )}
 
+        {momComparison.length > 0 && (
+          <div className="mb-8">
+            <MomBenchmark comparison={momComparison} />
+          </div>
+        )}
+
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Entries</h2>
@@ -78,7 +87,16 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const latestYear = years[0] ?? null;
   const globalLatestDate = entries[0]?.date_announced ?? '';
 
+  // The MOM benchmark spans multiple years, so compare it against all-time tracker
+  // stats rather than a year-filtered view. Computed here (server-side) so the
+  // fs-based CSV loader never enters the client bundle.
+  const allTimeStats = computeStats(entries);
+  const momComparison = buildBenchmarkComparison(
+    allTimeStats.monthlyBreakdown,
+    loadMomBenchmark(),
+  );
+
   return {
-    props: { entries, years, latestYear, globalLatestDate },
+    props: { entries, years, latestYear, globalLatestDate, momComparison },
   };
 };

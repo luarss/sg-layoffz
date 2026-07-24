@@ -55,6 +55,16 @@ export default function About() {
               , which publishes quarterly aggregate numbers broken down by sector and employment
               type.
             </p>
+            <p className="text-sm text-gray-600 leading-relaxed mt-2">
+              The home page benchmarks this tracker against those official figures: for each quarter
+              we roll up the tracker&apos;s monthly job-cut totals and express them as a percentage
+              of MOM&apos;s reported retrenchments (the exact numbers and per-quarter source links
+              live in <code>data/mom-benchmark.csv</code>). Because MOM counts every retrenchment
+              economy-wide while this tracker only captures publicly reported layoffs, the tracker
+              figures are expected to sit well below the official totals — the coverage percentage
+              is a measure of how much of the official picture public reporting surfaces, not a
+              like-for-like count.
+            </p>
           </section>
 
           <section>
