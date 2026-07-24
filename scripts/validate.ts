@@ -190,7 +190,7 @@ export function validateEntry(entry: LayoffEntry, rowIndex: number): ValidationE
     errors.push({ row: r, field: 'industry', message: `Must be one of: ${INDUSTRIES.join(', ')}` });
   }
 
-  const validStatuses = ['rumored', 'confirmed', 'reference'];
+  const validStatuses = ['rumored', 'confirmed', 'reference', 'denied', 'expired'];
   if (!validStatuses.includes(entry.status)) {
     errors.push({ row: r, field: 'status', message: `Must be one of: ${validStatuses.join(', ')}` });
   }

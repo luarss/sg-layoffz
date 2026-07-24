@@ -8,7 +8,7 @@ export interface LayoffEntry {
   industry: string;
   source_link: string;
   notes: string;
-  status: 'rumored' | 'confirmed' | 'reference';
+  status: 'rumored' | 'confirmed' | 'reference' | 'denied' | 'expired';
   event_id: string; // kebab-case slug identifying the underlying event; follow-up rows share one id
 }
 

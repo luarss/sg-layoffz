@@ -3,6 +3,7 @@ import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
+import { searchExa, titleFingerprint, SearchHit } from './search';
 
 // Exa is semantic, so natural-language intent queries beat bare keywords.
 //
@@ -58,33 +59,7 @@ const LOOKBACK_DAYS = 14;
 const DEFAULT_MONTHLY_CAP = 1000;
 const DEFAULT_RUN_CAP = 10;
 
-// Job boards and recruiting sites excluded at the Exa API level via excludeDomains.
-const EXCLUDED_DOMAINS = [
-  'accaglobal.com',
-  'alchemygts.com',
-  'frazerjones.com',
-  'gaapweb.com',
-  'glassdoor.com',
-  'hireza.wuaze.com',
-  'indeed.com',
-  'interimsearch.com',
-  'jobsdb.com',
-  'linkedin.com',
-  'mycareersfuture.gov.sg',
-  'nicollcurtin.com',
-  'seek.com',
-  'totallylegal.com',
-];
-
 const BUDGET_PATH = `${process.cwd()}/data/exa-budget.json`;
-
-interface ExaResult {
-  url: string;
-  title?: string;
-  publishedDate?: string;
-  text?: string;
-  author?: string;
-}
 
 interface BudgetState {
   month: string; // YYYY-MM
@@ -118,55 +93,9 @@ function saveBudget(state: BudgetState): void {
   fs.writeFileSync(BUDGET_PATH, JSON.stringify(state, null, 2) + '\n');
 }
 
-function titleFingerprint(title: string): string {
-  return title
-    .replace(/ [-–] [^-–\n]+$/, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .split(' ')
-    .slice(0, 6)
-    .join(' ');
-}
-
-async function runExaQuery(
-  apiKey: string,
-  query: string,
-  startDate: string,
-  endDate: string
-): Promise<ExaResult[]> {
-  const t0 = Date.now();
-  const res = await fetch('https://api.exa.ai/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-    },
-    body: JSON.stringify({
-      query,
-      numResults: RESULTS_PER_QUERY,
-      type: 'auto',
-      startPublishedDate: startDate,
-      endPublishedDate: endDate,
-      excludeDomains: EXCLUDED_DOMAINS,
-      contents: { text: { maxCharacters: 800 } },
-    }),
-  });
-
-  const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`Exa ${res.status}: ${body.slice(0, 200)} (${elapsed}s)`);
-  }
-  const data = (await res.json()) as { results?: ExaResult[] };
-  console.log(`    [timing] "${query}": ${elapsed}s`);
-  return data.results || [];
-}
-
-function resultToReviewEntry(r: ExaResult, index: number): ReviewEntry {
+function resultToReviewEntry(r: SearchHit, index: number): ReviewEntry {
   const title = r.title || r.url;
-  const text = r.text || '';
+  const text = r.snippet || '';
   const combined = `${title}. ${text}`;
   const company = normalizeCompany(
     title.split(/cuts?|lays? off|retrench|sheds?/i)[0] || title
@@ -235,7 +164,7 @@ async function main() {
   const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
   const rejected = readCsv('rejected.csv');
 
-  const allResults: ExaResult[] = [];
+  const allResults: SearchHit[] = [];
   let issued = 0;
   let skipped = 0;
 
@@ -248,7 +177,12 @@ async function main() {
     issued++;
     budget.searches_used++;
     try {
-      const results = await runExaQuery(apiKey, query, startDate, endDate);
+      const results = await searchExa(apiKey, query, {
+        numResults: RESULTS_PER_QUERY,
+        startPublishedDate: startDate,
+        endPublishedDate: endDate,
+        maxCharacters: 800,
+      });
       console.log(`    Found ${results.length} results`);
       allResults.push(...results);
     } catch (err) {

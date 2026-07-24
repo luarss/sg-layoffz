@@ -1,0 +1,71 @@
+name: Rumor Recheck
+
+on:
+  schedule:
+    # Weekly, Mondays at 19:00 UTC (3am SGT) — an hour after the daily scrape window.
+    - cron: '0 19 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: scrape-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Recheck stale rumors
+        id: recheck
+        continue-on-error: true
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}
+          MIMO_BASE_URL: ${{ secrets.MIMO_BASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+        run: npm run rumors:recheck
+
+      - name: Apply recheck results to layoffs.csv
+        id: apply
+        if: steps.recheck.outcome == 'success'
+        run: npm run rumors:apply
+
+      - name: Dedup layoffs.csv
+        id: dedup
+        if: steps.apply.outcome == 'success'
+        run: npm run dedup
+
+      # Gate the auto-commit on validation, mirroring the scheduled-scrape workflow: fail
+      # rather than commit corruption if the rechecked data has hard errors.
+      - name: Validate data integrity
+        id: validate
+        if: steps.apply.outcome == 'success'
+        run: npm run validate
+
+      - name: Set commit date
+        id: meta
+        run: echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit results to main
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          file_pattern: >-
+            data/layoffs.csv
+            data/rumor-recheck-results.csv
+          commit_message: "rumors: recheck stale rumored rows (${{ steps.meta.outputs.date }})"

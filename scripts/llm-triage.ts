@@ -9,23 +9,14 @@
 // Provider fallback order: DeepSeek → MiMo (Xiaomi) → OpenRouter
 // Providers are included automatically when their keys are present.
 // A provider is skipped (and the next tried) when it returns an API error.
-//
-// Environment variables:
-//   DEEPSEEK_API_KEY    DeepSeek key  (base URL: https://api.deepseek.com/v1)
-//   DEEPSEEK_MODEL      model override (default: deepseek-v4-flash)
-//   MIMO_API_KEY        MiMo key
-//   MIMO_BASE_URL       MiMo OpenAI-compatible endpoint
-//   MIMO_MODEL          model override (default: mimo-v2.5)
-//   OPENROUTER_API_KEY  OpenRouter key (base URL: https://openrouter.ai/api/v1)
-//   OPENROUTER_MODEL    model override (default: openrouter/owl-alpha)
-//   LLM_PROVIDER        force a single provider: deepseek | mimo | openrouter
+// The provider chain wiring lives in ./llm-provider (shared with rumor-recheck).
 
 import fs from 'node:fs';
-import OpenAI from 'openai';
 import { readCsv, appendCsv, writeCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
 import { LLMVerdict, coerceVerdict } from '../src/lib/verdict';
 import { normalizeCompany } from './normalize';
+import { ProviderConfig, getProviderChain } from './llm-provider';
 
 // Derive a kebab-case event_id from company + event month, used when the model does
 // not propose one (or proposes a blank).
@@ -38,12 +29,6 @@ function eventIdFor(company: string, date: string): string {
   return `${slug || 'event'}-${month || 'unknown'}`;
 }
 
-interface ProviderConfig {
-  name: string;
-  client: OpenAI;
-  model: string;
-}
-
 interface SummaryRow {
   original_company: string;
   llm_company: string;
@@ -53,63 +38,6 @@ interface SummaryRow {
   provider: string;
   notes: string;
   rejection_reason?: string;
-}
-
-// Build the ordered provider chain from available env vars.
-// If LLM_PROVIDER is set, only that provider is included (no fallback).
-function getProviderChain(): ProviderConfig[] {
-  const force = process.env.LLM_PROVIDER;
-  const chain: ProviderConfig[] = [];
-
-  const want = (name: string) => !force || force === name;
-
-  if (want('deepseek') && process.env.DEEPSEEK_API_KEY) {
-    chain.push({
-      name: 'deepseek',
-      client: new OpenAI({
-        apiKey: process.env.DEEPSEEK_API_KEY,
-        baseURL: 'https://api.deepseek.com/v1',
-      }),
-      model: process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash',
-    });
-  }
-
-  if (want('mimo') && process.env.MIMO_API_KEY && process.env.MIMO_BASE_URL) {
-    chain.push({
-      name: 'mimo',
-      client: new OpenAI({
-        apiKey: process.env.MIMO_API_KEY,
-        baseURL: process.env.MIMO_BASE_URL,
-      }),
-      model: process.env.MIMO_MODEL || 'mimo-v2.5',
-    });
-  }
-
-  if (want('openrouter') && process.env.OPENROUTER_API_KEY) {
-    chain.push({
-      name: 'openrouter',
-      client: new OpenAI({
-        apiKey: process.env.OPENROUTER_API_KEY,
-        baseURL: 'https://openrouter.ai/api/v1',
-        defaultHeaders: {
-          'HTTP-Referer': 'https://github.com/luarss/sg-layoffz',
-          'X-Title': 'sg-layoffz',
-        },
-      }),
-      model: process.env.OPENROUTER_MODEL || 'openrouter/owl-alpha',
-    });
-  }
-
-  if (chain.length === 0) {
-    throw new Error(
-      'No LLM provider configured. Set at least one of:\n' +
-      '  DEEPSEEK_API_KEY\n' +
-      '  MIMO_API_KEY + MIMO_BASE_URL\n' +
-      '  OPENROUTER_API_KEY'
-    );
-  }
-
-  return chain;
 }
 
 const SYSTEM_PROMPT = `You are an expert analyst for a Singapore layoff tracking database. Evaluate news articles about potential Singapore layoff events and classify each one.

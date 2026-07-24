@@ -13,6 +13,8 @@
     "review": "tsx scripts/resolve-gnews.ts && tsx scripts/triage.ts && tsx scripts/review.ts",
     "review:interactive": "tsx scripts/review.ts",
     "triage:llm": "tsx scripts/llm-triage.ts",
+    "rumors:recheck": "tsx scripts/rumor-recheck.ts",
+    "rumors:apply": "tsx scripts/apply-rumor-results.ts",
     "eval:llm": "tsx scripts/llm-evals.ts",
     "eval:golden": "tsx scripts/llm-evals.ts --golden",
     "dedup": "tsx scripts/dedup-layoffs.ts",

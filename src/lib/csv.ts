@@ -86,3 +86,56 @@ export function writeCsv(filename: string, entries: LayoffEntry[]): void {
 
   fs.writeFileSync(filePath, csv + '\n');
 }
+
+// Column-preserving read/write pair, used by callers that patch layoffs.csv in place
+// (e.g. apply-rumor-results.ts) and must NOT silently drop columns the CSV schema
+// gained in a parallel change. Unlike readCsv/writeCsv — which project rows onto the
+// fixed CSV_HEADERS — these keep whatever columns the file actually has.
+export type CsvRow = Record<string, unknown>;
+
+export function readCsvRaw(filename: string): CsvRow[] {
+  const filePath = csvPath(filename);
+  if (!fs.existsSync(filePath)) return [];
+
+  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
+  const parsed = Papa.parse<CsvRow>(raw, {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+  });
+
+  if (parsed.errors.length > 0) {
+    console.warn('CSV parse warnings:', parsed.errors);
+  }
+
+  return parsed.data;
+}
+
+// Derive the column order for a row set: known CSV_HEADERS first (in their canonical
+// order, when present in the data), then any extra columns in first-seen order. This
+// keeps the familiar layout while tolerating new columns appended by a parallel change.
+export function deriveFields(rows: CsvRow[]): string[] {
+  const present = new Set<string>();
+  for (const row of rows) {
+    for (const key of Object.keys(row)) present.add(key);
+  }
+  const known = (CSV_HEADERS as string[]).filter((h) => present.has(h));
+  const extras = [...present].filter((k) => !(CSV_HEADERS as string[]).includes(k));
+  return [...known, ...extras];
+}
+
+export function writeCsvRaw(filename: string, rows: CsvRow[], fields?: string[]): void {
+  const filePath = csvPath(filename);
+  const cols = fields && fields.length > 0 ? fields : deriveFields(rows);
+  const csv = cleanRow(
+    Papa.unparse(
+      {
+        fields: cols,
+        data: rows.map((r) => cols.map((c) => r[c] ?? '')),
+      },
+      { newline: '\n' }
+    )
+  );
+
+  fs.writeFileSync(filePath, csv + '\n');
+}
