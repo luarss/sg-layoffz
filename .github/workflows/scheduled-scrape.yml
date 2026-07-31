@@ -45,6 +45,11 @@ jobs:
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
         run: npx tsx scripts/scrape-exa.ts
 
+      - name: Ingest layoffsg.com
+        id: scrape_layoffsg
+        continue-on-error: true
+        run: npx tsx scripts/scrape-lsg.ts
+
       - name: LLM Triage
         id: llm_triage
         continue-on-error: true
@@ -108,7 +113,7 @@ jobs:
         run: echo "::warning::Review queue has ${{ steps.count.outputs.count }} entries. Consider reviewing soon."
 
       - name: Report scraper failures
-        if: failure() || steps.scrape_news.outcome == 'failure' || steps.scrape_sources.outcome == 'failure' || steps.scrape_exa.outcome == 'failure'
+        if: failure() || steps.scrape_news.outcome == 'failure' || steps.scrape_sources.outcome == 'failure' || steps.scrape_exa.outcome == 'failure' || steps.scrape_layoffsg.outcome == 'failure'
         run: |
           if [ "${{ steps.scrape_news.outcome }}" = "failure" ]; then
             echo "::warning::Google News scraper failed"
@@ -118,6 +123,9 @@ jobs:
           fi
           if [ "${{ steps.scrape_exa.outcome }}" = "failure" ]; then
             echo "::warning::Exa scraper failed"
+          fi
+          if [ "${{ steps.scrape_layoffsg.outcome }}" = "failure" ]; then
+            echo "::warning::layoffsg.com ingestion failed"
           fi
           if [ "${{ steps.scrape_news.outcome }}" = "failure" ] && [ "${{ steps.scrape_sources.outcome }}" = "failure" ]; then
             echo "::error::Both RSS scrapers failed"
