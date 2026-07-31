@@ -1,18 +1,13 @@
 name: LLM Evals
 
+# Manual-only. The eval scores a live external model (deepseek-v4-flash →
+# openrouter/owl-alpha), which drifts and shows ~10-12pt run-to-run variance at
+# temperature 0 — so no meaningful pass threshold holds without flapping. Running
+# it on push blocked unrelated commits on model behaviour they didn't cause, so
+# the automatic gate is disabled. Run on demand from the Actions tab (or
+# `gh workflow run "LLM Evals"`) to spot-check classification quality.
 on:
-  push:
-    # Gate only on changes that actually affect LLM classification — the eval
-    # depends on a live external model, so gating every scripts/** or data push
-    # blocks unrelated commits (e.g. data ingests) on model drift they didn't cause.
-    paths:
-      - 'scripts/llm-evals.ts'
-      - 'scripts/llm-triage.ts'
-      - 'scripts/llm-provider.ts'
-      - 'src/lib/verdict.ts'
-      - 'src/lib/types.ts'
-      - 'data/eval-golden.json'
-      - '.github/workflows/llm-evals.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
