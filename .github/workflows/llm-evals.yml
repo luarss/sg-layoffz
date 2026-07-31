@@ -2,10 +2,17 @@ name: LLM Evals
 
 on:
   push:
+    # Gate only on changes that actually affect LLM classification — the eval
+    # depends on a live external model, so gating every scripts/** or data push
+    # blocks unrelated commits (e.g. data ingests) on model drift they didn't cause.
     paths:
-      - 'scripts/**'
-      - 'src/**'
+      - 'scripts/llm-evals.ts'
+      - 'scripts/llm-triage.ts'
+      - 'scripts/llm-provider.ts'
+      - 'src/lib/verdict.ts'
+      - 'src/lib/types.ts'
       - 'data/eval-golden.json'
+      - '.github/workflows/llm-evals.yml'
 
 permissions:
   contents: read

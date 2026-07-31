@@ -172,8 +172,17 @@ NOT reject a Singapore closure as "not a layoff" or as having "no Singapore nexu
 - Aggregator article covering many companies (not a single specific event)
 - Legal case, court ruling, or severance policy debate
 - Duplicate of an already well-known event
+- Unnamed, anonymized, or placeholder company — the subject is a generic descriptor
+  ("an art firm", "another legacy bank", "unnamed AI startup", "a pension manager")
+  rather than a specific named company
 
-**NEEDS_REVIEW** — genuinely ambiguous; you cannot make a confident determination.
+**NEEDS_REVIEW** — use ONLY as a last resort, for a genuinely ambiguous article where
+none of the rules above apply. Do NOT retreat to needs_review just to avoid a hard call:
+- If any REJECTED rule matches, return \`rejected\`.
+- If it is a Singapore closure or a credibly reported cut, decide \`confirmed\`/\`rumored\`.
+- A worldwide or foreign headcount does NOT make the verdict ambiguous — still classify
+  the event (accept when there is a Singapore nexus, reject when there is none) and put
+  the figure in jobs_cut_global.
 
 ## Evaluation Dimensions (assess internally)
 1. singapore_nexus — does this involve a Singapore entity or Singapore office of a multinational?
@@ -217,7 +226,7 @@ Return ONLY a valid JSON object (no markdown, no extra text):
   "event_id": "kebab-case-slug",
   "headcount_scope": "singapore" | "partial" | "global" | "unknown",
   "notes": "1–2 sentence reason for your decision",
-  "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal> (only when verdict=rejected)"
+  "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal|vague> (only when verdict=rejected)"
 }`;
 
 function buildUserPrompt(entry: LayoffEntry): string {
