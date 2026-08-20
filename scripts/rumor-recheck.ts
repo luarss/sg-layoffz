@@ -178,9 +178,15 @@ export async function classifyRumor(
       { role: 'user', content: buildUserPrompt(rumor, hits) },
     ],
     temperature: 0,
-    max_tokens: 512,
+    // Reasoning models (e.g. deepseek-v4-flash) spend hidden reasoning tokens against
+    // this cap; 512 truncated the JSON body and every recheck fell through to null.
+    // Budget for reasoning + the small JSON verdict.
+    max_tokens: 4096,
     response_format: { type: 'json_object' },
   });
+  // A truncated response (finish_reason=length) has an empty/partial body — return
+  // null so the chain falls through to the next provider rather than a bogus verdict.
+  if (response.choices[0]?.finish_reason === 'length') return null;
   const rawText = response.choices[0]?.message?.content || '{}';
   return parseRecheckVerdict(rawText);
 }

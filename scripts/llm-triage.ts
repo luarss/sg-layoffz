@@ -190,9 +190,23 @@ async function evaluateEntry(
           { role: 'user', content: buildUserPrompt(entry, eventIndex) },
         ],
         temperature: 0,
-        max_tokens: 512,
+        // Providers in the chain (e.g. deepseek-v4-flash) are reasoning models whose
+        // hidden reasoning tokens count against max_tokens. At 512 the reasoning ate
+        // the whole budget, the response was cut off (finish_reason=length) with an
+        // empty/truncated JSON body, and every row silently fell to needs_review and
+        // piled up in the queue. Budget for reasoning + the small JSON verdict.
+        max_tokens: 4096,
         response_format: { type: 'json_object' },
       });
+
+      // A truncated response (reasoning overran the budget) yields empty/partial JSON
+      // that coerces to a bogus needs_review. Treat it as a provider failure so we
+      // fall through to the next provider instead of poisoning the queue.
+      if (response.choices[0]?.finish_reason === 'length') {
+        errors.push(`${provider.name}: response truncated (finish_reason=length)`);
+        process.stdout.write(` [${provider.name} truncated, trying next]`);
+        continue;
+      }
 
       const raw = response.choices[0]?.message?.content || '{}';
 

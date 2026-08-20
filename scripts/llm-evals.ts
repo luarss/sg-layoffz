@@ -260,9 +260,15 @@ async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promi
             { role: 'user', content: buildUserPrompt(entry) },
           ],
           temperature: 0,
-          max_tokens: 512,
+          // Reasoning models spend hidden reasoning tokens against this cap; at 512
+          // the JSON body was truncated and the eval scored on empty output. Budget
+          // for reasoning + the small JSON verdict.
+          max_tokens: 4096,
           response_format: { type: 'json_object' },
         });
+        // A truncated response (finish_reason=length) yields empty/partial JSON that
+        // parses to null — retry, then fall through to the next provider.
+        if (response.choices[0]?.finish_reason === 'length') continue;
         const raw = response.choices[0]?.message?.content || '{}';
         // Zod-validated against the shared VerdictSchema: a partial/empty response
         // (e.g. '{}') or one missing a valid verdict returns null, so we retry and
