@@ -272,50 +272,86 @@ async function main() {
   const remaining: LayoffEntry[] = [];
   const summaryRows: SummaryRow[] = [];
 
-  for (let i = 0; i < queue.length; i++) {
-    const entry = queue[i];
-    process.stdout.write(`  [${i + 1}/${queue.length}] ${entry.company.slice(0, 50).padEnd(50)} `);
+  // Overall wall-clock budget. The scheduled-scrape job is capped at 60 min; if triage
+  // runs past that GitHub kills the process and NO progress is written (CSVs flush only
+  // at the end), so the whole queue is re-triaged next run. Stop well before the cap,
+  // leave any unprocessed rows in the queue, and flush what we have. Override with
+  // TRIAGE_BUDGET_MS.
+  const startedAt = Date.now();
+  const budgetMs = Number(process.env.TRIAGE_BUDGET_MS) || 45 * 60_000;
+  let timedOut = false;
 
-    const { verdict, provider } = await evaluateEntry(chain, entry, eventIndex);
-    console.log(`→ ${verdict.verdict} (${verdict.confidence}) [${provider}]`);
+  // Each entry is an independent, network-bound LLM call (~13s), so a large queue is
+  // slow purely because it runs one at a time. Process a sliding window concurrently to
+  // cut wall-clock roughly by the concurrency factor. Results are consumed in queue
+  // order so routing, logging, and the summary stay deterministic. Keep concurrency
+  // modest to avoid provider rate limits; override with TRIAGE_CONCURRENCY.
+  const concurrency = Math.max(1, Number(process.env.TRIAGE_CONCURRENCY) || 5);
+  let processed = 0;
 
-    summaryRows.push({
-      original_company: entry.company,
-      llm_company: verdict.company,
-      source_link: entry.source_link,
-      verdict: verdict.verdict,
-      confidence: verdict.confidence,
-      provider,
-      notes: verdict.notes,
-      rejection_reason: verdict.rejection_reason ?? undefined,
-    });
+  for (let start = 0; start < queue.length; start += concurrency) {
+    if (Date.now() - startedAt > budgetMs) {
+      // Out of time — keep this and every later row in the queue for the next run.
+      timedOut = true;
+      remaining.push(...queue.slice(start));
+      console.log(
+        `\n⏱  Time budget (${Math.round(budgetMs / 60_000)} min) exhausted after ${start}/${queue.length} entries — ` +
+        `${queue.length - start} left in queue for next run.`
+      );
+      break;
+    }
 
-    const date_announced = verdict.date_announced || entry.date_announced;
-    const layoffEntry: LayoffEntry = {
-      company: verdict.company,
-      date_announced,
-      date_reported: verdict.date_reported || entry.date_reported || entry.date_announced,
-      jobs_cut_sg: verdict.jobs_cut_sg,
-      jobs_cut_global: verdict.jobs_cut_global,
-      pct_workforce: verdict.pct_workforce,
-      industry: verdict.industry,
-      source_link: entry.source_link,
-      notes: verdict.notes,
-      status: (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored')
-        ? verdict.verdict
-        : (entry.status as LayoffEntry['status']) || 'rumored',
-      event_id: verdict.event_id || entry.event_id || eventIdFor(verdict.company, date_announced),
-    };
+    const window = queue.slice(start, start + concurrency);
+    const results = await Promise.all(
+      window.map((entry) => evaluateEntry(chain, entry, eventIndex))
+    );
 
-    if (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored') {
-      accepted.push(layoffEntry);
-    } else if (verdict.verdict === 'rejected') {
-      rejected.push({
-        ...layoffEntry,
-        notes: `[LLM rejected: ${verdict.rejection_reason || 'see notes'}] ${verdict.notes}`,
+    for (let k = 0; k < window.length; k++) {
+      const entry = window[k];
+      const { verdict, provider } = results[k];
+      processed++;
+      console.log(
+        `  [${processed}/${queue.length}] ${entry.company.slice(0, 50).padEnd(50)} → ${verdict.verdict} (${verdict.confidence}) [${provider}]`
+      );
+
+      summaryRows.push({
+        original_company: entry.company,
+        llm_company: verdict.company,
+        source_link: entry.source_link,
+        verdict: verdict.verdict,
+        confidence: verdict.confidence,
+        provider,
+        notes: verdict.notes,
+        rejection_reason: verdict.rejection_reason ?? undefined,
       });
-    } else {
-      remaining.push(entry);
+
+      const date_announced = verdict.date_announced || entry.date_announced;
+      const layoffEntry: LayoffEntry = {
+        company: verdict.company,
+        date_announced,
+        date_reported: verdict.date_reported || entry.date_reported || entry.date_announced,
+        jobs_cut_sg: verdict.jobs_cut_sg,
+        jobs_cut_global: verdict.jobs_cut_global,
+        pct_workforce: verdict.pct_workforce,
+        industry: verdict.industry,
+        source_link: entry.source_link,
+        notes: verdict.notes,
+        status: (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored')
+          ? verdict.verdict
+          : (entry.status as LayoffEntry['status']) || 'rumored',
+        event_id: verdict.event_id || entry.event_id || eventIdFor(verdict.company, date_announced),
+      };
+
+      if (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored') {
+        accepted.push(layoffEntry);
+      } else if (verdict.verdict === 'rejected') {
+        rejected.push({
+          ...layoffEntry,
+          notes: `[LLM rejected: ${verdict.rejection_reason || 'see notes'}] ${verdict.notes}`,
+        });
+      } else {
+        remaining.push(entry);
+      }
     }
   }
 
@@ -326,7 +362,8 @@ async function main() {
   const summary = {
     run_date: new Date().toISOString().slice(0, 10),
     providers: chain.map((p) => ({ name: p.name, model: p.model })),
-    total: queue.length,
+    timed_out: timedOut,
+    total: summaryRows.length,
     confirmed: summaryRows.filter((r) => r.verdict === 'confirmed').length,
     rumored: summaryRows.filter((r) => r.verdict === 'rumored').length,
     rejected: summaryRows.filter((r) => r.verdict === 'rejected').length,

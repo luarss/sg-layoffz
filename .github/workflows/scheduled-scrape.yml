@@ -53,6 +53,10 @@ jobs:
       - name: LLM Triage
         id: llm_triage
         continue-on-error: true
+        # Backstop above the script's own 45-min wall-clock budget (TRIAGE_BUDGET_MS).
+        # The script flushes partial progress and exits cleanly first; this only fires
+        # if that logic fails, and still leaves time for dedup/validate/commit.
+        timeout-minutes: 50
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}

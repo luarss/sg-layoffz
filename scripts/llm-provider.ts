@@ -20,6 +20,16 @@ export interface ProviderConfig {
   model: string;
 }
 
+// Per-request ceilings shared by every provider client. The OpenAI SDK defaults to a
+// 10-minute timeout with 2 automatic retries, so a single hung request can silently
+// burn ~30 min before falling through — enough to blow the whole job's 60-min cap.
+// Bound both so one stuck request fails fast and the chain moves on. Override with
+// LLM_TIMEOUT_MS / LLM_MAX_RETRIES if a slow reasoning model needs more headroom.
+const REQUEST_TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS) || 120_000;
+const REQUEST_MAX_RETRIES = Number.isFinite(Number(process.env.LLM_MAX_RETRIES))
+  ? Number(process.env.LLM_MAX_RETRIES)
+  : 1;
+
 // Build the ordered provider chain from available env vars.
 // If LLM_PROVIDER is set, only that provider is included (no fallback).
 export function getProviderChain(): ProviderConfig[] {
@@ -34,6 +44,8 @@ export function getProviderChain(): ProviderConfig[] {
       client: new OpenAI({
         apiKey: process.env.DEEPSEEK_API_KEY,
         baseURL: 'https://api.deepseek.com/v1',
+        timeout: REQUEST_TIMEOUT_MS,
+        maxRetries: REQUEST_MAX_RETRIES,
       }),
       model: process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash',
     });
@@ -45,6 +57,8 @@ export function getProviderChain(): ProviderConfig[] {
       client: new OpenAI({
         apiKey: process.env.MIMO_API_KEY,
         baseURL: process.env.MIMO_BASE_URL,
+        timeout: REQUEST_TIMEOUT_MS,
+        maxRetries: REQUEST_MAX_RETRIES,
       }),
       model: process.env.MIMO_MODEL || 'mimo-v2.5',
     });
@@ -56,6 +70,8 @@ export function getProviderChain(): ProviderConfig[] {
       client: new OpenAI({
         apiKey: process.env.OPENROUTER_API_KEY,
         baseURL: 'https://openrouter.ai/api/v1',
+        timeout: REQUEST_TIMEOUT_MS,
+        maxRetries: REQUEST_MAX_RETRIES,
         defaultHeaders: {
           'HTTP-Referer': 'https://github.com/luarss/sg-layoffz',
           'X-Title': 'sg-layoffz',
