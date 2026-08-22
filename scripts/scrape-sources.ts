@@ -17,13 +17,35 @@ const USER_AGENT =
 const GOOGLEBOT_UA =
   'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
 
+// AI data-partner fetchers. Publishers with content-licensing deals allowlist
+// these, so they clear paywalls that block browsers and the AI *bot* crawlers.
+// Only useful if the allowlist is UA-based (not IP-verified) — tried last.
+const OPENAI_FD_UA = 'OpenAI File Downloader';
+const XAI_UA =
+  'XaiImageApiFetch/1.0 (Linux; x86_64) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3';
+
+// Claude-User — allowlisted by sites (e.g. LinkedIn) that 999/wall the other
+// bots and even Googlebot; useful where only a genuine browser or Claude clears.
+const CLAUDE_UA =
+  'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ' +
+  'Claude-User/1.0; +Claude-User@anthropic.com)';
+
 const ACCEPT_XML = 'application/rss+xml, application/xml, text/xml, */*';
 
+// HTTP statuses used to block a given identity — a retry with a different UA
+// may clear them. 999 is LinkedIn's auth-wall/rate-limit code.
+const BLOCK_STATUSES = new Set([401, 403, 999]);
+
 // Fetch profiles tried in order by fetchRaw. Chrome first (widest coverage),
-// then Googlebot+referer as a fallback for publishers that block browsers.
+// then Googlebot+referer, then AI data-partner UAs and Claude-User as last
+// resorts for publishers that block everything else.
 const FETCH_PROFILES: Array<Record<string, string>> = [
   { 'User-Agent': USER_AGENT, Accept: ACCEPT_XML },
   { 'User-Agent': GOOGLEBOT_UA, Accept: ACCEPT_XML, Referer: 'https://www.google.com/' },
+  { 'User-Agent': OPENAI_FD_UA, Accept: ACCEPT_XML },
+  { 'User-Agent': XAI_UA, Accept: ACCEPT_XML },
+  { 'User-Agent': CLAUDE_UA, Accept: ACCEPT_XML },
 ];
 
 const parser = new Parser({ headers: { 'User-Agent': USER_AGENT } });
@@ -132,9 +154,10 @@ function fetchWith(url: string, headers: Record<string, string>, redirectsLeft =
   });
 }
 
-// Fetch a URL trying each identity profile in order. On a 401/403 (the statuses
-// publishers use to block a given UA), fall through to the next profile; any
-// other failure aborts immediately since a different UA won't help.
+// Fetch a URL trying each identity profile in order. On a block status
+// (BLOCK_STATUSES — the codes publishers use to reject a given UA), fall through
+// to the next profile; any other failure aborts immediately since a different UA
+// won't help.
 async function fetchRaw(url: string): Promise<string> {
   let lastErr: unknown;
   for (const headers of FETCH_PROFILES) {
@@ -142,7 +165,7 @@ async function fetchRaw(url: string): Promise<string> {
       return await fetchWith(url, headers);
     } catch (err) {
       lastErr = err;
-      if (err instanceof HttpStatusError && (err.status === 401 || err.status === 403)) {
+      if (err instanceof HttpStatusError && BLOCK_STATUSES.has(err.status)) {
         continue;
       }
       throw err;
