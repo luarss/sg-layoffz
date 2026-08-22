@@ -6,7 +6,27 @@ import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
 
-const parser = new Parser();
+// Real Chrome UA — the browser identity that passes the most publisher/CDN
+// blocks (Cloudflare, etc.) when fetching feeds. Matches resolve-gnews.ts.
+const USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+
+// Googlebot UA — some publishers serve full content to Google's crawler while
+// 401/403'ing browsers. Paired with a Google referer to mimic a search click.
+const GOOGLEBOT_UA =
+  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+
+const ACCEPT_XML = 'application/rss+xml, application/xml, text/xml, */*';
+
+// Fetch profiles tried in order by fetchRaw. Chrome first (widest coverage),
+// then Googlebot+referer as a fallback for publishers that block browsers.
+const FETCH_PROFILES: Array<Record<string, string>> = [
+  { 'User-Agent': USER_AGENT, Accept: ACCEPT_XML },
+  { 'User-Agent': GOOGLEBOT_UA, Accept: ACCEPT_XML, Referer: 'https://www.google.com/' },
+];
+
+const parser = new Parser({ headers: { 'User-Agent': USER_AGENT } });
 
 interface FeedConfig {
   name: string;
@@ -73,38 +93,62 @@ function isRelevant(title: string, snippet: string): boolean {
   return LAYOFF_TERMS.some((term) => combined.includes(term));
 }
 
+// Error carrying the HTTP status so the profile-fallback logic can decide
+// whether a retry with a different identity is worth attempting.
+class HttpStatusError extends Error {
+  constructor(readonly status: number, url: string) {
+    super(`HTTP ${status} for ${url}`);
+  }
+}
+
 // Fetch a URL via Node's https module (matches rss-parser's transport, so it gets
 // through Cloudflare on feeds like Mothership where undici-based `fetch` is 403'd).
-function fetchRaw(url: string, redirectsLeft = 5): Promise<string> {
+// A single request with the given headers; follows redirects, preserving headers.
+function fetchWith(url: string, headers: Record<string, string>, redirectsLeft = 5): Promise<string> {
   return new Promise((resolve, reject) => {
     const lib = url.startsWith('https:') ? https : http;
-    const req = lib.get(
-      url,
-      { headers: { 'User-Agent': 'rss-parser', Accept: 'application/rss+xml, application/xml, text/xml, */*' } },
-      (res) => {
-        const status = res.statusCode || 0;
-        if (status >= 300 && status < 400 && res.headers.location && redirectsLeft > 0) {
-          res.resume();
-          req.destroy();
-          const next = new URL(res.headers.location, url).toString();
-          resolve(fetchRaw(next, redirectsLeft - 1));
-          return;
-        }
-        if (status < 200 || status >= 300) {
-          res.resume();
-          req.destroy();
-          reject(new Error(`HTTP ${status} for ${url}`));
-          return;
-        }
-        let body = '';
-        res.setEncoding('utf8');
-        res.on('data', (chunk) => (body += chunk));
-        res.on('end', () => resolve(body));
+    const req = lib.get(url, { headers }, (res) => {
+      const status = res.statusCode || 0;
+      if (status >= 300 && status < 400 && res.headers.location && redirectsLeft > 0) {
+        res.resume();
+        req.destroy();
+        const next = new URL(res.headers.location, url).toString();
+        resolve(fetchWith(next, headers, redirectsLeft - 1));
+        return;
       }
-    );
+      if (status < 200 || status >= 300) {
+        res.resume();
+        req.destroy();
+        reject(new HttpStatusError(status, url));
+        return;
+      }
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => (body += chunk));
+      res.on('end', () => resolve(body));
+    });
     req.on('error', reject);
     req.setTimeout(15000, () => req.destroy(new Error('Timeout')));
   });
+}
+
+// Fetch a URL trying each identity profile in order. On a 401/403 (the statuses
+// publishers use to block a given UA), fall through to the next profile; any
+// other failure aborts immediately since a different UA won't help.
+async function fetchRaw(url: string): Promise<string> {
+  let lastErr: unknown;
+  for (const headers of FETCH_PROFILES) {
+    try {
+      return await fetchWith(url, headers);
+    } catch (err) {
+      lastErr = err;
+      if (err instanceof HttpStatusError && (err.status === 401 || err.status === 403)) {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
 }
 
 // Fetch + parse with a sanitization fallback: some feeds (e.g. Mothership) emit
