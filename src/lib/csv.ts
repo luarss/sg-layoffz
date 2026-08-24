@@ -6,6 +6,16 @@ function csvPath(filename: string): string {
   return `${process.cwd()}/data/${filename}`;
 }
 
+// Only these columns are numeric. Restricting PapaParse's dynamicTyping to them keeps
+// every other column a string — otherwise an all-digits value in a string column (e.g.
+// a company/title that is purely numeric) gets silently cast to a number, and later
+// string ops like `entry.company.slice(...)` throw at runtime.
+const NUMERIC_COLUMNS = {
+  jobs_cut_sg: true,
+  jobs_cut_global: true,
+  pct_workforce: true,
+} as const;
+
 export function readCsv(filename: string): LayoffEntry[] {
   const filePath = csvPath(filename);
   if (!fs.existsSync(filePath)) return [];
@@ -17,7 +27,7 @@ export function readCsv(filename: string): LayoffEntry[] {
   const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
   const parsed = Papa.parse<LayoffEntry>(raw, {
     header: true,
-    dynamicTyping: true,
+    dynamicTyping: NUMERIC_COLUMNS,
     skipEmptyLines: true,
   });
 
@@ -100,7 +110,7 @@ export function readCsvRaw(filename: string): CsvRow[] {
   const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
   const parsed = Papa.parse<CsvRow>(raw, {
     header: true,
-    dynamicTyping: true,
+    dynamicTyping: NUMERIC_COLUMNS,
     skipEmptyLines: true,
   });
 
