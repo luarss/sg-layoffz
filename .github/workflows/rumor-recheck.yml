@@ -39,6 +39,7 @@ jobs:
           OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
           LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
         run: npm run rumors:recheck
 
       - name: Apply recheck results to layoffs.csv

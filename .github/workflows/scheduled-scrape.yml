@@ -36,6 +36,8 @@ jobs:
       - name: Scrape source websites
         id: scrape_sources
         continue-on-error: true
+        env:
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
         run: npx tsx scripts/scrape-sources.ts
 
       - name: Scrape Exa
@@ -43,6 +45,7 @@ jobs:
         continue-on-error: true
         env:
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
         run: npx tsx scripts/scrape-exa.ts
 
       - name: Ingest layoffsg.com

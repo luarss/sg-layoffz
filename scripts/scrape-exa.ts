@@ -3,7 +3,7 @@ import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
-import { searchExa, titleFingerprint, SearchHit } from './search';
+import { searchExa, searchTinyFish, titleFingerprint, SearchHit } from './search';
 
 // Exa is semantic, so natural-language intent queries beat bare keywords.
 //
@@ -120,6 +120,28 @@ function resultToReviewEntry(r: SearchHit, index: number): ReviewEntry {
   };
 }
 
+// TinyFish fallback for a single query, with logging and error-swallowing so a
+// failed fallback never aborts the run (mirrors how Exa failures are handled).
+async function tinyFishFallback(
+  apiKey: string,
+  query: string,
+  startDate: string,
+  endDate: string
+): Promise<SearchHit[]> {
+  try {
+    const results = await searchTinyFish(apiKey, query, {
+      numResults: RESULTS_PER_QUERY,
+      startPublishedDate: startDate,
+      endPublishedDate: endDate,
+    });
+    console.log(`    [tinyfish] fallback returned ${results.length} results`);
+    return results;
+  } catch (err) {
+    console.error(`    TinyFish fallback failed: ${(err as Error).message}`);
+    return [];
+  }
+}
+
 function emitResult(newEntries: number, dupes: number, potential: number) {
   console.log(
     `SCRAPE_RESULT:source=exa,new_entries=${newEntries},duplicates=${dupes},potential_dupes=${potential}`
@@ -129,28 +151,40 @@ function emitResult(newEntries: number, dupes: number, potential: number) {
 async function main() {
   console.log('🔍 Scraping Exa for Singapore layoff coverage...\n');
 
-  const apiKey = process.env.EXA_API_KEY;
-  if (!apiKey) {
-    console.log('  EXA_API_KEY not set — skipping Exa scrape.');
+  const exaKey = process.env.EXA_API_KEY;
+  const tinyfishKey = process.env.TINYFISH_API_KEY;
+  if (!exaKey && !tinyfishKey) {
+    console.log('  Neither EXA_API_KEY nor TINYFISH_API_KEY set — skipping Exa scrape.');
     emitResult(0, 0, 0);
     return;
   }
 
   const budget = loadBudget();
-  const remaining = budget.monthly_cap - budget.searches_used;
-  console.log(
-    `  Budget: ${budget.searches_used}/${budget.monthly_cap} used this month (${budget.month}); ${remaining} remaining.`
-  );
+  const remaining = exaKey ? budget.monthly_cap - budget.searches_used : 0;
+  if (exaKey) {
+    console.log(
+      `  Budget: ${budget.searches_used}/${budget.monthly_cap} used this month (${budget.month}); ${remaining} remaining.`
+    );
+  }
 
-  if (remaining <= 0) {
+  // Exa is the primary provider; TinyFish is the free fallback. Exa is "unavailable"
+  // when there's no key or the monthly budget is spent — in which case we run the
+  // whole plan through TinyFish instead of skipping the step entirely.
+  const exaUnavailable = !exaKey || remaining <= 0;
+  if (exaUnavailable && !tinyfishKey) {
     console.log('  Monthly budget exhausted — skipping Exa scrape.');
     emitResult(0, 0, 0);
     saveBudget(budget); // persists potential month rollover even on no-op
     return;
   }
+  if (exaUnavailable && tinyfishKey) {
+    console.log('  Exa unavailable (no key or budget exhausted) — using TinyFish fallback.');
+  }
 
   const runCap = parseInt(process.env.EXA_RUN_CAP || '', 10) || DEFAULT_RUN_CAP;
-  const allowance = Math.min(remaining, runCap);
+  // When Exa drives the run, cap by its remaining budget. When falling back to
+  // TinyFish (free), only the per-run cap applies.
+  const allowance = exaUnavailable ? runCap : Math.min(remaining, runCap);
   console.log(`  This run will issue up to ${allowance} search(es).`);
 
   const today = new Date();
@@ -175,21 +209,35 @@ async function main() {
     }
     console.log(`  Query: "${query}"`);
     issued++;
-    budget.searches_used++;
-    try {
-      const results = await searchExa(apiKey, query, {
-        numResults: RESULTS_PER_QUERY,
-        startPublishedDate: startDate,
-        endPublishedDate: endDate,
-        maxCharacters: 800,
-      });
-      console.log(`    Found ${results.length} results`);
-      allResults.push(...results);
-    } catch (err) {
-      console.error(`    Failed: ${(err as Error).message}`);
+
+    // Per query, use Exa while it has a key and budget; otherwise fall back to
+    // TinyFish. A mid-run Exa failure also falls through to TinyFish when keyed.
+    const useExa = exaKey && budget.searches_used < budget.monthly_cap;
+    let results: SearchHit[] = [];
+
+    if (useExa) {
+      budget.searches_used++;
+      try {
+        results = await searchExa(exaKey, query, {
+          numResults: RESULTS_PER_QUERY,
+          startPublishedDate: startDate,
+          endPublishedDate: endDate,
+          maxCharacters: 800,
+        });
+      } catch (err) {
+        console.error(`    Failed: ${(err as Error).message}`);
+        if (tinyfishKey) {
+          results = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
+        }
+      }
+      // Persist after every call so a crash mid-run doesn't reset the counter.
+      saveBudget(budget);
+    } else if (tinyfishKey) {
+      results = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
     }
-    // Persist after every call so a crash mid-run doesn't reset the counter.
-    saveBudget(budget);
+
+    console.log(`    Found ${results.length} results`);
+    allResults.push(...results);
     await new Promise((r) => setTimeout(r, 500));
   }
 

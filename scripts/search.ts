@@ -147,3 +147,150 @@ export async function searchExa(
     source: r.author || 'Exa',
   }));
 }
+
+// ---------------------------------------------------------------------------
+// TinyFish fallback (https://tinyfish.ai) — a drop-in for the two paid halves of
+// our coverage pipeline: Search (below) and Fetch/extract (`fetchTinyFish`).
+// Both are gated on TINYFISH_API_KEY by callers, so with no key the pipeline
+// behaves exactly as before. Search & Fetch are free on TinyFish, which makes it
+// a natural safety net when Exa's monthly budget is exhausted or a request fails,
+// and when a publisher Cloudflare-blocks our direct fetches.
+// ---------------------------------------------------------------------------
+
+const TINYFISH_SEARCH_ENDPOINT = 'https://api.search.tinyfish.ai';
+const TINYFISH_FETCH_ENDPOINT = 'https://api.fetch.tinyfish.ai';
+
+export interface TinyFishSearchOptions {
+  numResults?: number;
+  // Accepts ISO 8601 or YYYY-MM-DD; TinyFish's after_date/before_date want the
+  // calendar date, so we truncate to the first 10 chars.
+  startPublishedDate?: string;
+  endPublishedDate?: string;
+  excludeDomains?: string[];
+  location?: string;
+  language?: string;
+  domainType?: 'web' | 'news' | 'research_paper';
+}
+
+interface TinyFishSearchResult {
+  position?: number;
+  site_name?: string;
+  title?: string;
+  snippet?: string;
+  url?: string;
+  // Present when domain_type=news.
+  publisher?: string;
+  date?: string;
+}
+
+// True if `url`'s host is (a subdomain of) any excluded domain. TinyFish has no
+// server-side excludeDomains param, so we filter the job-board/recruiter noise
+// client-side to match Exa's behaviour.
+function hostIsExcluded(url: string, excluded: Set<string>): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+    for (const d of excluded) {
+      if (host === d || host.endsWith(`.${d}`)) return true;
+    }
+  } catch {
+    // Unparseable URL — let it through; dedup downstream will handle it.
+  }
+  return false;
+}
+
+// Query the TinyFish Search API and return normalized SearchHits. Throws on a
+// non-2xx response so callers can decide how to react, mirroring searchExa.
+export async function searchTinyFish(
+  apiKey: string,
+  query: string,
+  opts: TinyFishSearchOptions = {}
+): Promise<SearchHit[]> {
+  const {
+    numResults = 10,
+    startPublishedDate,
+    endPublishedDate,
+    excludeDomains = EXA_EXCLUDED_DOMAINS,
+    location = 'Singapore',
+    language = 'en',
+    domainType = 'news',
+  } = opts;
+
+  const params = new URLSearchParams({ query });
+  if (location) params.set('location', location);
+  if (language) params.set('language', language);
+  if (domainType) params.set('domain_type', domainType);
+  if (startPublishedDate) params.set('after_date', startPublishedDate.slice(0, 10));
+  if (endPublishedDate) params.set('before_date', endPublishedDate.slice(0, 10));
+
+  const t0 = Date.now();
+  const res = await fetch(`${TINYFISH_SEARCH_ENDPOINT}?${params.toString()}`, {
+    headers: { 'X-API-Key': apiKey },
+  });
+
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`TinyFish search ${res.status}: ${body.slice(0, 200)} (${elapsed}s)`);
+  }
+  const data = (await res.json()) as { results?: TinyFishSearchResult[] };
+  console.log(`    [timing] "${query}": ${elapsed}s`);
+
+  const excluded = new Set(excludeDomains.map((d) => d.toLowerCase()));
+  return (data.results || [])
+    .filter((r): r is TinyFishSearchResult & { url: string } =>
+      Boolean(r.url) && !hostIsExcluded(r.url!, excluded)
+    )
+    .slice(0, numResults)
+    .map((r) => ({
+      title: r.title || r.url,
+      url: r.url,
+      snippet: r.snippet || '',
+      publishedDate: r.date || '',
+      source: r.publisher || r.site_name || 'TinyFish',
+    }));
+}
+
+export interface TinyFishFetchResult {
+  url: string;
+  finalUrl: string;
+  title: string;
+  text: string;
+}
+
+interface TinyFishFetchApiResult {
+  url?: string;
+  final_url?: string;
+  title?: string;
+  text?: string;
+}
+
+// Fetch (render) one or more URLs through TinyFish's real-browser Fetch API and
+// return the extracted content. Used as a last-resort extractor when a publisher
+// blocks our direct requests (Cloudflare et al.). Throws on a non-2xx response.
+export async function fetchTinyFish(
+  apiKey: string,
+  urls: string[],
+  format: 'markdown' | 'html' | 'json' = 'markdown'
+): Promise<TinyFishFetchResult[]> {
+  const res = await fetch(TINYFISH_FETCH_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': apiKey,
+    },
+    // API caps a single request at 10 URLs.
+    body: JSON.stringify({ urls: urls.slice(0, 10), format }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`TinyFish fetch ${res.status}: ${body.slice(0, 200)}`);
+  }
+  const data = (await res.json()) as { results?: TinyFishFetchApiResult[] };
+  return (data.results || []).map((r) => ({
+    url: r.url || '',
+    finalUrl: r.final_url || r.url || '',
+    title: r.title || '',
+    text: r.text || '',
+  }));
+}

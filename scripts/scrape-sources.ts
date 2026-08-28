@@ -5,6 +5,7 @@ import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
+import { fetchTinyFish } from './search';
 
 // Real Chrome UA — the browser identity that passes the most publisher/CDN
 // blocks (Cloudflare, etc.) when fetching feeds. Matches resolve-gnews.ts.
@@ -171,6 +172,28 @@ async function fetchRaw(url: string): Promise<string> {
       throw err;
     }
   }
+
+  // Every identity profile was block-listed (Cloudflare et al.). As a last resort,
+  // render the page through TinyFish's real-browser Fetch API, which is built to
+  // get past exactly these blocks. Only attempted when TINYFISH_API_KEY is set;
+  // otherwise we preserve the original block error.
+  const tinyfishKey = process.env.TINYFISH_API_KEY;
+  if (
+    tinyfishKey &&
+    lastErr instanceof HttpStatusError &&
+    BLOCK_STATUSES.has(lastErr.status)
+  ) {
+    try {
+      const [doc] = await fetchTinyFish(tinyfishKey, [url], 'html');
+      if (doc?.text) {
+        console.log(`    [tinyfish] extracted ${url} after ${lastErr.status} block`);
+        return doc.text;
+      }
+    } catch (err) {
+      console.error(`    [tinyfish] fetch fallback failed for ${url}: ${(err as Error).message}`);
+    }
+  }
+
   throw lastErr;
 }
 
