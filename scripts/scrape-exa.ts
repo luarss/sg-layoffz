@@ -3,7 +3,7 @@ import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
 import { isDuplicate } from './deduplicate';
-import { searchExa, searchTinyFish, titleFingerprint, SearchHit } from './search';
+import { searchExa, searchTinyFish, searchKeenable, titleFingerprint, SearchHit } from './search';
 
 // Exa is semantic, so natural-language intent queries beat bare keywords.
 //
@@ -142,6 +142,41 @@ async function tinyFishFallback(
   }
 }
 
+// Keenable is keyless, so it's the guaranteed final tier. Errors are swallowed.
+async function keenableFallback(
+  query: string,
+  startDate: string,
+  endDate: string
+): Promise<SearchHit[]> {
+  try {
+    const results = await searchKeenable(query, {
+      numResults: RESULTS_PER_QUERY,
+      startPublishedDate: startDate,
+      endPublishedDate: endDate,
+    });
+    console.log(`    [keenable] fallback returned ${results.length} results`);
+    return results;
+  } catch (err) {
+    console.error(`    Keenable fallback failed: ${(err as Error).message}`);
+    return [];
+  }
+}
+
+// Fallback search chain used when Exa is unavailable or a query fails: try
+// TinyFish first (when keyed), then Keenable (keyless, always available).
+async function fallbackSearch(
+  query: string,
+  startDate: string,
+  endDate: string,
+  tinyfishKey: string | undefined
+): Promise<SearchHit[]> {
+  if (tinyfishKey) {
+    const tf = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
+    if (tf.length > 0) return tf;
+  }
+  return keenableFallback(query, startDate, endDate);
+}
+
 function emitResult(newEntries: number, dupes: number, potential: number) {
   console.log(
     `SCRAPE_RESULT:source=exa,new_entries=${newEntries},duplicates=${dupes},potential_dupes=${potential}`
@@ -153,11 +188,6 @@ async function main() {
 
   const exaKey = process.env.EXA_API_KEY;
   const tinyfishKey = process.env.TINYFISH_API_KEY;
-  if (!exaKey && !tinyfishKey) {
-    console.log('  Neither EXA_API_KEY nor TINYFISH_API_KEY set — skipping Exa scrape.');
-    emitResult(0, 0, 0);
-    return;
-  }
 
   const budget = loadBudget();
   const remaining = exaKey ? budget.monthly_cap - budget.searches_used : 0;
@@ -167,23 +197,20 @@ async function main() {
     );
   }
 
-  // Exa is the primary provider; TinyFish is the free fallback. Exa is "unavailable"
-  // when there's no key or the monthly budget is spent — in which case we run the
-  // whole plan through TinyFish instead of skipping the step entirely.
+  // Provider tiers: Exa (primary, paid) → TinyFish (free, keyed) → Keenable
+  // (free, keyless). Exa is "unavailable" when there's no key or the monthly
+  // budget is spent; because Keenable needs no key the run never skips entirely,
+  // it just falls through to the free tiers.
   const exaUnavailable = !exaKey || remaining <= 0;
-  if (exaUnavailable && !tinyfishKey) {
-    console.log('  Monthly budget exhausted — skipping Exa scrape.');
-    emitResult(0, 0, 0);
-    saveBudget(budget); // persists potential month rollover even on no-op
-    return;
-  }
-  if (exaUnavailable && tinyfishKey) {
-    console.log('  Exa unavailable (no key or budget exhausted) — using TinyFish fallback.');
+  if (exaUnavailable) {
+    const via = tinyfishKey ? 'TinyFish then Keenable' : 'Keenable';
+    console.log(`  Exa unavailable (no key or budget exhausted) — falling back to ${via}.`);
+    saveBudget(budget); // persists potential month rollover even when Exa is unused
   }
 
   const runCap = parseInt(process.env.EXA_RUN_CAP || '', 10) || DEFAULT_RUN_CAP;
   // When Exa drives the run, cap by its remaining budget. When falling back to
-  // TinyFish (free), only the per-run cap applies.
+  // the free tiers, only the per-run cap applies.
   const allowance = exaUnavailable ? runCap : Math.min(remaining, runCap);
   console.log(`  This run will issue up to ${allowance} search(es).`);
 
@@ -226,14 +253,12 @@ async function main() {
         });
       } catch (err) {
         console.error(`    Failed: ${(err as Error).message}`);
-        if (tinyfishKey) {
-          results = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
-        }
+        results = await fallbackSearch(query, startDate, endDate, tinyfishKey);
       }
       // Persist after every call so a crash mid-run doesn't reset the counter.
       saveBudget(budget);
-    } else if (tinyfishKey) {
-      results = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
+    } else {
+      results = await fallbackSearch(query, startDate, endDate, tinyfishKey);
     }
 
     console.log(`    Found ${results.length} results`);

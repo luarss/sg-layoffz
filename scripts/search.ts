@@ -294,3 +294,146 @@ export async function fetchTinyFish(
     text: r.text || '',
   }));
 }
+
+// ---------------------------------------------------------------------------
+// Keenable fallback (https://keenable.ai) — the final, keyless tier below Exa
+// and TinyFish. Keenable is keyless by default (KEENABLE_API_KEY only raises
+// rate limits), so it works without any secret and its `/public` endpoints are
+// used when no key is present. Provides both Search and Fetch/extract.
+// ---------------------------------------------------------------------------
+
+const KEENABLE_SEARCH_ENDPOINT = 'https://api.keenable.ai/v1/search';
+const KEENABLE_FETCH_ENDPOINT = 'https://api.keenable.ai/v1/fetch';
+// Identifies this app on Keenable's public (keyless) endpoints, where the
+// X-Keenable-Title header is required.
+const KEENABLE_APP_TITLE = 'sg-layoffz';
+
+export interface KeenableSearchOptions {
+  numResults?: number;
+  // ISO 8601 or YYYY-MM-DD; truncated to the calendar date Keenable expects.
+  startPublishedDate?: string;
+  endPublishedDate?: string;
+  excludeDomains?: string[];
+  // Optional; falls back to KEENABLE_API_KEY, then to the keyless public endpoint.
+  apiKey?: string;
+}
+
+interface KeenableSearchResult {
+  title?: string;
+  url?: string;
+  description?: string;
+  snippets?: string[] | string;
+  published_at?: string;
+}
+
+// Resolve the Keenable key (explicit arg > env) and return the endpoint URL and
+// headers to use — the authenticated endpoint when keyed, the public one when not.
+function keenableAuth(endpoint: string, apiKey?: string): { url: string; headers: Record<string, string> } {
+  const key = apiKey ?? process.env.KEENABLE_API_KEY;
+  if (key) {
+    return { url: endpoint, headers: { 'X-API-Key': key } };
+  }
+  return { url: `${endpoint}/public`, headers: { 'X-Keenable-Title': KEENABLE_APP_TITLE } };
+}
+
+// Query the Keenable Search API and return normalized SearchHits. Throws on a
+// non-2xx response, mirroring searchExa/searchTinyFish.
+export async function searchKeenable(
+  query: string,
+  opts: KeenableSearchOptions = {}
+): Promise<SearchHit[]> {
+  const {
+    numResults = 10,
+    startPublishedDate,
+    endPublishedDate,
+    excludeDomains = EXA_EXCLUDED_DOMAINS,
+    apiKey,
+  } = opts;
+
+  const { url, headers } = keenableAuth(KEENABLE_SEARCH_ENDPOINT, apiKey);
+  const body: Record<string, string> = { query };
+  if (startPublishedDate) body.published_after = startPublishedDate.slice(0, 10);
+  if (endPublishedDate) body.published_before = endPublishedDate.slice(0, 10);
+
+  const t0 = Date.now();
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify(body),
+  });
+
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    throw new Error(`Keenable search ${res.status}: ${errBody.slice(0, 200)} (${elapsed}s)`);
+  }
+  const data = (await res.json()) as { results?: KeenableSearchResult[] };
+  console.log(`    [timing] "${query}": ${elapsed}s`);
+
+  const excluded = new Set(excludeDomains.map((d) => d.toLowerCase()));
+  return (data.results || [])
+    .filter((r): r is KeenableSearchResult & { url: string } =>
+      Boolean(r.url) && !hostIsExcluded(r.url!, excluded)
+    )
+    .slice(0, numResults)
+    .map((r) => {
+      const snippet =
+        r.description ||
+        (Array.isArray(r.snippets) ? r.snippets.join(' ') : r.snippets) ||
+        '';
+      let source = 'Keenable';
+      try {
+        source = new URL(r.url).hostname.replace(/^www\./, '');
+      } catch {
+        // keep default
+      }
+      return {
+        title: r.title || r.url,
+        url: r.url,
+        snippet,
+        publishedDate: r.published_at || '',
+        source,
+      };
+    });
+}
+
+export interface KeenableFetchResult {
+  url: string;
+  title: string;
+  text: string;
+}
+
+// Fetch (extract) a single URL through Keenable, returning clean markdown. Uses
+// live=true so arbitrary (non-indexed) news URLs are fetched from source rather
+// than requiring them to be in Keenable's index. Throws on a non-2xx response.
+export async function fetchKeenable(
+  targetUrl: string,
+  apiKey?: string
+): Promise<KeenableFetchResult> {
+  const { url, headers } = keenableAuth(KEENABLE_FETCH_ENDPOINT, apiKey);
+  const qs = new URLSearchParams({ url: targetUrl, live: 'true' });
+  const res = await fetch(`${url}?${qs.toString()}`, { headers });
+
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    throw new Error(`Keenable fetch ${res.status}: ${errBody.slice(0, 200)}`);
+  }
+
+  // The endpoint may return either a JSON envelope or raw markdown; handle both.
+  const raw = await res.text();
+  try {
+    const data = JSON.parse(raw) as {
+      title?: string;
+      content?: string;
+      markdown?: string;
+      text?: string;
+    };
+    return {
+      url: targetUrl,
+      title: data.title || '',
+      text: data.content || data.markdown || data.text || '',
+    };
+  } catch {
+    return { url: targetUrl, title: '', text: raw };
+  }
+}

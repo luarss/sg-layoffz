@@ -22,7 +22,7 @@ import type OpenAI from 'openai';
 import { readCsv, writeCsvRaw } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
 import { ProviderConfig, getProviderChain } from './llm-provider';
-import { searchGoogleNews, searchExa, searchTinyFish, SearchHit } from './search';
+import { searchGoogleNews, searchExa, searchTinyFish, searchKeenable, SearchHit } from './search';
 
 export const RECHECK_STATUSES = ['confirmed', 'denied', 'expired', 'still-rumored'] as const;
 export type RecheckStatus = (typeof RECHECK_STATUSES)[number];
@@ -237,10 +237,13 @@ async function gatherEvidence(rumor: LayoffEntry): Promise<SearchHit[]> {
   const gnews = await searchGoogleNews(query);
   hits.push(...gnews);
 
+  // Semantic tier on top of the free Google News RSS results, with fallbacks:
+  // Exa (paid) → TinyFish (free, keyed) → Keenable (free, keyless). We stop at
+  // the first tier that returns coverage.
   const semanticQuery = `${rumor.company} Singapore layoffs update`;
   const exaKey = process.env.EXA_API_KEY;
   const tinyfishKey = process.env.TINYFISH_API_KEY;
-  let exaOk = false;
+  let semanticOk = false;
   if (exaKey) {
     try {
       const exa = await searchExa(exaKey, semanticQuery, {
@@ -248,19 +251,26 @@ async function gatherEvidence(rumor: LayoffEntry): Promise<SearchHit[]> {
         maxCharacters: 1200,
       });
       hits.push(...exa);
-      exaOk = true;
+      semanticOk = true;
     } catch (err) {
       console.error(`    Exa search failed: ${(err as Error).message}`);
     }
   }
-  // Fall back to TinyFish when Exa is absent or errored, so a rumor still gets
-  // semantic coverage on top of the free Google News RSS results.
-  if (!exaOk && tinyfishKey) {
+  if (!semanticOk && tinyfishKey) {
     try {
       const tf = await searchTinyFish(tinyfishKey, semanticQuery, { numResults: 5 });
       hits.push(...tf);
+      semanticOk = true;
     } catch (err) {
       console.error(`    TinyFish search failed: ${(err as Error).message}`);
+    }
+  }
+  if (!semanticOk) {
+    try {
+      const kb = await searchKeenable(semanticQuery, { numResults: 5 });
+      hits.push(...kb);
+    } catch (err) {
+      console.error(`    Keenable search failed: ${(err as Error).message}`);
     }
   }
 
