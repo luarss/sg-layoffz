@@ -46,6 +46,61 @@ describe('isDuplicate', () => {
     ).toBe('duplicate');
   });
 
+  it('matches a URL differing only by utm tracking params', () => {
+    const existing = [entry({ source_link: 'https://x.com/article' })];
+    expect(
+      isDuplicate(
+        { source_link: 'https://x.com/article?utm_source=twitter&utm_medium=social' },
+        existing,
+        []
+      )
+    ).toBe('duplicate');
+  });
+
+  it('matches a URL differing only by a trailing slash', () => {
+    const existing = [entry({ source_link: 'https://x.com/article' })];
+    expect(
+      isDuplicate({ source_link: 'https://x.com/article/' }, existing, [])
+    ).toBe('duplicate');
+  });
+
+  it('matches a URL differing only by http vs https scheme', () => {
+    const existing = [entry({ source_link: 'https://x.com/article' })];
+    expect(
+      isDuplicate({ source_link: 'http://x.com/article' }, existing, [])
+    ).toBe('duplicate');
+  });
+
+  it('matches a URL differing only by a www prefix', () => {
+    const existing = [entry({ source_link: 'https://x.com/article' })];
+    expect(
+      isDuplicate({ source_link: 'https://www.x.com/article' }, existing, [])
+    ).toBe('duplicate');
+  });
+
+  it('matches a Wayback-wrapped variant of an existing source_link', () => {
+    const existing = [entry({ source_link: 'https://x.com/article' })];
+    expect(
+      isDuplicate(
+        { source_link: 'https://web.archive.org/web/20260101000000/https://x.com/article' },
+        existing,
+        []
+      )
+    ).toBe('duplicate');
+  });
+
+  it('matches a URL differing only by utm params against rejected.csv', () => {
+    const rejected = [entry({ source_link: 'https://x.com/rejected' })];
+    expect(
+      isDuplicate(
+        { source_link: 'https://x.com/rejected?utm_source=newsletter' },
+        [],
+        [],
+        rejected
+      )
+    ).toBe('duplicate');
+  });
+
   it('matches a Google News fingerprint already in the review queue', () => {
     const queue = [review({ notes: 'title [gn:fp-9] x' })];
     expect(

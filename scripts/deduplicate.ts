@@ -1,5 +1,6 @@
 import { LayoffEntry, ReviewEntry } from '../src/lib/types';
 import { normalizeCompany } from './normalize';
+import { normalizeUrl } from './url-normalize';
 
 export type DedupResult = 'new' | 'duplicate' | 'potential-duplicate';
 
@@ -14,18 +15,24 @@ export function isDuplicate(
   reviewQueue: ReviewEntry[],
   rejected: LayoffEntry[] = []
 ): DedupResult {
-  // Exact URL match in layoffs.csv, review queue, or rejected.csv.
-  // Rejected articles should not return to the queue on a later scrape.
+  // Normalized URL match in layoffs.csv, review queue, or rejected.csv. Normalizing
+  // strips utm/tracking params, trailing slashes, scheme, www, AMP variants, and the
+  // Wayback wrapper so re-fetches of the same article under a cosmetically different
+  // URL are still caught. Rejected articles should not return to the queue on a
+  // later scrape. Build each side's normalized-URL set once per call rather than
+  // re-normalizing every row on every `.find` — rejected.csv alone runs 3000+ rows.
   if (candidate.source_link) {
-    const candidateUrl = candidate.source_link.toLowerCase();
-    const urlMatch = existing.find((e) => e.source_link?.toLowerCase() === candidateUrl);
-    if (urlMatch) return 'duplicate';
+    const candidateUrl = normalizeUrl(candidate.source_link);
+    if (candidateUrl) {
+      const existingUrls = new Set(existing.map((e) => normalizeUrl(e.source_link || '')));
+      if (existingUrls.has(candidateUrl)) return 'duplicate';
 
-    const queueMatch = reviewQueue.find((e) => e.source_link?.toLowerCase() === candidateUrl);
-    if (queueMatch) return 'duplicate';
+      const queueUrls = new Set(reviewQueue.map((e) => normalizeUrl(e.source_link || '')));
+      if (queueUrls.has(candidateUrl)) return 'duplicate';
 
-    const rejectedMatch = rejected.find((e) => e.source_link?.toLowerCase() === candidateUrl);
-    if (rejectedMatch) return 'duplicate';
+      const rejectedUrls = new Set(rejected.map((e) => normalizeUrl(e.source_link || '')));
+      if (rejectedUrls.has(candidateUrl)) return 'duplicate';
+    }
   }
 
   // Title fingerprint match — catches the same Google News article re-fetched under a

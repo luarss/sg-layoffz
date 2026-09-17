@@ -12,5 +12,16 @@ export function normalizeUrl(url: string): string {
   const lsg = u.match(/layoffsg\.com\/feed\?[^#]*\bevent=([0-9a-z]+)/i);
   if (lsg) return `https://layoffsg.com/feed?event=${lsg[1].toLowerCase()}`;
   u = u.replace(/[?#].*$/, '').replace(/\/+$/, '');
-  return u.toLowerCase();
+  u = u.toLowerCase();
+  // Scheme and a leading "www." are cosmetic — the same article served over http vs
+  // https, or with vs without a www subdomain, is the same source.
+  u = u.replace(/^https?:\/\//, '').replace(/^www\./, '');
+  // AMP variants ("/amp" or "amp/" path segments, or a trailing ".amp") render the
+  // same article for the mobile AMP pipeline, not a distinct page.
+  u = u.replace(/(?:^|\/)amp(?=\/|$)/g, '').replace(/\.amp$/, '');
+  // A bare directory-index file is equivalent to its directory.
+  u = u.replace(/\/index\.html?$/, '');
+  // Re-collapse any doubled or trailing slashes left behind by the strips above.
+  u = u.replace(/\/{2,}/g, '/').replace(/\/+$/, '');
+  return u;
 }
