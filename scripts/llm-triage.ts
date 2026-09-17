@@ -17,6 +17,14 @@ import { LayoffEntry } from '../src/lib/types';
 import { LLMVerdict, coerceVerdict } from '../src/lib/verdict';
 import { normalizeCompany } from './normalize';
 import { ProviderConfig, getProviderChain } from './llm-provider';
+import {
+  buildClusters,
+  resolveCluster,
+  anchorsFromLayoffs,
+  buildCompanyTokens,
+  type Cluster,
+  type ClusterNode,
+} from './cluster';
 
 // Derive a kebab-case event_id from company + event month, used when the model does
 // not propose one (or proposes a blank).
@@ -149,7 +157,82 @@ function buildEventIndex(layoffs: LayoffEntry[]): Map<string, EventHint[]> {
   return out;
 }
 
-function buildUserPrompt(entry: LayoffEntry, eventIndex: Map<string, EventHint[]>): string {
+// Per-candidate clustering hints: a "primary" hint (this row clusters with one
+// specific existing event — anchor company-token match within ±21 days, or an exact
+// URL/fingerprint match) and a "fallback" list of other plausible existing events for
+// the same company, surfaced when there's no confident single match.
+type ClusterHint = { primary: EventHint | null; fallback: EventHint[] };
+const NO_CLUSTER_HINT: ClusterHint = { primary: null, fallback: [] };
+
+// Cluster review-queue candidates against layoffs.csv anchors (company tokens ∪
+// ±21 day window, plus exact URL/fingerprint collapse — see scripts/cluster.ts).
+// Runs once, up front, before any LLM calls: cheap in-memory union-find over at most
+// a few thousand rows. `ClusterNode.idx` is the row's index in `queue`.
+function buildQueueClusters(queue: LayoffEntry[], existingLayoffs: LayoffEntry[]): Cluster[] {
+  if (queue.length === 0) return [];
+
+  const tokens = buildCompanyTokens(existingLayoffs);
+  const candidateNodes: ClusterNode[] = queue.map((r, idx) => ({
+    idx,
+    kind: 'candidate' as const,
+    company: r.company || '',
+    date_announced: r.date_announced || '',
+    url: r.source_link || '',
+    notes: r.notes || '',
+    jobs_cut: r.jobs_cut_sg != null ? Number(r.jobs_cut_sg) : r.jobs_cut_global != null ? Number(r.jobs_cut_global) : null,
+  }));
+  const anchorNodes = anchorsFromLayoffs(existingLayoffs);
+  return buildClusters([...candidateNodes, ...anchorNodes], tokens);
+}
+
+// Derive one ClusterHint per candidate queue row from the cluster set above.
+function clusterHintsFromClusters(
+  clusters: Cluster[],
+  existingLayoffs: LayoffEntry[]
+): Map<number, ClusterHint> {
+  const hints = new Map<number, ClusterHint>();
+
+  for (const cluster of clusters) {
+    const candidateIdxs = cluster.members.filter((m) => m.kind === 'candidate').map((m) => m.idx);
+    if (candidateIdxs.length === 0) continue;
+
+    // All distinct existing events anchored to this cluster — the fallback list.
+    const fallback: EventHint[] = [];
+    const seen = new Set<string>();
+    for (const m of cluster.members) {
+      if (m.kind !== 'anchor') continue;
+      const anchorEntry = existingLayoffs[m.idx];
+      if (!anchorEntry?.event_id || seen.has(anchorEntry.event_id)) continue;
+      seen.add(anchorEntry.event_id);
+      fallback.push({ event_id: anchorEntry.event_id, date_announced: m.date_announced, company: m.company });
+    }
+
+    let primary: EventHint | null = null;
+    if (cluster.hasAnchor) {
+      const resolution = resolveCluster(cluster);
+      if (resolution.kind === 'anchored') {
+        const anchorEntry = existingLayoffs[resolution.anchor.idx];
+        if (anchorEntry?.event_id) {
+          primary = {
+            event_id: anchorEntry.event_id,
+            date_announced: resolution.anchor.date_announced,
+            company: resolution.anchor.company,
+          };
+        }
+      }
+    }
+
+    for (const idx of candidateIdxs) hints.set(idx, { primary, fallback });
+  }
+
+  return hints;
+}
+
+function buildUserPrompt(
+  entry: LayoffEntry,
+  eventIndex: Map<string, EventHint[]>,
+  clusterHint: ClusterHint
+): string {
   const lines: string[] = [
     `Title/Company: ${entry.company}`,
     `Date: ${entry.date_announced}`,
@@ -162,10 +245,27 @@ function buildUserPrompt(entry: LayoffEntry, eventIndex: Map<string, EventHint[]
   if (entry.pct_workforce != null) lines.push(`% workforce (scraped): ${entry.pct_workforce}`);
   if (entry.notes) lines.push(`Notes/snippet: ${entry.notes}`);
 
-  const hints = eventIndex.get(normalizeCompany(entry.company || '').toLowerCase());
-  if (hints && hints.length > 0) {
+  if (clusterHint.primary) {
+    const p = clusterHint.primary;
+    lines.push(
+      `This appears to be follow-up coverage of event ${p.event_id} (${p.company}, ${p.date_announced}). ` +
+      `Reuse that exact event_id unless the article clearly describes a separate, later round of cuts.`
+    );
+  }
+
+  // Fallback hint list: exact-normalized-company existing events (original behaviour)
+  // plus any events linked to this row via clustering (catches cross-name variants,
+  // e.g. "Uber" vs "Uber Technologies", that an exact-key lookup misses). Skip the
+  // primary hint's event_id here so it isn't listed twice.
+  const hintMap = new Map<string, EventHint>();
+  const exact = eventIndex.get(normalizeCompany(entry.company || '').toLowerCase());
+  for (const h of exact || []) hintMap.set(h.event_id, h);
+  for (const h of clusterHint.fallback) hintMap.set(h.event_id, h);
+  if (clusterHint.primary) hintMap.delete(clusterHint.primary.event_id);
+
+  if (hintMap.size > 0) {
     lines.push('Existing events for this company (reuse an event_id if this is follow-up coverage):');
-    for (const h of hints.slice(0, 12)) {
+    for (const h of [...hintMap.values()].slice(0, 12)) {
       lines.push(`  - ${h.event_id} (${h.date_announced})`);
     }
   }
@@ -177,7 +277,8 @@ function buildUserPrompt(entry: LayoffEntry, eventIndex: Map<string, EventHint[]
 async function evaluateEntry(
   chain: ProviderConfig[],
   entry: LayoffEntry,
-  eventIndex: Map<string, EventHint[]>
+  eventIndex: Map<string, EventHint[]>,
+  clusterHint: ClusterHint
 ): Promise<{ verdict: LLMVerdict; provider: string }> {
   const errors: string[] = [];
 
@@ -187,7 +288,7 @@ async function evaluateEntry(
         model: provider.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(entry, eventIndex) },
+          { role: 'user', content: buildUserPrompt(entry, eventIndex, clusterHint) },
         ],
         temperature: 0,
         // Providers in the chain (e.g. deepseek-v4-flash) are reasoning models whose
@@ -259,8 +360,16 @@ async function main() {
   }
 
   // Existing events index, so the model can reuse an event_id for follow-up coverage.
+  // readCsv already returns [] for a missing/empty layoffs.csv, so an empty tracker
+  // just means every cluster is candidate-only (no anchors) — handled below.
   const existingLayoffs = readCsv('layoffs.csv') as LayoffEntry[];
   const eventIndex = buildEventIndex(existingLayoffs);
+
+  // Cluster review-queue candidates against layoffs.csv anchors up front — cheap,
+  // one-shot union-find — so per-row hints and the post-verdict event_id alignment
+  // below both reuse the same cluster set instead of reclustering per row.
+  const clusters = buildQueueClusters(queue, existingLayoffs);
+  const clusterHints = clusterHintsFromClusters(clusters, existingLayoffs);
 
   const chain = getProviderChain();
   const providerNames = chain.map((p) => `${p.name}(${p.model})`).join(' → ');
@@ -271,6 +380,12 @@ async function main() {
   const rejected: LayoffEntry[] = [];
   const remaining: LayoffEntry[] = [];
   const summaryRows: SummaryRow[] = [];
+
+  // Track the constructed layoffEntry per queue idx (only for confirmed/rumored rows)
+  // so the post-loop cluster alignment below can look them up and mutate event_id in
+  // place — the same object references live in `accepted`, so mutating here is
+  // reflected there too.
+  const acceptedByIdx = new Map<number, LayoffEntry>();
 
   // Overall wall-clock budget. The scheduled-scrape job is capped at 60 min; if triage
   // runs past that GitHub kills the process and NO progress is written (CSVs flush only
@@ -303,11 +418,14 @@ async function main() {
 
     const window = queue.slice(start, start + concurrency);
     const results = await Promise.all(
-      window.map((entry) => evaluateEntry(chain, entry, eventIndex))
+      window.map((entry, k) =>
+        evaluateEntry(chain, entry, eventIndex, clusterHints.get(start + k) ?? NO_CLUSTER_HINT)
+      )
     );
 
     for (let k = 0; k < window.length; k++) {
       const entry = window[k];
+      const queueIdx = start + k;
       const { verdict, provider } = results[k];
       processed++;
       console.log(
@@ -344,6 +462,7 @@ async function main() {
 
       if (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored') {
         accepted.push(layoffEntry);
+        acceptedByIdx.set(queueIdx, layoffEntry);
       } else if (verdict.verdict === 'rejected') {
         rejected.push({
           ...layoffEntry,
@@ -352,6 +471,34 @@ async function main() {
       } else {
         remaining.push(entry);
       }
+    }
+  }
+
+  // Candidates that clustered only with each other (no layoffs.csv anchor) may each
+  // have been triaged independently and minted their own event_id. Align them: for
+  // every non-anchored cluster with ≥2 accepted candidates, adopt the canonical row's
+  // (per resolveCluster) event_id across the whole cluster so they count as one event.
+  for (const cluster of clusters) {
+    if (cluster.hasAnchor) continue;
+    const candidateIdxs = cluster.members.filter((m) => m.kind === 'candidate').map((m) => m.idx);
+    if (candidateIdxs.length < 2) continue;
+
+    const resolution = resolveCluster(cluster);
+    if (resolution.kind !== 'canonical') continue;
+
+    const canonicalEntry = acceptedByIdx.get(resolution.canonicalIdx);
+    if (!canonicalEntry) continue; // canonical row wasn't accepted — nothing to align to
+    const canonicalEventId = canonicalEntry.event_id;
+
+    for (const idx of candidateIdxs) {
+      if (idx === resolution.canonicalIdx) continue;
+      const row = acceptedByIdx.get(idx);
+      if (!row || row.event_id === canonicalEventId) continue;
+      console.log(
+        `  ↳ linking ${row.company} (${row.date_announced}) ${row.event_id} → ${canonicalEventId} ` +
+        `(clustered with ${canonicalEntry.company}, row ${resolution.canonicalIdx})`
+      );
+      row.event_id = canonicalEventId;
     }
   }
 
