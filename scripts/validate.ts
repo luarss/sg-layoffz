@@ -2,6 +2,7 @@ import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
 import { normalizeCompany } from './normalize';
 import { extractGnFingerprint } from './deduplicate';
+import { normalizeUrl } from './url-normalize';
 
 interface ValidationError {
   row: number;
@@ -102,21 +103,6 @@ function significantTokens(entry: LayoffEntry): Set<string> {
     if (tok.length >= 4 && !SAME_EVENT_STOPWORDS.has(tok)) out.add(tok);
   }
   return out;
-}
-
-// Normalise a source URL for duplicate detection: drop the Wayback prefix, tracking
-// query strings, and trailing slashes so the same underlying article matches.
-function normalizeUrl(url: string): string {
-  if (!url) return '';
-  let u = url.replace(/^https?:\/\/web\.archive\.org\/web\/\d+\//, '');
-  // layoffsg.com/feed identifies each event SOLELY by its ?event= id — the path is
-  // always "/feed". Stripping the query (as we do for tracking params below) would
-  // collapse every distinct layoffsg event to one URL, producing bogus duplicate-source
-  // and cross-file-contradiction warnings for unrelated events. Keep the event id.
-  const lsg = u.match(/layoffsg\.com\/feed\?[^#]*\bevent=([0-9a-z]+)/i);
-  if (lsg) return `https://layoffsg.com/feed?event=${lsg[1].toLowerCase()}`;
-  u = u.replace(/[?#].*$/, '').replace(/\/+$/, '');
-  return u.toLowerCase();
 }
 
 // Company aliasing is shared with the scrape/dedup pipeline — see the single
