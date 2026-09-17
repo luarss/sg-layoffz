@@ -46,7 +46,8 @@ comma (`rumoredKee Wah Bakery`), is row gluing — flag it immediately.
 npx tsx .claude/skills/audit-layoff-data/scripts/scan.ts
 ```
 
-It reports malformed rows (field-count != 8 → row gluing) across both CSVs, exact
+It reports malformed rows (field count different from the header's own column count →
+row gluing) across both CSVs, exact
 `company+date` duplicates, and same-company clusters worth a manual double-count look.
 Non-zero exit means a glued row exists. This bundles the checks so you don't re-derive
 them each time.

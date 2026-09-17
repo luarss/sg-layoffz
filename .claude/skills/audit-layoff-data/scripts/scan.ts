@@ -1,10 +1,12 @@
 // Data-integrity scan for the sg-layoffz datasets.
 //
 // Catches the two failure modes that have actually slipped past CI:
-//   1. Row gluing — a row whose field count != 8, caused by appending to a file whose
-//      last row lacked a trailing newline (e.g. status "rumored" fused with the next
-//      company "Kee Wah Bakery" → "rumoredKee Wah Bakery"). The status enum check in
-//      validate.ts only flags the symptom; this pinpoints the merged row directly.
+//   1. Row gluing — a row whose field count != the header's column count, caused by
+//      appending to a file whose last row lacked a trailing newline (e.g. status
+//      "rumored" fused with the next company "Kee Wah Bakery" → "rumoredKee Wah
+//      Bakery"). The status enum check in validate.ts only flags the symptom; this
+//      pinpoints the merged row directly. The expected count is read from each file's
+//      own header row (not hardcoded), so it stays correct as the CSV schema grows.
 //   2. Duplicates / double-counts — exact company+date repeats, plus same-company
 //      clusters worth a human double-count review (validate.ts already warns on
 //      near-date confirmed pairs; this gives the broader picture).
@@ -16,7 +18,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Papa from 'papaparse';
 
-const EXPECTED_FIELDS = 8;
 const FILES = ['layoffs.csv', 'rejected.csv'];
 
 function normCompany(s: string): string {
@@ -36,15 +37,22 @@ for (const file of FILES) {
 
   // --- 1. Malformed rows (field-count mismatch = likely row gluing) ---
   const rows = Papa.parse<string[]>(raw, { skipEmptyLines: true }).data;
-  const malformed = rows
-    .map((r, i) => ({ line: i + 1, n: r.length, first: String(r[0]).slice(0, 50) }))
-    .filter((r) => r.n !== EXPECTED_FIELDS);
+  if (rows.length === 0) continue;
+  // The expected field count is derived from this file's own header row, not a
+  // hardcoded constant — the CSV schema has grown before (8 → 11 columns) and a
+  // stale hardcoded count made this scan report every row as malformed, silently
+  // disabling the glued-row safety net.
+  const expectedFields = rows[0].length;
+  const dataRows = rows.slice(1);
+  const malformed = dataRows
+    .map((r, i) => ({ line: i + 2, n: r.length, first: String(r[0]).slice(0, 50) }))
+    .filter((r) => r.n !== expectedFields);
   if (malformed.length) {
     hadError = true;
-    console.error(`\n❌ ${file}: ${malformed.length} malformed row(s) (expected ${EXPECTED_FIELDS} fields):`);
+    console.error(`\n❌ ${file}: ${malformed.length} malformed row(s) (expected ${expectedFields} fields):`);
     for (const m of malformed) console.error(`   line ${m.line}: ${m.n} fields | ${m.first}`);
   } else {
-    console.log(`\n✓ ${file}: all rows have ${EXPECTED_FIELDS} fields`);
+    console.log(`\n✓ ${file}: all rows have ${expectedFields} fields`);
   }
 }
 
