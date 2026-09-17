@@ -1,0 +1,107 @@
+[
+  {
+    "a": "AUO (AU Optronics)",
+    "b": "AU Optronics (AUO)",
+    "why": "Live pair in layoffs.csv — acronym-first vs full-name-first parenthetical forms of the same firm."
+  },
+  {
+    "a": "Wing Seong Fatty's Restaurant",
+    "b": "Wing Seong Fatty's",
+    "why": "Live pair in layoffs.csv — trailing 'Restaurant' descriptor vs the bare name."
+  },
+  {
+    "a": "Dan's Steaks",
+    "b": "Dan's Steaks Bar and Grill",
+    "why": "Live pair in layoffs.csv — trailing 'Bar and Grill' descriptor vs the bare name."
+  },
+  {
+    "a": "Pantler",
+    "b": "Pantler Patisserie",
+    "why": "Live pair in layoffs.csv — trailing 'Patisserie' descriptor vs the bare name."
+  },
+  {
+    "a": "Japan Home",
+    "b": "Japan Home Stores",
+    "why": "Live pair in layoffs.csv — trailing 'Stores' descriptor vs the bare name."
+  },
+  {
+    "a": "Laurent Cafe & Chocolate Bar",
+    "b": "Laurent Café & Chocolate Bar",
+    "why": "Live pair in layoffs.csv — accented 'Café' vs unaccented 'Cafe' surface variant."
+  },
+  {
+    "a": "Heineken",
+    "b": "Heineken Asia Pacific",
+    "why": "Live pair in layoffs.csv — trailing 'Asia Pacific' regional-office descriptor vs the parent brand."
+  },
+  {
+    "a": "Borneo Motors",
+    "b": "Toyota Distributor Borneo Motors",
+    "why": "Live pair in layoffs.csv — bare distributor name vs the parent-descriptor-prefixed form. Too specific a prefix to strip generically, so pinned as an explicit alias."
+  },
+  {
+    "a": "Tiger Beer (Asia Pacific Breweries)",
+    "b": "Asia Pacific Breweries",
+    "why": "Live pair in layoffs.csv — both are Heineken's Singapore brewing unit (APB); there is already an 'apbs (tiger beer)' -> Heineken alias for the bare brand form."
+  },
+  {
+    "a": "Ygg",
+    "b": "Yield Guild Games",
+    "why": "Historical pair (July-2026 Web3-arm shutdown, 35 jobs) — ticker/acronym vs full name; the acronym shares no tokens with the full name so it dodged token-based dedup."
+  },
+  {
+    "a": "Jetstar Asia",
+    "b": "Qantas (Jetstar Asia)",
+    "why": "Historical pair (June-2025 Jetstar Asia shutdown) — subsidiary name vs parent-prefixed parenthetical form."
+  },
+  {
+    "a": "Oatly",
+    "b": "Oatly Group AB",
+    "why": "Historical pair (Dec-2024 SG plant closure) — brand name vs the Swedish legal entity name."
+  },
+  {
+    "a": "Coca-Cola",
+    "b": "Coca-Cola Singapore Beverages",
+    "why": "Historical pair (2015 Tuas plant closure) — brand name vs the SG bottler's legal name."
+  },
+  {
+    "a": "Loushang",
+    "b": "Lou Shang",
+    "why": "Historical pair (HDB-themed cafe closure) — unspaced vs spaced form of the same name; previously produced contradictory confirmed/rumored/rejected rows for one event."
+  },
+  {
+    "a": "Meta",
+    "b": "Meta Platforms",
+    "why": "Generic 'Platforms' trailing descriptor vs the bare brand name — regression guard for the new trailing-descriptor strip list."
+  },
+  {
+    "a": "Tomahawk King",
+    "b": "Tomahawk King Steakhouse",
+    "why": "Aug-2026 closure scraped under three name variants."
+  },
+  {
+    "a": "Tomahawk King",
+    "b": "Halal Steakhouse Tomahawk King",
+    "why": "Leading-descriptor variant of the same Aug-2026 closure."
+  },
+  {
+    "a": "MUFG (Mitsubishi UFJ Financial Group)",
+    "b": "Mitsubishi UFJ Financial Group (MUFG)",
+    "why": "Sep-2019 brokerage cuts under acronym-first vs full-name-first parenthetical forms."
+  },
+  {
+    "a": "True Fitness",
+    "b": "True Fitness & True Yoga",
+    "why": "Sep-2026 closure scraped under four name variants."
+  },
+  {
+    "a": "True Fitness",
+    "b": "True Fitness / True Yoga",
+    "why": "Slash variant of the same Sep-2026 closure."
+  },
+  {
+    "a": "True Fitness",
+    "b": "True Fitness and True Yoga",
+    "why": "'and' variant of the same Sep-2026 closure."
+  }
+]

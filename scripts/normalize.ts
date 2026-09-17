@@ -1,59 +1,51 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import Papa from 'papaparse';
 import { INDUSTRIES } from '../src/lib/types';
 
-const COMPANY_ALIASES: Record<string, string> = {
+// A small in-code fallback used only if data/company-aliases.csv is missing (e.g. a
+// fresh checkout that hasn't pulled data/, or a sandboxed test run with a stripped-down
+// data dir). The CSV is the source of truth — see loadCompanyAliases() below — so this
+// fallback is intentionally minimal, not a full mirror of the CSV.
+const FALLBACK_ALIASES: Record<string, string> = {
   'dbs bank': 'DBS',
-  'dbs group holdings': 'DBS',
-  'dbs group': 'DBS',
-  'grab holdings': 'Grab',
-  'grab singapore': 'Grab',
   'sea limited': 'Sea',
-  'sea group': 'Sea',
-  'sea (shopee)': 'Shopee',
-  // Shopee's June-2026 developer cuts were reported under several name variants that
-  // the generic paren-strip below can't safely collapse (stripping "(Shopee)" off
-  // "Sea Limited (Shopee)" would land on the 'sea limited' → Sea alias, splitting the
-  // event off Shopee). Pin the parenthetical forms explicitly — checked before the strip.
-  'shopee (sea)': 'Shopee',
-  'sea limited (shopee)': 'Shopee',
-  "sea's shopee division": 'Shopee',
-  'shopee (sea limited)': 'Shopee',
-  'shopee singapore': 'Shopee',
   "yeo's": 'Yeo Hiap Seng',
   'ninja van': 'Ninja Van',
-  // "Loushang" and "Lou Shang" are the same HDB-themed cafe; the spacing variant
-  // dodged dedup and produced contradictory confirmed/rumored/rejected rows.
-  'loushang': 'Lou Shang',
-  // "YGG" is the ticker/short form of Yield Guild Games; the July-2026 Web3-arm
-  // shutdown (35 jobs) was scraped under both names and double-counted because the
-  // acronym shares no tokens with the full name.
-  'ygg': 'Yield Guild Games',
-  'yield guild games (ygg)': 'Yield Guild Games',
-  'gxs bank': 'GXS Bank',
-  // Same June-2025 Jetstar Asia shutdown was scraped as both "Jetstar Asia" and
-  // "Qantas (Jetstar Asia)" (parent). The paren-strip would land the latter on
-  // "Qantas", splitting the event — pin it to Jetstar Asia before the strip.
-  'qantas (jetstar asia)': 'Jetstar Asia',
-  // Oatly's Dec-2024 SG plant closure reported under the legal name too.
-  'oatly group ab': 'Oatly',
-  // Coca-Cola's 2015 Tuas plant closure reported under the SG bottler name.
-  'coca-cola singapore beverages': 'Coca-Cola',
-  'mediacorp pte ltd': 'Mediacorp',
-  'mediacorp singapore': 'Mediacorp',
-  'singtel': 'Singtel',
-  'singapore telecommunications': 'Singtel',
-  'citigroup': 'Citi',
-  'citibank': 'Citi',
-  // APB (Asia Pacific Breweries / Tiger Beer) is Heineken's Singapore unit — the
-  // same Tuas cut gets reported under both names, so collapse to one key.
-  'apbs (tiger beer)': 'Heineken',
-  // Catch the parenthetical "Yeo's (Yeo Hiap Seng)" form the bare 'yeo's' alias misses.
-  "yeo's (yeo hiap seng)": 'Yeo Hiap Seng',
-  // NOTE: do NOT add self-mapping "X Singapore" → "X Singapore" aliases here. The
-  // alias lookup returns before suffix-stripping, so a self-map would prevent the
-  // 'singapore' suffix (below) from collapsing the SG-office row and the parent-
-  // company row of the same event into one key — splitting it across two rows.
-  // Let "BioNTech Singapore"/"ExxonMobil Singapore" fall through to suffix-stripping.
 };
+
+// Company aliases live in data/company-aliases.csv (header: alias,canonical,note) so a
+// future audit can append a row without touching this file. Loaded synchronously at
+// module init — every caller (scrape/dedup/cluster/validate scripts, tests) imports
+// normalizeCompany well before any async work starts, so a sync read keeps the API
+// simple and avoids threading an init step through every call site.
+//
+// NOTE: do NOT add self-mapping "X Singapore" -> "X Singapore" rows to the CSV. The
+// alias lookup returns before suffix-stripping, so a self-map would prevent the
+// 'singapore' suffix (below) from collapsing the SG-office row and the parent-company
+// row of the same event into one key -- splitting it across two rows. Let "BioNTech
+// Singapore"/"ExxonMobil Singapore" fall through to suffix-stripping instead.
+function loadCompanyAliases(): Record<string, string> {
+  const filePath = path.join(process.cwd(), 'data', 'company-aliases.csv');
+  if (!fs.existsSync(filePath)) return { ...FALLBACK_ALIASES };
+
+  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
+  const parsed = Papa.parse<{ alias: string; canonical: string; note?: string }>(raw, {
+    header: true,
+    skipEmptyLines: true,
+  });
+
+  const map: Record<string, string> = {};
+  for (const row of parsed.data) {
+    const alias = String(row.alias ?? '').trim().toLowerCase();
+    const canonical = String(row.canonical ?? '').trim();
+    if (!alias || !canonical) continue;
+    map[alias] = canonical;
+  }
+  return Object.keys(map).length > 0 ? map : { ...FALLBACK_ALIASES };
+}
+
+const COMPANY_ALIASES: Record<string, string> = loadCompanyAliases();
 
 const SUFFIXES = [
   'pte ltd',
@@ -73,8 +65,67 @@ const SUFFIXES = [
   'international',
 ];
 
+// Trailing generic business descriptors, stripped AFTER the corporate suffixes above.
+// These collapse brand/parent surface variants ("Meta Platforms" -> "Meta",
+// "Japan Home Stores" -> "Japan Home", "Heineken Asia Pacific" -> "Heineken") without
+// touching words in the middle of a name. Deliberately conservative: every entry here
+// is a word (or fixed phrase) that only ever adds a generic qualifier, never a
+// company's actual identity -- words like "beer", "home" or a bare "bar" are left out
+// on purpose so "Tiger Beer" doesn't become "Tiger" and "Japan Home" doesn't become
+// "Japan". Every pattern below is anchored with a leading `\s+`, so a descriptor can
+// only strip when something precedes it -- a bare "Sea" or "Cafe" is left untouched.
+//
+// NOTE: standalone "asia"/"apac" are deliberately NOT in this list, even though a
+// regional-office suffix is the intended target ("Heineken Asia Pacific" -> Heineken).
+// Real, distinct companies in this dataset end in a bare "Asia" as part of their actual
+// name (e.g. "Jetstar Asia", "CJ Logistics Asia"), so stripping a lone trailing "Asia"
+// would wrongly collapse them into their region-less prefix. The two-word "Asia
+// Pacific" phrase is a safer, more specific trailing descriptor and covers the live
+// Heineken pair without touching any single-word "... Asia" company name.
+//
+// NOTE: "technologies"/"technology"/"tech" are also deliberately NOT in this list.
+// They would collapse "Uber Technologies" into "Uber" — but tests/validate.ts's
+// cross-name token check (see 'same-day-same-event' in checkIntegrity) uses exactly
+// that pair as its regression example for a *different*, already-shipped safety net:
+// two same-day, same-industry rows sharing a distinctive token are hard-errored so a
+// human links them via event_id. Merging the pair here would route them through the
+// same-company 'duplicate' path instead and silently defeat that check. See the
+// "Uber" / "Uber Technologies" entry in tests/known-duplicates.test.ts's
+// knownDistinctPairs for the pinned regression.
+const GENERIC_TRAILING_DESCRIPTORS = [
+  'platforms',
+  'asia pacific',
+  'stores',
+  'store',
+  'patisserie',
+  'cafe',
+  'restaurant',
+  'bakery',
+  'bar and grill',
+  'bistro',
+  'eatery',
+  'kitchen',
+  'studio',
+];
+
+// Unicode-fold a name so accent/diacritic variants collapse ("Café" == "Cafe"),
+// normalize curly apostrophes to a plain one, treat "&" the same as "and" when it's
+// used as a spaced word-joiner (but leave a tight "H&M"-style abbreviation alone), and
+// collapse whitespace. Runs before anything else so every later step (alias lookup,
+// suffix-strip) sees one consistent surface form.
+function foldUnicodeAndPunctuation(raw: string): string {
+  return raw
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // strip combining diacritical marks
+    .replace(/[‘’ʼ]/g, "'") // curly/modifier apostrophes -> '
+    .replace(/\s&\s/g, ' and ') // " & " (spaced) -> " and "; "H&M" (unspaced) untouched
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function normalizeCompany(raw: string): string {
-  let name = raw.trim();
+  let name = foldUnicodeAndPunctuation(raw);
+  if (!name) return raw.trim();
 
   // Check known aliases first (exact lowercased match, parenthetical forms included).
   const lower = name.toLowerCase();
@@ -90,10 +141,21 @@ export function normalizeCompany(raw: string): string {
     if (COMPANY_ALIASES[name.toLowerCase()]) return COMPANY_ALIASES[name.toLowerCase()];
   }
 
-  // Strip suffixes
+  // Strip corporate suffixes (Pte Ltd, Holdings, Group, Singapore, ...).
   for (const suffix of SUFFIXES) {
     const re = new RegExp(`\\s+${suffix.replace(/\./g, '\\.')}$`, 'i');
     name = name.replace(re, '');
+  }
+
+  // Strip trailing generic descriptors (Platforms, Cafe, Bar and Grill, ...). The
+  // `stripped !== name` check is a defensive no-op guard: the `\s+` anchor above
+  // already guarantees a descriptor can never consume a whole (unprefixed) name, so
+  // this never fires today, but it keeps the loop inert rather than destructive if a
+  // future descriptor is added without that anchor.
+  for (const descriptor of GENERIC_TRAILING_DESCRIPTORS) {
+    const re = new RegExp(`\\s+${descriptor}$`, 'i');
+    const stripped = name.replace(re, '').trim();
+    if (stripped && stripped !== name) name = stripped;
   }
 
   // Strip trailing punctuation and extra whitespace

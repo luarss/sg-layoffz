@@ -1,0 +1,44 @@
+alias,canonical,note
+dbs bank,DBS,
+dbs group holdings,DBS,
+dbs group,DBS,
+grab holdings,Grab,
+grab singapore,Grab,
+sea limited,Sea,
+sea group,Sea,
+sea (shopee),Shopee,"Shopee's June-2026 developer cuts were reported under several name variants that the generic paren-strip can't safely collapse (stripping ""(Shopee)"" off ""Sea Limited (Shopee)"" would land on the 'sea limited' -> Sea alias, splitting the event off Shopee). Pin the parenthetical forms explicitly - checked before the paren-strip."
+shopee (sea),Shopee,"See the 'sea (shopee)' note - same June-2026 Shopee/Sea brand-variant collapse."
+sea limited (shopee),Shopee,"See the 'sea (shopee)' note - same June-2026 Shopee/Sea brand-variant collapse."
+sea's shopee division,Shopee,"See the 'sea (shopee)' note - same June-2026 Shopee/Sea brand-variant collapse."
+shopee (sea limited),Shopee,"See the 'sea (shopee)' note - same June-2026 Shopee/Sea brand-variant collapse."
+shopee singapore,Shopee,
+yeo's,Yeo Hiap Seng,
+ninja van,Ninja Van,
+loushang,Lou Shang,"""Loushang"" and ""Lou Shang"" are the same HDB-themed cafe; the spacing variant dodged dedup and produced contradictory confirmed/rumored/rejected rows."
+ygg,Yield Guild Games,"""YGG"" is the ticker/short form of Yield Guild Games; the July-2026 Web3-arm shutdown (35 jobs) was scraped under both names and double-counted because the acronym shares no tokens with the full name."
+yield guild games (ygg),Yield Guild Games,
+gxs bank,GXS Bank,
+qantas (jetstar asia),Jetstar Asia,"Same June-2025 Jetstar Asia shutdown was scraped as both ""Jetstar Asia"" and ""Qantas (Jetstar Asia)"" (parent). The paren-strip would land the latter on ""Qantas"", splitting the event - pin it to Jetstar Asia before the strip."
+oatly group ab,Oatly,Oatly's Dec-2024 SG plant closure reported under the legal name too.
+coca-cola singapore beverages,Coca-Cola,Coca-Cola's 2015 Tuas plant closure reported under the SG bottler name.
+mediacorp pte ltd,Mediacorp,
+mediacorp singapore,Mediacorp,
+singtel,Singtel,
+singapore telecommunications,Singtel,
+citigroup,Citi,
+citibank,Citi,
+apbs (tiger beer),Heineken,"APB (Asia Pacific Breweries / Tiger Beer) is Heineken's Singapore unit - the same Tuas cut gets reported under both names, so collapse to one key."
+yeo's (yeo hiap seng),Yeo Hiap Seng,"Catch the parenthetical ""Yeo's (Yeo Hiap Seng)"" form the bare 'yeo's' alias misses."
+auo,AU Optronics,"""AUO"" is the acronym for AU Optronics; ""AUO (AU Optronics)"" and ""AU Optronics (AUO)"" were both scraped for the same event."
+toyota distributor borneo motors,Borneo Motors,"Borneo Motors is Toyota's Singapore distributor; scraped under the parent-descriptor-prefixed ""Toyota Distributor Borneo Motors"" form as well as the bare distributor name. Too specific a prefix to strip generically, so pinned as an alias instead."
+tiger beer (asia pacific breweries),Heineken,"Tiger Beer / Asia Pacific Breweries (APB) is Heineken's Singapore brewing unit; pin the parenthetical form before the paren-strip so it doesn't land on 'Tiger Beer' or 'Asia Pacific Breweries' as its own key."
+asia pacific breweries,Heineken,"Asia Pacific Breweries (APB), maker of Tiger Beer, is Heineken's Singapore unit - the same Tuas cut is reported under the bottler's legal name."
+heineken asia pacific,Heineken,Heineken's APAC regional entity name; same event reported under the regional-office name as well as the bare parent name.
+tomahawk king steakhouse,Tomahawk King,Aug-2026 closure of the halal steakhouse reported under three name variants; 'steakhouse' is not in the generic trailing-descriptor list.
+halal steakhouse tomahawk king,Tomahawk King,Leading descriptor variant of the same Aug-2026 closure.
+mufg (mitsubishi ufj financial group),MUFG,Sep-2019 brokerage cuts reported under both acronym-first and full-name-first parenthetical forms; pin both before the paren-strip.
+mitsubishi ufj financial group (mufg),MUFG,See above.
+mitsubishi ufj financial group,MUFG,Full legal name of MUFG.
+true fitness & true yoga,True Fitness,Sep-2026 closure of True Fitness/True Yoga scraped under four name variants; collapse to the parent brand.
+true fitness / true yoga,True Fitness,See above.
+true fitness and true yoga,True Fitness,See above.
