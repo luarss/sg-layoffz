@@ -23,9 +23,16 @@ interface IntegrityWarning {
     | 'global-figure'
     | 'contradictory-verdict'
     | 'cross-file-contradiction'
-    | 'possible-same-event';
+    | 'possible-same-event'
+    | 'same-day-same-event';
   message: string;
 }
+
+// Integrity finding types that are promoted to hard errors (block `npm run validate`
+// with exit 1) rather than staying advisory. Currently just the high-confidence
+// same-day subset of the cross-name same-event detection below — see
+// 'same-day-same-event' in checkIntegrity for what qualifies.
+const HARD_INTEGRITY_ERROR_TYPES = new Set<IntegrityWarning['type']>(['same-day-same-event']);
 
 // Today in YYYY-MM-DD. Overridable via VALIDATE_TODAY so tests are deterministic.
 function today(): string {
@@ -83,6 +90,13 @@ const SAME_EVENT_STOPWORDS = new Set([
   'platforms', 'technologies', 'technology', 'services', 'solutions', 'capital',
   'ventures', 'labs', 'studios', 'digital', 'mobile', 'house', 'centre', 'center',
   'asia', 'pacific', 'financial', 'systems', 'media', 'partners', 'industries',
+  // Generic F&B/retail venue words that recur across many unrelated small
+  // businesses ("Pantler Patisserie" vs "Flor Patisserie", "Laurent Cafe" vs
+  // "Fika Swedish Cafe", "Korea Artiz Studio" vs "Korean Wedding Studio"). These
+  // caused false "same event" matches before being added here — only a shared
+  // token from the distinctive part of the name (the brand/proper noun) should
+  // count, never the generic category word attached to it.
+  'patisserie', 'cafe', 'studio',
 ]);
 
 // A significant token appearing in at most this many entries is treated as
@@ -295,7 +309,8 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
       const da = new Date(a.date_announced).getTime();
       const db = new Date(b.date_announced).getTime();
       if (!Number.isFinite(da) || !Number.isFinite(db)) continue;
-      if (Math.abs(db - da) > SAME_EVENT_WINDOW_DAYS * msPerDay) continue;
+      const daysApart = Math.round(Math.abs(db - da) / msPerDay);
+      if (daysApart > SAME_EVENT_WINDOW_DAYS) continue;
 
       const shared: string[] = [];
       for (const t of tokenSets[i]) {
@@ -308,11 +323,26 @@ export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
       const pairKey = `${i}|${j}`;
       if (seenPair.has(pairKey)) continue;
       seenPair.add(pairKey);
-      warnings.push({
-        rows: [i + 1, j + 1],
-        type: 'possible-same-event',
-        message: `Possible same event under different names: "${a.company}" (${a.date_announced}) and "${b.company}" (${b.date_announced}) share distinctive token(s) [${shared.join(', ')}]`,
-      });
+
+      if (daysApart === 0) {
+        // High-confidence subset: identical date_announced + identical industry +
+        // a shared distinctive company-name token + no shared event_id (already
+        // excluded above) is treated as certain enough to be a hard error rather
+        // than an advisory warning — two rows this aligned that are genuinely
+        // different companies are rare, and the fix is cheap either way (share an
+        // event_id, or add an alias/exclusion for the false positive).
+        warnings.push({
+          rows: [i + 1, j + 1],
+          type: 'same-day-same-event',
+          message: `Same-day, same-industry entries share distinctive company token(s) [${shared.join(', ')}]: "${a.company}" and "${b.company}" both on ${a.date_announced} — if this is one event, give both rows the same event_id; if they are genuinely different companies, add an alias/exclusion so this token stops matching`,
+        });
+      } else {
+        warnings.push({
+          rows: [i + 1, j + 1],
+          type: 'possible-same-event',
+          message: `Possible same event under different names: "${a.company}" (${a.date_announced}) and "${b.company}" (${b.date_announced}) share distinctive token(s) [${shared.join(', ')}]`,
+        });
+      }
     }
   }
 
@@ -458,27 +488,36 @@ export function validateCsv(filename: string): { valid: boolean; errors: Validat
     allErrors.push(...errors);
   }
 
-  const warnings = checkIntegrity(entries);
+  const allWarnings = checkIntegrity(entries);
 
   // When validating the active dataset, also cross-check against rejected.csv.
   if (filename === 'layoffs.csv') {
     try {
       const rejected = readCsv('rejected.csv');
-      warnings.push(...checkCrossFileContradictions(entries, rejected));
+      allWarnings.push(...checkCrossFileContradictions(entries, rejected));
     } catch {
       // rejected.csv is optional — skip the cross-check if it isn't present.
     }
   }
 
-  if (allErrors.length === 0 && warnings.length === 0) {
+  // Split the high-confidence subset (HARD_INTEGRITY_ERROR_TYPES) out into hard
+  // errors that block the commit; everything else stays an advisory warning.
+  const hardIntegrityErrors = allWarnings.filter((w) => HARD_INTEGRITY_ERROR_TYPES.has(w.type));
+  const warnings = allWarnings.filter((w) => !HARD_INTEGRITY_ERROR_TYPES.has(w.type));
+
+  if (allErrors.length === 0 && hardIntegrityErrors.length === 0 && warnings.length === 0) {
     console.log(`✅ ${filename}: All ${entries.length} entries valid.`);
     return { valid: true, errors: [], warnings: [] };
   }
 
-  if (allErrors.length > 0) {
-    console.error(`❌ ${filename}: ${allErrors.length} validation error(s):`);
+  if (allErrors.length > 0 || hardIntegrityErrors.length > 0) {
+    console.error(`❌ ${filename}: ${allErrors.length + hardIntegrityErrors.length} validation error(s):`);
     for (const err of allErrors) {
       console.error(`  Row ${err.row}, ${err.field}: ${err.message}`);
+    }
+    for (const err of hardIntegrityErrors) {
+      const rowLabel = err.rows.length === 1 ? `Row ${err.rows[0]}` : `Rows ${err.rows.join(' & ')}`;
+      console.error(`  [${err.type}] ${rowLabel}: ${err.message}`);
     }
   }
 
@@ -490,7 +529,7 @@ export function validateCsv(filename: string): { valid: boolean; errors: Validat
     }
   }
 
-  return { valid: allErrors.length === 0, errors: allErrors, warnings };
+  return { valid: allErrors.length === 0 && hardIntegrityErrors.length === 0, errors: allErrors, warnings };
 }
 
 // CLI entry point — only when run directly (tsx scripts/validate.ts), not when

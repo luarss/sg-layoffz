@@ -212,6 +212,49 @@ describe('checkIntegrity — cross-name same-event detection', () => {
   });
 });
 
+describe('checkIntegrity — same-day same-event hard error', () => {
+  it('flags same-day, same-industry rows sharing a rare company token with different event_id as an error', () => {
+    // Regression: "Uber" and "Uber Technologies" both dated 2026-09-02 are the same
+    // announcement scraped under two names — high-confidence enough to hard-error.
+    const w = checkIntegrity([
+      entry({ company: 'Uber', industry: 'Tech', date_announced: '2026-09-02', event_id: 'uber-2026-09-a' }),
+      entry({ company: 'Uber Technologies', industry: 'Tech', date_announced: '2026-09-02', event_id: 'uber-2026-09-b' }),
+    ]);
+    const hit = w.find((x) => x.type === 'same-day-same-event');
+    expect(hit).toBeDefined();
+    expect(hit!.rows).toEqual([1, 2]);
+    // Same-day pairs are promoted to the error and must NOT also show up as the
+    // advisory possible-same-event warning.
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+  });
+
+  it('does NOT flag same-day rows that already share an event_id', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Uber', industry: 'Tech', date_announced: '2026-09-02', event_id: 'uber-2026-09' }),
+      entry({ company: 'Uber Technologies', industry: 'Tech', date_announced: '2026-09-02', event_id: 'uber-2026-09' }),
+    ]);
+    expect(w.some((x) => x.type === 'same-day-same-event')).toBe(false);
+  });
+
+  it('keeps the near-date (≤21d), different-date version as an advisory warning, not an error', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-07-01', event_id: 'a' }),
+      entry({ company: 'Unnamed Eunos Coffee Shop', industry: 'F&B', date_announced: '2026-07-03', event_id: 'b' }),
+    ]);
+    expect(w.some((x) => x.type === 'same-day-same-event')).toBe(false);
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(true);
+  });
+
+  it('does NOT flag a generic token (e.g. "cafe") even on the same day', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Laurent Cafe & Chocolate Bar', industry: 'F&B', date_announced: '2026-08-09', event_id: 'a' }),
+      entry({ company: 'Fika Swedish Cafe', industry: 'F&B', date_announced: '2026-08-09', event_id: 'b' }),
+    ]);
+    expect(w.some((x) => x.type === 'same-day-same-event')).toBe(false);
+    expect(w.some((x) => x.type === 'possible-same-event')).toBe(false);
+  });
+});
+
 describe('checkCrossFileContradictions', () => {
   it('flags an event kept in layoffs.csv that is also substantively rejected (same URL)', () => {
     // Regression: Lou Shang was kept (confirmed/rumored) while the same article sat in
