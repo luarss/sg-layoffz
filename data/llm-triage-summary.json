@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-09-19",
+  "run_date": "2026-09-20",
   "providers": [
     {
       "name": "deepseek",
@@ -11,242 +11,224 @@
     }
   ],
   "timed_out": false,
-  "total": 24,
-  "confirmed": 9,
-  "rumored": 1,
+  "total": 22,
+  "confirmed": 6,
+  "rumored": 2,
   "rejected": 14,
   "needs_review": 0,
   "remaining_queue": 0,
   "rows": [
     {
-      "original_company": "Meta In Spanish Lawsuit Over Mass Content Moderator Layoffs - The Straits Times",
-      "llm_company": "Meta",
-      "source_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOQm9RdXF5a05qaktYTWdRRkpkNmhVY1BUbzZjV056ZzlycU1RamJ2S0V1SW5rTW9Yay10Q2h5dWx1QVY4ZUlBUHMtR3VScWEyYkFSaTdwWU1KT3RCVW5MeXJEOVRmdG52TlFydTgtV0I4eGwwdms3Q0k1NGtVSUJDRWd6UWpJLVBzZ184TjR2ZmhqeHVDUWlUWW1QOUpNOG1ObXJ3?oc=5",
+      "original_company": "Singapore Worker Says Layoffs Left Him Questioning The Promise Of Stability For Locals - Theindependent.sg",
+      "llm_company": "Singapore Worker Says Layoffs Left Him Questioning The Promise Of Stability For Locals - Theindependent.sg",
+      "source_link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxObTZJN182S2tXVW91NVR3cFpCU1RyMkNldDVKNXkxVUpreUd3U0FuUHRTdmRxN3pMOUo4emkxR0xMTklWTC0tazlFSXoyWWY2VmdaNmN2THFuay02ODdqZFhndDNELWpNVHNSQUpiU3pJcVdCMVQ0X0hWemVwY2hZb0lUNWY4ejFvZjhxY2o5N3BIN2tSOHo2c3dXNUpFY0ZzUVNRVGFLcmJHZUFFY2otbkdR?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article concerns a Spanish lawsuit over content moderator layoffs, i.e. a legal case rather than a Singapore layoff event; no Singapore nexus to the reported job cuts.",
-      "rejection_reason": "legal"
-    },
-    {
-      "original_company": "Bbc Tells Some Staff In Singapore Bureau To Reapply For Jobs Amid Restructuring Exercise - The Straits Times",
-      "llm_company": "BBC",
-      "source_link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxOR2I3ZVRYSUI4QWVEQlZONmtTemlCX3hvSndKNFREU3RSZ2FJWXhmY1dyWWxoZU5xZWJRVU84MDV6RFY1SkdCcnliMm5mU1dSZXh3NlRIbThXTjFUZmZkdXNhUkNWRU9JNEh5cGJNT09oQ1dkQ0h5eGM4dURIemVNbEtsbXlxclZ5YTFZNUpBY0xTZzYzR0F5UWtmWUVMVXc2dkpsNDRBYlZQRjRmckF5eUJCMzVLa29DMjlvSzNmSWNrNVJaa243OTBXOGRlUQ?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "BBC's Singapore bureau is undergoing a restructuring exercise where staff are asked to reapply for jobs, indicating potential layoffs. No headcount is disclosed, and the actual job cuts are anticipated rather than confirmed."
-    },
-    {
-      "original_company": "Less Than 2 In 5 Singapore Employers Are Hiring In The Next 3 Months, But Ai And Technology Sectors Are Still Recruiting - Theindependent.sg",
-      "llm_company": "Less Than 2 In 5 Singapore Employers Are Hiring In The Next 3 Months, But Ai And Technology Sectors Are Still Recruiting - Theindependent.sg",
-      "source_link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQa0NObldRZmRQWTNJbzNPMXk0QUVwaEp1NU15bWt2S0pzNDllcHdZOW03dGtCZ1BoZE03WThpNVZPNHpBNlBnVF9HeFMydFlrVWZVRElsSk9naGN6OUlRZzVlX0RPWGxCUXdkeFJkQm1xbVJXblJPeDFqd1piVmVLM1E2OUFmUWVqU040eGtvWmc2NE5iYmFnOEdZOVZjNmYyOWd1bjdKa3FpazE4MDZnaWlDU2xaT0M4c1g1cTlyckxiMzlob2UzNWRsUkpobS1Qd0hHTjNqUkdwQzJUYmc?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports labour market hiring survey statistics for Singapore employers rather than any specific company's layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Hsbc Axes 40 Dealmakers In Hong Kong As Part Of Revamp To",
-      "llm_company": "HSBC",
-      "source_link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPUVBoX0ZqNHR3U19idU1WV0xaXzJkSUl3QUd0NHZJRjV0TkZTUGhQUXpacVpoLXB4YlJpbnRtMlFIZUJUVHpIYS1BUGNTUkNjbEFmWjNfd29iV1hXbzNUTUlwby1DSVpNalNCVmpiTXdoWnBOQTgwQXI4eEZSR25zUnhxYm9BdmZ0S1pzb1ZhdXVvcVBHZE1pZDdIX3R2X0plZUotcFhOUno1NUFLenhfM2pCeHhRX0k?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Cuts are in Hong Kong only, no Singapore nexus. Follow-up coverage of HSBC's 2025-02-14 restructuring event.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Biontech To Close Germany, Singapore Sites",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQWjRXWUJ6d0JYUFVlNlNIUmNfTnVnTEo3WDJKd0FpRFR5S1VQczM1eVh5VlpNSEdjX0paN1JEZmJQTTVkM2JOaFFieExPemk4MUhvdDd0NDlVV3JUS1o3dW1aTzdOY09sdzRuai15Rk1mcVpVN1dFY1Z2dVA3NEhPb0p0ZHlwalZ0RUdKNzc3MGZJVEI5cGdwSEJxVmd3c1RlVmJz?oc=5",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "BioNTech is closing its Singapore site, a Singapore closure event implying job losses; this is follow-up coverage of the existing event biontech-2026-04, so that event_id is reused."
-    },
-    {
-      "original_company": "Biontech To Restructure Global Operations With Site Closures In Germany And Singapore, Impacting 1,860 Roles - Biopharma Apac",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOYlV1MW9JY1NDd1hkYURzZU5nOVFXTGM5N1dPZ2t5aUhzeGR1OVV4akNpa3lJM1B0TlE2MU5mM2VyZXVSMml1anNsM2QtZ0JpY1BpbTZqc3RlczZlM1VobzBSaU4xVEFpS25fdEFHRGlhcmx4OHlEVnctaHdOb2NJNmtxUl9EbjhsRmRUb3lGM2ZCX2ZwelJzOHRjS2RWSzhvaW1haWFXdjRFQnJvWmRBVEpUazBTbzQ0Q2F4ZGs3UmM0VnZiQjhCSzdzdTZhQkRQVzNKQXFnQU1wMDR1VGJxdXRnUS0?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "BioNTech is restructuring global operations with site closures in Germany and Singapore affecting 1,860 roles, a confirmed event with a Singapore nexus. Headcount is a global figure covering both countries, so it is recorded as global; follow-up coverage of the existing biontech-2026-04 event."
-    },
-    {
-      "original_company": "S'pore Startup Smove Hits A Speed Bump: Exits Car-sharing Market, Now Under Liquidation - Vulcan Post",
-      "llm_company": "Smove",
-      "source_link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNYWdXbjNzTVlzZm0xSWRhTG05WHR2THFFakEyNkZBOHZUR1JWUkZlTjhYWEJFa2d3NFRmbVhMb3U3aHpaa1NleTkzU0RTSWlmaUZjV09LYWxYRUd6NlR1TTZINll4MzY4YjZvY0lHeGNwT01kZTNYLVhqcjVCZFBwSEtR?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Smove, a Singapore car-sharing startup, has exited the market and is under liquidation, implying job losses. This is a confirmed closure event with a clear Singapore nexus."
-    },
-    {
-      "original_company": "Yoga Inc.'s Abrupt Closure Leaves Instructors, Customers In Limbo, Singapore News - Asiaone",
-      "llm_company": "Yoga Inc.",
-      "source_link": "https://www.asiaone.com/singapore/yoga-inc-closure",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Singapore yoga studio Yoga Inc. abruptly closed, leaving instructors without work — a Singapore closure counts as a layoff event even with headcount unstated."
-    },
-    {
-      "original_company": "Yoga Inc Closes Remaining Singapore Studios With Immediate Effect, Teachers Say",
-      "llm_company": "Yoga Inc",
-      "source_link": "https://yenfeng.substack.com/p/yoga-inc-closes-remaining-singapore",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Closure of all remaining Singapore studios with immediate effect, which implies Singapore job losses; a Singapore outlet closure counts as a layoff event even with headcount unstated. Source is a Substack newsletter reporting accounts from teachers rather than a corporate announcement, hence medium confidence."
-    },
-    {
-      "original_company": "True Fitness, True Yoga Close All Outlets; Liquidators Start Winding-up Process - The Business Times",
-      "llm_company": "True Fitness / True Yoga",
-      "source_link": "https://www.businesstimes.com.sg/singapore/smes/true-fitness-true-yoga-close-all-outlets-liquidators-start-winding-process",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Singapore fitness chain True Fitness and True Yoga have closed all outlets and entered liquidation, implying Singapore job losses; follow-up coverage of the existing true-fitness-2026-closure event, so the event_id is reused. No headcount disclosed."
-    },
-    {
-      "original_company": "Dws Group Has Scaled Back Its Private Lending Business In The Asia-pacific Region | Akm En",
-      "llm_company": "DWS Group",
-      "source_link": "https://www.akm.ru/eng/news/dws-group-has-scaled-back-its-private-lending-business-in-the-asia-pacific-region/",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "The article reports a regional business scale-back without mentioning Singapore-specific job cuts or a Singapore closure, so there is no clear Singapore layoff nexus.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Cnbc Closes Hong Kong Office And Cancels Multiple Programmes Amidst Restructuring | Human Resources Online",
-      "llm_company": "CNBC",
-      "source_link": "https://www.humanresourcesonline.net/cnbc-closes-hong-kong-office-and-cancels-multiple-programmes-amidst-restructuring",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "CNBC's restructuring involves closing its Hong Kong office and cancelling programmes in Hong Kong; there is no Singapore entity, office, or Singapore job impact mentioned.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "'no Response': Yoga Inc Shutters Safra Punggol Outlet, Cancels Classes At Our Tampines Hub | The Straits Times",
-      "llm_company": "Yoga Inc",
-      "source_link": "https://www.straitstimes.com/singapore/no-response-yoga-inc-shutters-safra-punggol-outlet-cancels-classes-at-our-tampines-hub",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Yoga Inc is shuttering its Safra Punggol outlet and cancelling classes at Our Tampines Hub, a Singapore business closure implying job losses. Treated as follow-up coverage of the existing Singapore closure event, so the event_id is reused."
-    },
-    {
-      "original_company": "'they Didn't Tell Us Upfront': True Fitness Staff, Gym Members Caught Off-guard By Sudden Closure – Metapress",
-      "llm_company": "True Fitness",
-      "source_link": "https://metapress.net/business/2026/09/11/they-didnt-tell-us-upfront-true-fitness-staff-gym-members-caught-off-guard-by-sudden-closure/",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Sudden closure of Singapore gym chain True Fitness, with staff caught off-guard, implies Singapore job losses; this is follow-up coverage of the existing true-fitness-2026-closure event."
-    },
-    {
-      "original_company": "Kpmg Uk Job",
-      "llm_company": "KPMG UK",
-      "source_link": "https://business-news-today.com/kpmg-uk-job-cuts-near-1000-in-2026-as-consulting-slowdown-reshapes-workforce/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The reported job cuts are at KPMG's UK arm and concern UK roles only, with no Singapore entity or Singapore office affected; this tracker covers Singapore layoffs only.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Late-career",
-      "llm_company": "Late-career",
-      "source_link": "https://silverstreak.sg/late-career-retrenchment/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Personal/commentary piece on 'late-career retrenchment' from a lifestyle site; no named company, no specific layoff event, and it reads as an individual narrative rather than a reported job-cut announcement.",
+      "notes": "First-person account of a Singapore worker reflecting on being laid off; it is a personal anecdote/commentary rather than a specific named-company layoff event announcement.",
       "rejection_reason": "personal"
     },
     {
-      "original_company": "Growing Your Tree Of Prosperity: The Ten Years That Fund Your Retirement Open At 30 And Close At 40",
-      "llm_company": "Growing Your Tree Of Prosperity: The Ten Years That Fund Your Retirement Open At 30 And Close At 40",
-      "source_link": "http://treeofprosperity.blogspot.com/2026/09/the-ten-years-that-fund-your-retirement.html",
+      "original_company": "Singapore Adds Jobs In Q2 Even As",
+      "llm_company": "Singapore Adds Jobs In Q2 Even As",
+      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPT2F0NUMtRHdFZHBJSTQyMGdrS0l3djUtdk1EQXBtSXpxMmhKMGxGVHBfSlNfaXZucl90V0F4UGkzSWk0MnBMUE9VSUFISVhBN0VsN1UwWmNaWmgxRFIyWUFxQXZfeVZaMEtzNkZDZkl0U1RvQ1ViaVo0Y0pWUzh1eFlLX0hscVotRXVxTHhhbG95QmJTdm9BWHhMOXJ5Nmh0Z3FwZkw0R1lDdmg4MWcxRVc5a082Q0pxcEJELVlQZFhIdw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Personal finance blog post about retirement planning and investing, not a layoff event; no company, no job cuts, no Singapore layoff nexus.",
-      "rejection_reason": "commentary"
+      "notes": "The article reports Singapore's quarterly labour market/employment statistics (jobs added in Q2), not a specific company layoff event.",
+      "rejection_reason": "statistics"
     },
     {
-      "original_company": "Barclays Aims To More Than Double Banker Headcount In Singapore Private Bank By 2030",
-      "llm_company": "Barclays",
-      "source_link": "https://theedgemalaysia.com/node/816871",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article concerns Barclays planning to more than double its Singapore private bank headcount by 2030 — a hiring/expansion announcement, not a layoff.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Hsbc Layoffs And Redundancies 2026: Which Jobs Are At Risk?",
-      "llm_company": "HSBC",
-      "source_link": "https://www.grindhotline.com/hsbc-layoffs-2026-20000-ai-job-cuts-middle-back-office.html",
+      "original_company": "Chee Soon Juan Announces Closure Of Orange And Teal After Four-year Run - Theindependent.sg",
+      "llm_company": "Orange and Teal",
+      "source_link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxONEJoRDlpVTNvc1BWTHVsZC1NV0daU0JVTDBGMklBTUVNRTItSnNEbU5OTHB2SXkydEQ4TWpOVXJzYjdBR3FLMDdUbFhGYXJfaUIxT2cwTjhnd2RYejE4c2ZNcW0xUGpUMGJUSEV5N1lqclJCcTJVREZXWTJ5dHlqVy11WkQ5QVJHQ19SS3htRjNpeDdHWDBDdlRn?oc=5",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of HSBC's reported 20,000-role AI-driven back/middle-office cuts; HSBC has major Singapore operations so the Singapore nexus holds. Figure is global, so recorded under jobs_cut_global and the existing event_id is reused."
+      "notes": "A named Singapore business (Orange and Teal) is being closed after a four-year run, as announced. Under the rules, a Singapore outlet/business closure implying job losses counts as a layoff event; since the closure is announced/actively occurring, it is confirmed. No headcount was disclosed."
     },
     {
-      "original_company": "Johnson And Johnson To Shut Down Kedah Plant",
-      "llm_company": "Johnson & Johnson",
-      "source_link": "https://theedgemalaysia.com/article/johnson-johnson-shut-down-kedah-plant",
+      "original_company": "Kf Seetoh Questions Foodfare's Response On Cny Hawker Closure, Says “they Need Better Empathy, Pr And Editors” - Theindependent.sg",
+      "llm_company": "Foodfare",
+      "source_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPdWhaV2sxNHdxSzJiWXBZb3hCdVZQTmhYbzNNSHB4RHA4bVJSTGpvMWtGRFZ0b1JaT2hwM3BnRFdOSzNCSjRZU2hGcE8yeWF5YkUyeFotcGNTaFB0eE1xeWNXTEJidHRXeU5yVzExME9MOXFhSEZrU2h6cVlmUVZjSGd2TjZNVWI5QTg0UjI0eVkxWjRkSDR6VGtnc0I3Um1SRWtaZmtPV1FPUWttbWxuclBESk5HYkxJUFJ4RG1kdmczTUtjTWxPMlo1dw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article concerns the shutdown of Johnson & Johnson's plant in Kedah, Malaysia, with no stated Singapore entity, office, or Singapore job impact.",
-      "rejection_reason": "not-sg"
+      "notes": "This is a commentary/opinion piece by KF Seetoh questioning Foodfare's public relations response to a Chinese New Year hawker closure, not a report of a layoff event or retrenchment.",
+      "rejection_reason": "commentary"
     },
     {
-      "original_company": "Bat To Close Down Pj Factory",
-      "llm_company": "British American Tobacco",
-      "source_link": "https://theedgemalaysia.com/article/bat-close-down-pj-factory-lay-230-workers-0",
+      "original_company": "Post Office Closures: Which London Branches Could Be Hit? - Bbc",
+      "llm_company": "Post Office",
+      "source_link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5GcW43SndzUUdlNVh6SW5OYUJVTXh5S1htWVJzaTdRbGt2UzBtSzYyVUUzWUlPclFRVjktVlJHX2JIU0tUSFVQa3BqUmNLVHg1ZFVvOURJLW96emhw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article concerns the closure of British American Tobacco's Petaling Jaya factory in Malaysia with 230 workers laid off; there is no Singapore entity, office, or Singapore job impact, so it lacks a Singapore nexus.",
+      "notes": "Article concerns Post Office branch closures in London, UK, with no Singapore entity or Singapore nexus whatsoever.",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Lotte Chemical Titan Shuts Down Operations Temporarily In Pasir Gudang To",
-      "llm_company": "Lotte Chemical Titan",
-      "source_link": "https://theedgemalaysia.com/node/737696",
+      "original_company": "'hundreds' Could Lose Jobs In Legal And General Kingswood Closure - Bbc",
+      "llm_company": "Legal & General",
+      "source_link": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE4wdnlSOTFoREtVaXJURlBWbngwMnVGWTh0cXdGRTJBWTBIWUc1MGFkdG0tOEJHZmw4YjNJMi1HU3d3TFA0b1hVWTFsMHVmaXZTSFVaUDNuYw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Temporary shutdown of Lotte Chemical Titan's operations in Pasir Gudang, Johor, Malaysia — no Singapore entity, office, or workforce is involved, so there is no Singapore nexus.",
+      "notes": "This concerns the closure of Legal & General's Kingswood office in the UK, with no Singapore entity or Singapore office affected, so it has no Singapore layoff nexus.",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Hartalega To Decommission Bestari Jaya Plant, Likely Giving Rise To Rm347m Impairment",
-      "llm_company": "Hartalega",
-      "source_link": "https://theedgemalaysia.com/node/665935",
+      "original_company": "Ovo Energy To Shut Five Scots Bases Amid Job",
+      "llm_company": "Ovo Energy",
+      "source_link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1Xa3VzSHd2d2NWNFRYX0ZYQzkyWHZNd1pYUWl3LUI4anpXSVpYemZZQWZZUXF4ZmFQUDNjMGRIejdZejV1ZFk4WUpQbjYxY3R2VjR3Y0wwbUtNVkY4dlFmSWQtZFA4UWdLNFFfUVRnZ0Y?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Hartalega is decommissioning its Bestari Jaya plant in Malaysia; the affected site and workforce are entirely in Malaysia with no Singapore entity or office involved, so there is no Singapore nexus for this tracker.",
+      "notes": "Ovo Energy is a UK energy supplier closing five Scottish bases; the event concerns UK operations only with no Singapore entity, office, or staff affected.",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Kawan Food To Close China Plant Due To Us Tariff Impact, Limited Room For Expansion",
-      "llm_company": "Kawan Food",
-      "source_link": "https://theedgemalaysia.com/node/728516",
+      "original_company": "Hiring Has Been 'frozen To Begin With,' Jobseekers Say As More Firms Plan 2026 Hiring Freeze - Theindependent.sg",
+      "llm_company": "Multiple firms",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQTmNaMTNhRFhOQnU4dXRGWDV1ejNlLVFzTXVEUmlJUlZabUFqZWExVkZ6V3JESmJJc1BYUzlUMGpydThza1NwX0RwMzlhVUk4NHZMWFJuNFZjT01ObUNKQUh6NGJJam0yRjZKd3JwNU1vS2E1SG1SbzhZUk9QYWlUdWV1dmZQWGM1T0JyZzRWNGZfcEhsVXJCRld6aXkwWXhIeENrWnd5SVBiajJyN1B6RG5CQWRrUQ?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Malaysian frozen food manufacturer Kawan Food is closing its China plant due to US tariffs; the closure and any resulting job losses are in China, with no Singapore entity, office, or operations involved.",
+      "notes": "Article discusses hiring freezes and jobseeker anecdotes broadly, not a specific company layoff event in Singapore.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Oatly Closes Singapore Facility To Streamline Production In Europe - Scandasia",
+      "llm_company": "Oatly",
+      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPMkJnQkZ6SG1GamUydkpDeFJBTGlrVklzQ0ZaX3M3dzNiM1FpM2J3blA1amFIM0NwbVhCY1B3N3EzOE1tdTc1X2dLVkpCWi1JbGFBRG9jS2xNZVl0TWx2LU1sNGtJVHhldk4zTGprTEFsQXFtSkxLdy1qckpiY1ZBTXotUFBJNktYNE5ndjdtVE1zWXc?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Oatly is closing its Singapore facility, a Singapore closure that implies job losses. This is follow-up coverage of the previously identified event, so the existing event_id is reused."
+    },
+    {
+      "original_company": "As A Valley Solar Startup Shuts Down, The Solar Sector Booms - Fortune",
+      "llm_company": "As A Valley Solar Startup Shuts Down, The Solar Sector Booms - Fortune",
+      "source_link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5EaGktS3ZNamNqZFkyYzVrY1pIYk1rMTRWV1ByY213SHV0dkxnYU5PMmNENGUxZ0xKZm9MOVEtVFFWR09kNE1mQUUtdWZ4WlRRbUUxa0hNUXNwVXE3OXc3OG5LRTEzTmFEbmZPUTRn?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article concerns a Silicon Valley solar startup's shutdown framed as sector-wide analysis; no Singapore entity, office, or Singapore job impact is identified.",
       "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "新年伊始突被传召开会 遭裁lazada员工吓哭 - 8world",
+      "llm_company": "Lazada",
+      "source_link": "https://www.8world.com/singapore/lazada-layoffs-retrenchment-job-cuts-employees-2336826",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "8world reports Lazada employees in Singapore being retrenched, with staff summoned to meetings and left in tears — a credibly reported, already-underway retrenchment at a named company with Singapore operations. No headcount figure disclosed, so both job fields are null."
+    },
+    {
+      "original_company": "The Smart Move: Four Businesses Innovating In Singapore To Serve ..",
+      "llm_company": "N/A",
+      "source_link": "https://www.edb.gov.sg/en/news-and-insights/the-smart-move-four-businesses-innovating-in-singapore-to-serve-asias-fastest-growing-markets",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "EDB promotional feature about four businesses innovating/expanding in Singapore; contains no layoff, retrenchment, or closure news, so it is not a layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "P&c Global Opens New Singapore Office At One Fullerton",
+      "llm_company": "P&C Global",
+      "source_link": "https://www.pandcglobal.com/pc-global-singapore-office-one-fullerton/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a company expansion/hiring announcement about opening a new Singapore office, not a layoff or closure event; no job cuts are reported.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "[pdf] Advance Release - Labour Market Statistics And Publications",
+      "llm_company": "[pdf] Advance Release - Labour Market Statistics And Publications",
+      "source_link": "https://stats.mom.gov.sg/iMAS_PdfLibrary/mrsd-LMAR-2Q-2026.pdf",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a MOM official labour market statistics advance release PDF, not a report of a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Losing A Job In Your 30s Can Feel Like Grief, Experts Say — News4me",
+      "llm_company": "Losing A Job In Your 30s Can Feel Like Grief, Experts Say — News4me",
+      "source_link": "https://www.news4me.sg/article/losing-a-job-in-your-30s-can-feel-like-grief-experts-say-d12fe94f199d",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is an advice/commentary piece about the emotional experience of job loss in one's 30s, not a report of a specific company's layoff event. It names no company and discloses no Singapore job cuts.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "渣打集团拟裁逾7000岗位 新加坡仍会增聘客户关系经理 - 8world",
+      "llm_company": "Standard Chartered",
+      "source_link": "https://www.8world.com/singapore/standchart-layoff-3154706",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Report says Standard Chartered is planning to cut over 7,000 roles globally, with Singapore reportedly still hiring client relationship managers; since the cuts are planned rather than underway, this is rumored. The 7,000 figure is a global headcount, so it goes in jobs_cut_global, and no Singapore-specific number is given."
+    },
+    {
+      "original_company": "Singapore Insurers Face Pressure As Hiring Outlook Slips | Insurance Asia",
+      "llm_company": "Singapore Insurers Face Pressure As Hiring Outlook Slips | Insurance Asia",
+      "source_link": "https://insuranceasia.com/insurance/news/singapore-insurers-face-pressure-hiring-outlook-slips",
+      "verdict": "rejected",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Market overview of Singapore insurers' hiring outlook; no specific company or actual layoff event, just sector-wide employment sentiment/statistics.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Gsk Winds Down German Flu Vaccine Plant, 650 Jobs Go",
+      "llm_company": "GSK",
+      "source_link": "https://biotech-insider.com/gsk-winds-down-german-flu-vaccine-plant-650-jobs/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "GSK's wind-down of its German flu vaccine plant affects only German operations with no Singapore entity, office, or staff impact reported.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Crystal Jade Closes Clementi Mall And Jurong Point Outlets | The Straits Times",
+      "llm_company": "Crystal Jade",
+      "source_link": "https://www.straitstimes.com/singapore/crystal-jade-shuts-clementi-mall-and-jurong-point-outlets-bringing-total-closures-in-2026-to-five",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Singapore F&B chain Crystal Jade closed its Clementi Mall and Jurong Point outlets, bringing total 2026 closures to five; outlet closures implying job losses count as a layoff event."
+    },
+    {
+      "original_company": "Crystal Jade Closes Great World Outlet, 3rd Closure In 2026 - Mothership.sg - News From Singapore, Asia And Around The World",
+      "llm_company": "Crystal Jade",
+      "source_link": "https://mothership.sg/2026/09/crystal-jade-great-world-outlet-closed/",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Singapore F&B outlet closure at Great World, reported as Crystal Jade's third outlet closure in 2026, implying Singapore job losses; headcount not disclosed."
+    },
+    {
+      "original_company": "True Fitness, True Yoga Closes All Outlets; Liquidators Start Winding-up Process - The Business Times",
+      "llm_company": "True Fitness / True Yoga",
+      "source_link": "https://www.businesstimes.com.sg/singapore/smes/true-fitness-true-yoga-begin-winding-process-singapore",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Singapore fitness chain True Fitness and True Yoga has closed all outlets and entered liquidation/winding-up, implying job losses for Singapore staff. Closure of a Singapore business counts as a confirmed layoff event; no headcount disclosed."
+    },
+    {
+      "original_company": "Cinnabon To Close Ion Orchard Outlet In Singapore | The Straits Times",
+      "llm_company": "Cinnabon",
+      "source_link": "https://www.straitstimes.com/life/food/cinnabon-to-close-its-ion-outlet-on-sept-22",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Cinnabon's Ion Orchard outlet in Singapore is slated to close on Sept 22, 2026, so the closure implying job losses is announced but not yet completed; classified as rumored. This is follow-up coverage of the existing event, so the event_id is reused."
     }
   ]
 }
