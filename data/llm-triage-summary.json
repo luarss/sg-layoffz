@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-09-22",
+  "run_date": "2026-09-23",
   "providers": [
     {
       "name": "deepseek",
@@ -11,332 +11,289 @@
     }
   ],
   "timed_out": false,
-  "total": 33,
-  "confirmed": 8,
+  "total": 28,
+  "confirmed": 1,
   "rumored": 1,
-  "rejected": 23,
+  "rejected": 25,
   "needs_review": 1,
   "remaining_queue": 1,
   "rows": [
     {
-      "original_company": "Singapore Baby-care Brand Tollyjoy To Wind Down After 55 Years - Cna",
-      "llm_company": "Tollyjoy",
-      "source_link": "https://www.channelnewsasia.com/singapore/tollyjoy-baby-brand-close-after-55-years-6398891",
-      "verdict": "confirmed",
+      "original_company": "Aviation Sector Kept At 'underweight' By Uob Despite Changi Airport Initiatives",
+      "llm_company": "UOB",
+      "source_link": "https://theedgemalaysia.com/node/206409",
+      "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Singapore baby-care brand Tollyjoy is winding down operations after 55 years, a Singapore business closure that implies job losses for local staff. Follow-up coverage of the existing Tollyjoy event, so the event_id is reused."
+      "notes": "This is a market/analyst commentary piece about UOB keeping the aviation sector at 'underweight' amid Changi Airport initiatives; it is not a report of any specific company layoff or Singapore job cut event.",
+      "rejection_reason": "commentary"
     },
     {
-      "original_company": "Sulzer",
-      "llm_company": "Sulzer",
-      "source_link": "https://frontaliereticino.ch/en/swiss-articles/sulzer-chemtech-restructuring/",
-      "verdict": "rumored",
-      "confidence": "low",
+      "original_company": "Layoffs Sweep Parts Of Singapore: Twelve Industries Have Already Lost Over 10,000 Jobs In 2026 - Vulcan Post",
+      "llm_company": "Layoffs Sweep Parts Of Singapore: Twelve Industries Have Already Lost Over 10,000 Jobs In 2026 - Vulcan Post",
+      "source_link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOUXNXSTVUZEJmWTRPQXRRajk5bld5eU5hamk5WERLV2pqN001ZnZHemZlR29uNHZlS1g3ME5hSkVFUzVCMGtQcF9SdHh1N09ORkNWRGhlYzd6ZVVPT2pmd19iMGlELThkS2ljOFRhbTkwbTQyRWZtVGVJdXlCX19FUHR4YktvNHpPX0dZdUZOQks?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": "Swiss report on a Sulzer Chemtech restructuring; Sulzer has Singapore operations, so an SG nexus may exist, but the 20 Singapore roles are only a third-party (Insider/layoffsg) estimate rather than a company-confirmed Singapore figure, making the SG impact anticipated rather than confirmed. Classified rumored with low confidence given the estimated nature of the Singapore headcount."
+      "notes": "This is an aggregator/market-overview piece summarising layoffs across twelve industries rather than reporting a single specific company's layoff event, so it cannot be tied to one named employer.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Retrenchments Are Due To Restructuring, Not Ai: Jasmin Lau - The Edge",
+      "llm_company": "Retrenchments Are Due To Restructuring, Not Ai: Jasmin Lau - The Edge",
+      "source_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQc3hDVkppVVBYY1licE5fRkM1S1hiVlVFLWwydE52STI5U1kxUHNHSlVrbFd1QkhZYjVtVEU1U1RsWFp0dWgwbEFHYXlGNEl5TkhJTG1URWJobzRJMmt6dmxzc3gyVDhQcFBrcjFJUFp3anhvVVMyYmxMNE1XUzA0Q014RVlXd05nMXF3XzluNVFhN0hvSEltZk9LX0E0SXg4eU5HRy1TN3hrdkRLemc?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports a Singapore political office holder's (Jasmin Lau) comments attributing retrenchments to restructuring rather than AI — a government policy statement/commentary on layoff trends, not a specific company's layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Mom: Singapore Job",
+      "llm_company": "Mom: Singapore Job",
+      "source_link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNVUlKNzBxM1hNVXY4U0NIV0h1MW9VY25QY2JJZVBfNjFURVRxYUFzeUt2Wi01aW95V2RxS1RIT2JPb3M0Q2NjRmpRcFF0T1FxN1pfQTdSa1BRamZJVE1yd0R1QmtfUTdQQmtNTkJyV0ZMYld1U0NQcGFMNU9DM0hiemRveUloTWpKaXNoY0lNLUJiZW1rM3FVRkQwOU43eF9QTks3ZjVpZW5faENuVXE2RXB6QTFyZlk4MWM5VzFILVhSLTVHTzZSMQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a Ministry of Manpower (MOM) labour market statistics report on job cuts, not a report of a specific company's layoff event; no named company or Singapore layoff event is present.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Tech Layoffs Stem From Companies Comparing 'revenue Per Bot Vs Revenue Per Employee,' Netizen Argues - The Independent",
+      "llm_company": "Tech Layoffs Stem From Companies Comparing 'revenue Per Bot Vs Revenue Per Employee,' Netizen Argues - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPeEtWRHFfWTVUcU9hSXFRdzQyMUl0M0RZR1BMdzZkaWgySndIdEdJRUhKUUFia2J2dXVCMkdQSy1qY0tzUV9NR2g1QTBNTTFLWWpPaHJwcFFRUlNDcWF3RnFpS0RyZlU2WDdTYWYxQlp4azRCVXBNaDJ4QjdYdkxLaDhwcGNPa2l6Y3daRFJZLWtPblVqQnl0cVZxRi1oRXltQnZnYk5Ed1R0dw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a netizen's opinion/argument piece explaining why tech layoffs happen ('revenue per bot vs revenue per employee'); it is commentary about layoff trends generally, with no specific company or Singapore layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Saudi Aramco Trading Arm Hiring Staff For Singapore Push: Sources - The Straits Times",
+      "llm_company": "Saudi Aramco Trading",
+      "source_link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPU0hMYnpXeXVFUkF6c1l2NThtQi1JRVdlaHp2VVRrRmd4QlpLcDZpT1RaUTVERWdHdGdwdzljT0FsODZYV25NS3Y4d1duWUlYNUJ6QUk5T2JjSHFHa0VGcF9VUHVTUDZkU1hGMlByVXFYMHBPa09lcHNMOGNCYUhvVFMxbEpwb1pjQjZ3dmcxY2VOX1Y2MnpIbmlfc1ZWcDB4Nm4xOQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This article concerns Saudi Aramco's trading arm hiring staff for a Singapore expansion push — a hiring/job-posting announcement, not a layoff event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Jagat, A Location-based Social Network That Focuses On Real-life Connections, Surpasses 10m Users - Techcrunch",
+      "llm_company": "Jagat",
+      "source_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNNElzemRhSGpHTWIybW5yXzUyRkg3dUp5SllnYWZFeUxtU053RWlyQzRsQkE1N25Ddnd6eWcyTy1oZDUwNTdkNkpobWFpTnpSOFpuWDJSQXJRd0xERE5rbTROUW5CbkxZdkdhcndLbW1mTG9zX3B0NWdWUU5wTG5Ca0Rld0JSMnlfR2pBbE9XNlVIamtMdEZmQktBLUtxNDRrVTJYWU5PTzdXcXR3Tk1hUEs2T1Y4SVlnR19kZ2tpdUY?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports Jagat surpassing 10 million users, a growth/product milestone with no mention of job cuts, retrenchment, or any Singapore closure. It is not a layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Foundry Group Is Shutting Down And Won't Raise Another Fund - Techcrunch",
+      "llm_company": "Foundry Group",
+      "source_link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOdnlSaXpscTNHX19MNlNQV1g2YktmTzFxUmpBODV2dWt4akFTdkpCd2w4S2NQS2N0LTRVMkF5RUVfN1R2VHhZcmE1d2NPYl91bHk0aXpNQXlLLXVwaFZ2YlhUQzhHRGNPUFlzV1E4bTlrRm5vNE82cTRoQWFmb3Mzb1NXQXpJZXRWc1RmY3M4ci1CVHhScGhFNw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "US-based venture capital firm announcing it will not raise another fund; no Singapore operations or Singapore job losses reported.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Retrenchments Rise In Q2 As Firms Restructure: Mom, Singapore News",
+      "llm_company": "Retrenchments Rise In Q2 As Firms Restructure: Mom, Singapore News",
+      "source_link": "https://www.asiaone.com/singapore/retrenchments-rise-q2-2026",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports MOM's Q2 retrenchment statistics — a labour market statistical release rather than a specific company layoff event.",
+      "rejection_reason": "statistics"
     },
     {
       "original_company": "When Growth Sectors",
       "llm_company": "When Growth Sectors",
-      "source_link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPNGJ0VTE2UFJYX2RRQndCNm80WFk0ekJTcDltVXZjcFBtVFlRY2hRQjBrQ25wLXBvclpCb0FKNTVrd0tWTjJvQkJfU28ta19BYmlfdmRiekg5RUtLWXVSZEJWUG96WWd0cmlhOVNzVmE1MDc0ZnhIaURIME5mQUNwSXlYbW9XbjJkUExfMFUta0lrUUt0M256Y2laNUI0VXJmdWI1NUNzVmVCeWk5?oc=5",
+      "source_link": "https://www.businesstimes.com.sg/singapore/economy-policy/when-growth-sectors-shed-workers-its-time-mind-gap",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Title and snippet ('When Growth Sectors...') indicate a general commentary/analysis piece about sectors shedding workers, with no specific named company or Singapore layoff event.",
+      "notes": "Business Times piece titled 'When growth sectors shed workers, it's time to mind the gap' is a commentary/analysis on labour market trends rather than a report of a specific company's layoff event.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Layoffs Hit Highest Since Covid - Tabla.com.sg",
-      "llm_company": "Layoffs Hit Highest Since Covid - Tabla.com.sg",
-      "source_link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1CQzZnODh2U2FVUGE0RXNxMUUzSm5PUk0wUUxGMkFvX083b2dyNms0YXdicTBUZ0FGLWJQYXFKX1U3ZE1QbUVzRUNOZWVjbENtc0ZDcThBQmRXd1ZQTHF0N0tIaFVkaVl5VlE0cFc0aU9wejg?oc=5",
+      "original_company": "Twelve S'pore Industries Have Already Lost Over 10,000 Jobs In 2026",
+      "llm_company": "Twelve S'pore Industries Have Already Lost Over 10,000 Jobs In 2026",
+      "source_link": "https://vulcanpost.com/913393/singapore-layoffs-twelve-industries-lost-over-10000-jobs/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article is a macro-level report on layoff volumes reaching a post-Covid high, not a report of a specific company's layoff event; no named company or Singapore-specific cut is identified.",
-      "rejection_reason": "statistics"
+      "notes": "Article is a multi-industry aggregate overview of Singapore layoff totals rather than coverage of a single named company's layoff event.",
+      "rejection_reason": "aggregator"
     },
     {
-      "original_company": "Keeping Tab On Singapore's High",
-      "llm_company": "Unknown",
-      "source_link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNeDg2NmNaR1p2R2lMa2pGME13Nm8xZFl2N0xza3RQRlNEWWtDMzdBNDR0dzlTSzlSNFBPak9ac0VxMERZQVJoQmtjV1daMW0xNkcycUJKUXBLTVlHUVlZcUFSanRSVmwyX2VkdzU5LUdkSHVLZ0JBbVpWS2Y4M2RtT2N6SzZvSEV1YkJUNzM3RG1fR1Fua2w3ag?oc=5",
+      "original_company": "Incredible Holdings Files Application For Judicial Management - The Business Times",
+      "llm_company": "Incredible Holdings",
+      "source_link": "https://www.businesstimes.com.sg/companies-markets/incredible-holdings-files-application-judicial-management",
       "verdict": "rejected",
-      "confidence": "medium",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": "No specific company or layoff event is identifiable; the title suggests a general/commentary-style piece with no indication of Singapore job cuts.",
+      "notes": "Article concerns a judicial management application filed by Incredible Holdings — a legal/insolvency proceeding rather than a layoff or retrenchment announcement, and no job cuts are reported.",
+      "rejection_reason": "legal"
+    },
+    {
+      "original_company": "Tapas And Kakao Webtoon Are Shutting Down — What Singapore Manhwa Readers Need To Know | Gametrader.sg - Blog",
+      "llm_company": "Tapas and Kakao Webtoon",
+      "source_link": "https://www.gametrader.sg/blog/tapas-kakao-webtoon-shutdown-singapore-manhwa-2026/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Consumer explainer about webtoon platform shutdowns for Singapore readers, not a report of job cuts or a Singapore business closure.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Singapore's",
-      "llm_company": "Singapore's",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOOVgzaTlIeGk1aFdKZ0pwVXp1SGU4Y2JGWEpzRFR3Wm10RmQybzdfSVBiREFBUmYxRTN1WDJpM0d1Q3p5amFkRW41eVJLbzB6OUdESlpXWDI0bldFcWNqR0xwT2pCaTJJY3JRQ3FCeGc0Mk5IVzBXNHhQY1p0dTcxdzB0UkZ6NjkwS1NkV0lHaDR1Mm1ERElRS2NaSXF0U1NaRlFKdmowMFE3T3ktREhKNDlRdXlnMTZFMWNZ?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Snippet indicates an aggregate report on Singapore retrenchment statistics rather than a specific company layoff event. No named employer or Singapore office is identifiable.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Retrenchments Rise 21% In Q2 As Re-employment Slows - Singapore Business Review",
-      "llm_company": "Retrenchments Rise 21% In Q2 As Re-employment Slows - Singapore Business Review",
-      "source_link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNdkVMeG13LXUyS1dwQU5zVG93Y04yRG55Z3BfSFRWYWxPUUtPYnY5Si1ueVZLUVdEeWJwSnUxbjBzRlhWQmxRVTRRVzhvNGd0Y2F0cUI0ZzdYT091ckJ1MGt2eU5sQjNaMng4NHFYSWZ0Q2prUGl4c2lDTkNXOTF6Z19WSWxMTHJIRmNSWg?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports aggregate MOM labour market statistics on retrenchments rising 21% in Q2; it is not a single-company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Asiaone Is Hiring!, Singapore News - Asiaone",
-      "llm_company": "AsiaOne",
-      "source_link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1UMng2OER6ZkkxekN5R3VieFZONm1aY2ZCUnZlYWhjdnlTMlNDVTljREI1Z0dlN3Axb1AzM2hCeUxTTTB5azFIdHdxYWFEeE16ai1Hc2oyRlZmNG00?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a hiring announcement for AsiaOne, not a layoff event; no job cuts are reported.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Singapore's Speaker Seah Kian Peng Apologises For Nodding Off While Chairing Parliamentary Proceedings - The Star",
-      "llm_company": "N/A",
-      "source_link": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxQT2RFOTlYZEtsUVdPS0RJQkNKaVR1all4T3RxZkpTUDBjbzYyTm9KSXpYbnlZZHM0QnRVVXhpbEdVQzFuRnoyWGNuZjgzU3N0RGRpclJ2a1Y1bGVTcHk5Sy0yMmtRSlR0eXZUTHF1eU9KVnR4ZVI0YmdZd1lITTg1S01TeVhad2hGa3lsbHhmRFRBUWtQTGJadnd4bjcwOU1kNVJSSlVRYW1GTzg4TFJkM19sWFNlZFd4OEtmUzk0LWpIcFAwOHpxTHBoVFd2WDBxeEo1aUd1dlVDY1JRMVkwc3hjdUxwOE9sNnJPSXVDTDVNWWdERmtOSHdpaw?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article concerns the Singapore Parliament Speaker apologising for nodding off during proceedings; it contains no layoff, retrenchment, or business closure content and is a parliamentary matter.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Singapore Labour Market Expands Despite Rising",
-      "llm_company": "Singapore Labour Market Expands Despite Rising",
-      "source_link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOaU1BRTNScXk2MXlJdHVvck1BcEVuQTRSMnQzQkF4NjdKa2x0bEhiY2RGMmg5NUNxaFN3VTc5Tkg0SEVFbjE5b1FmaW5SZThjM2FqUlo2SktvbDRwc09NbExEYzhXemxsQ01KODlSSVQ2ckV2TXBLZTZ5Tllzeng5eWFBM294NE9GbXZiU1ZmdXpWdmV0QUE?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is a labour market overview/statistics piece about Singapore employment trends, not a report of a specific company's layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "'i Got Laid Off From My S$8k/mth Job And Lost $12k/mth Side Hustles To Foreigners' — Sg Tech Professional Says He Now Has To 'apply For Security Guard Jobs' - The Independent",
-      "llm_company": "'i Got Laid Off From My S$8k/mth Job And Lost $12k/mth Side Hustles To Foreigners' — Sg Tech Professional Says He Now Has To 'apply For Security Guard Jobs' - The Independent",
-      "source_link": "https://news.google.com/rss/articles/CBMihAJBVV95cUxPaTBkUUJCc2F0UmFLUTN1R0RYZHdPaVJKTmpKWUhkYmltN2x1WTRsdUFFLWlCMzVXYkFBRGhGNDAtbmlSbmk0aFhFQXc3Rng0Ny1BdW5VOEl0NDBfR2xhRElHb2JRbEVFdXZDZkk2bEZWMS11dFAzQ1BjXzRHRGtodUQ3V2tCaXhScXdXa3VsTExiRkFNdDlrMTZxdm1QcS1VNE9WVndvaHBmeDg4TV9wUF9RT19MWE9iTlhVZlR0anZiazk2ZjBHUm5pVGhUSUROdm50ZmNYOUtrSEd3SFlQSWViaEx5X1lVU0VRUjZad2VoUHg5cGhYY2tGbGJNS2xFR1Vldw?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "First-person account of an unnamed Singapore tech professional losing his job and side hustles; no specific named company or verifiable layoff event.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Singapore's Digital Economy Contributed 18.6% To Gdp, Generated 214,000 Tech Jobs In 2024 - The Straits Times",
-      "llm_company": "Singapore's Digital Economy Contributed 18.6% To Gdp, Generated 214,000 Tech Jobs In 2024 - The Straits Times",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQMjdXYTE4UmJpdnJITkpvMVRQc0R0NVhManB6NFZDdHY2SlNRQmRwLWtyQTVIQ1E3dnVlRTNZd01LQ1VTOUxGeGxRVVk0VDd6TXFacjhCNjlpdkJnd1lVaXBHQktQSEh2NHIxOHBxUUtteW9IbjlyMkZlY2t4MWE2eXdpSUl1dVNfODNld3UtcWdkVzNHMWhqM3c2SkdpRGwzMUpsb2hXYm8tQk5qUHhTd1FEY0UtWF9yUDVn?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a labour-market/economic statistics report on Singapore's digital economy GDP contribution and 214,000 tech jobs created — no layoff event, no specific company cutting jobs.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "More Than Half Of Firms Plan To Stop Hiring, Expect Wage Freezes Or Moderation In 2027: Snef Poll - Cna",
-      "llm_company": "More Than Half Of Firms Plan To Stop Hiring, Expect Wage Freezes Or Moderation In 2027: Snef Poll - Cna",
-      "source_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNZUxLX19COVR6bVJNLXE5d01LbVgxbDhPTkpNSGoyZGlEczlYN2haa3ZSUWhYZEVUN2dOVTcyWGhrdEplVTBTZUMtVnJkOFBEb1RnOWVoa0dtUHBBQUxDWXJVSW00VXhwTHM3Tk1SQU9BemZMd2FCVldQck1OUV9HcE82MnY4Q1NWM2xTNS1rZGRmbjVqcnF5MUpKNDNDbldXMHo1TF9HZ3dWNldfR3d0NFc4UnpMaldTTl83LVNyNERteUFjYzlINHl3?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is coverage of a SNEF survey/poll about firms' hiring and wage plans for 2027, not a specific company's layoff event. It is labour market statistics and forward-looking sentiment data, not an actual retrenchment.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Standard Chartered's Singapore Jobs Hit As Bank Chases Us$1.5b Return To Investors - Malay Mail",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNbmlZdTNFY3RsRjRSNFNRbFZfbzNOWTRJai05TlF4N3lvU2otMThKRVpBOGZmUWgzemhkdVFKTDQtS3BITGxXQjFxcklyWEs5S25hN0lyc0liTl9NV2tDMDRvaE1wakg5UG03QVQxdDRIV0ZKRzVyMVdqV0NTc1Foc3Y0N1RGcGY0ZEtzNjRBQjZTUU5SbUU5MGVza0c3eE5kc0pFSGtlTW5lRXJwOUJONjFZY3lmVHFqZndtTURrVUY2aDUyYjU4em1jSzVKTFRnVVBxT9IB2gFBVV95cUxNc1pUZElwSkR2VjhvNDd6WllpelQ2WGgwclBidl9RRzZXY1NsSV8yUmcxVU5oNHIxRXJXTTJ0WG5QYlBISEFUc1BIb1hrMTl3RzBDeEo5VnJPNVNTaDdiMWdxaER1MnlwamhkYWhHckg2UlJMUUpJdGp6SkF2bEl3VTBkYnMyMVo0SDU3TDRXcFlKMGFrUWh0QWJOcjlSbk9fNVNxMXY2aTJEWFlyR01uV3RNeVFSTTZkWHBCcjJFZmtiU2oyWk82bC1yWENia2w2UVRNVmpxRW5DUQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of Standard Chartered's June 2025 restructuring with reported Singapore job cuts; event_id reused as instructed. No specific headcount is disclosed in the provided title/snippet, so both headcount fields are left null."
-    },
-    {
-      "original_company": "80 Job",
-      "llm_company": "Standard Chartered",
-      "source_link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQRXJ0U3ByWWc0blN6dVdpVHhsbDFQSnBmUDJhY1lMQ09OVllCbTdFSG13SkNDSUxmaVdUem9PYkh2cWF0eGRyUFl1clhLcVhvNlZBNmJxMlhDQjQ3ajlxcnNuOEg1MjRSZU5jR0lxTkdkdDM4dUNBVmRYR1BVamVUb2tlNC1QNHBTWmg2eTBZZVZlS1htemtZVmVWcmFqanVybXRkUWRBVTc1emczNkhoNUNlUlRLMDk3MWRSZE4zcjR4TWhGZ1Fxc3lJZTNocXM?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Credibly reported cut of 80 Singapore roles at Standard Chartered, a named company with Singapore operations. This is a confirmed Singapore layoff event."
-    },
-    {
-      "original_company": "Nissan Launches Tekton Suv In South Africa After Plant Closure, Money News - Asiaone",
-      "llm_company": "Nissan",
-      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQNk9odWJBenFjSUh0Zk1CRldQaXVPUVNRTE9vaVBMTGJqYV9LeEltWmZ2ZjVSWUZzY0s4Y21zNGNyd18ydlQ3NFBWWldjemFHbW5MSnB3elQ2SG9oWjZXQVl3SUxTZmFuUnEyOVJINVNhZFFpeVJ2dGttWHZSX0dtV0tXMjJYV0tKMzZsUEVzOE1EYWc?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article concerns Nissan's South African plant closure and a new SUV launch there; there is no Singapore entity, office, or workforce affected.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Laid-off Locals Take Longer To Find Work In Q2 2026; Job Vacancies Shrink 6.4%: Mom",
-      "llm_company": "Laid-off Locals Take Longer To Find Work In Q2 2026; Job Vacancies Shrink 6.4%: Mom",
-      "source_link": "https://www.businesstimes.com.sg/singapore/economy-policy/laid-locals-take-longer-find-work-q2-2026-job-vacancies-shrink-6-4-mom",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a MOM labour market statistics report on re-employment duration and job vacancy changes, not a specific company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Singapore Labour Market Expands In Q2 Even As",
-      "llm_company": "Singapore Labour Market Expands In Q2 Even As",
-      "source_link": "https://www.straitstimes.com/singapore/jobs/spore-labour-market-expands-in-q2-even-as-retrenchments-rise-and-job-vacancies-fall",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a Straits Times report on aggregate Singapore labour market statistics (Q2 retrenchment and job vacancy data), not a layoff event at any specific named company.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Singapore's",
-      "llm_company": "Singapore's",
-      "source_link": "https://www.reuters.com/world/asia-pacific/singapores-retrenchment-rate-highest-level-since-2020-q2-this-year-ministry-says-2026-09-21/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports MOM's aggregate retrenchment-rate statistics for Singapore, not a specific company's layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Singapore",
-      "llm_company": "Singapore",
-      "source_link": "https://www.channelnewsasia.com/singapore/singapore-workers-retrenchments-jobs-q2-2026-6398481",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports aggregate Singapore retrenchment figures for Q2 2026 (MOM labour market data) with no specific company or single layoff event, so it falls under the statistics rejection rule.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Singapore Labour Market: Slower Resident Employment Growth",
-      "llm_company": "Singapore Labour Market: Slower Resident Employment Growth",
-      "source_link": "https://www.channelnewsasia.com/watch/singapore-labour-market-slower-resident-employment-growth-retrenchment-figures-concern-analyst-6400076",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article covers Singapore labour market statistics and analyst commentary on resident employment growth and retrenchment figures — aggregate MOM data, not a specific company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Layoffs Hit Highest Since Covid - Singapore - Tabla!",
-      "llm_company": "N/A",
-      "source_link": "https://www.tabla.com.sg/news/singapore/layoffs-hit-highest-covid",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports aggregate Singapore layoff levels reaching their highest since Covid, which is labour market statistics/commentary rather than a specific company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Tollyjoy Says Decision To Close After 55 Years Not Driven By Financial Considerations - Cna",
-      "llm_company": "Tollyjoy",
-      "source_link": "https://www.channelnewsasia.com/singapore/tollyjoy-baby-brand-closure-not-driven-financial-considerations-6401211",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of the announced closure of Singapore baby brand Tollyjoy after 55 years, a Singapore business closure implying job losses; reuses the existing event_id and no headcount was disclosed."
-    },
-    {
-      "original_company": "Radiant World",
-      "llm_company": "Radiant World",
-      "source_link": "https://www.straitstimes.com/business/companies-markets/radiant-world-cuts-more-jobs-as-legal-challenges-mount",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of the Radiant World retrenchment as further job cuts are carried out amid mounting legal challenges; reusing the existing event_id radiant-world-2026-08 as instructed rather than minting a new slug. No Singapore-specific or global headcount figure is disclosed."
-    },
-    {
-      "original_company": "Techshots | <!-- -->krutrim's Chip Ambitions Clouded By Team Exits",
-      "llm_company": "Krutrim",
-      "source_link": "https://www.techshotsapp.com/artificial-intelligence/krutrims-chip-ambitions-clouded-by-team-exits",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Krutrim is an Indian AI startup (Ola group) and the story concerns senior team departures at its India operations, with no Singapore entity, office or workforce affected.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Business Closures In Singapore: What They Teach Us About Financial Planning",
-      "llm_company": "Business Closures In Singapore: What They Teach Us About Financial Planning",
-      "source_link": "https://bizsquare.com.sg/financial-planning-for-businesses-in-singapore-lessons-from-recent-closures/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a financial-planning commentary/explainer drawing lessons from various Singapore business closures, not a report of a single specific layoff event involving a named company.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Wuxi Xdc Celebrates Gmp Release Of Singapore Site, Ushering In ..",
-      "llm_company": "WuXi XDC",
-      "source_link": "https://www.biospace.com/press-releases/wuxi-xdc-celebrates-gmp-release-of-singapore-site-ushering-in-a-new-era-of-global-expansion",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Press release about a GMP release and expansion of WuXi XDC's Singapore site; it is not a layoff, retrenchment, or closure event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Singapore",
-      "llm_company": "Singapore",
-      "source_link": "https://www.sseu.org.sg/news/Singapore-retrenchments-rise-to-highest-level-since-2020-as-job-vacancies-fall/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports aggregate national retrenchment figures (MOM labour market data) rising to their highest level since 2020, with no specific named company or discrete layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Tom And Stefanie Down To Three Stores From 10 As Founders' Daughter Aims To Keep Business Going - Cna Lifestyle",
-      "llm_company": "Tom & Stefanie",
-      "source_link": "https://cnalifestyle.channelnewsasia.com/living/tom-stefanie-closure-tiong-bahru-outlet-589341",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Singapore furniture retailer Tom & Stefanie has shrunk from 10 stores to three, including the closure of its Tiong Bahru outlet, an active Singapore closure implying job losses. Headcount not disclosed so figures remain null."
-    },
-    {
-      "original_company": "25-year-old Restaurant Chain Crystal Jade Closes 3 Singapore Outlets In One Month, 5 So Far This Year - Vnexpress",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://e.vnexpress.net/news/business/companies/25-year-old-restaurant-chain-crystal-jade-closes-3-singapore-outlets-in-one-month-5-so-far-this-year-5121652.html",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Crystal Jade has already shut 3 Singapore outlets in a month (5 in 2026), an ongoing Singapore closure event implying job losses, so it counts as confirmed layoff activity; this is follow-up coverage of the existing Crystal Jade closure event, so the event_id is reused. No headcount was disclosed, so both jobs fields are null."
-    },
-    {
-      "original_company": "More Vessel Arrivals In Singapore But Bunker Sales Fall | The Straits Times",
-      "llm_company": "Not applicable",
-      "source_link": "https://www.straitstimes.com/business/companies-markets/more-vessels-arrived-in-singapore-in-august-but-bunker-sales-fell",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports Singapore port vessel arrivals and bunker fuel sales data, not a company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Aviation Sector Kept At 'underweight' By Uob Despite Changi Airport Initiatives",
-      "llm_company": "Aviation Sector Kept At 'underweight' By Uob Despite Changi Airport Initiatives",
-      "source_link": "https://theedgemalaysia.com/node/206409",
+      "original_company": "Canon Consolidates Singapore Operations At Regional Headquarters | Singapore Business Review",
+      "llm_company": "Canon",
+      "source_link": "https://sbr.com.sg/exclusive/canon-consolidates-singapore-operations-regional-headquarters",
       "verdict": "needs_review",
       "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: JSON parse error (raw: {\"type\": \"json_object\"}\n{\"verdict\": \"rejected\", \"confidence\": \"high\", \"company\":) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
+      "provider": "deepseek",
+      "notes": "Headline indicates Canon is consolidating its Singapore operations at its regional headquarters, which may imply job losses or may simply be an office relocation, but no layoff or closure is explicitly reported. Only a title/snippet is available, making it genuinely ambiguous whether this is a layoff event."
     },
     {
-      "original_company": "Wipro",
-      "llm_company": "Wipro",
-      "source_link": "https://layoffsg.com/feed?event=6ab1e422b0e640a2bfbc62da",
+      "original_company": "Techshots | <!-- -->ola‑backed Ai Startup Krutrim",
+      "llm_company": "Krutrim",
+      "source_link": "https://www.techshotsapp.com/artificial-intelligence/olabacked-ai-startup-krutrim-lays-off-over-100-linguists-in-second-layoff-round",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Krutrim is an Indian AI startup backed by Ola, and the reported layoffs of over 100 linguists have no clear Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Singapore's",
+      "llm_company": "Singapore's",
+      "source_link": "https://www.hcamag.com/asia/specialisation/recruitment/singapores-retrenchments-went-up-as-re-entry-takes-longer/590573",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports on aggregate Singapore retrenchment figures and re-entry/re-employment trends rather than a specific company's layoff event, making it labour market statistics/commentary with no identifiable employer.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore",
+      "llm_company": "N/A",
+      "source_link": "https://www.pou.org.sg/news/Singapore-retrenchments-rise-to-highest-level-since-2020-as-job-vacancies-fall/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports aggregate national labour market statistics (retrenchment levels and job vacancy data) with no specific company or identifiable layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "F&b Closures In 2026: 13 Brands That Left A Mark On Our Dining Scene | Hungrygowhere",
+      "llm_company": "F&b Closures In 2026: 13 Brands That Left A Mark On Our Dining Scene | Hungrygowhere",
+      "source_link": "https://hungrygowhere.com/what-to-eat/singapore-fnb-closures-2026/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "HungryGoWhere roundup of 13 different F&B brand closures in 2026 — an aggregator article covering many companies rather than a single specific layoff event.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Cinnabon To Shutter Last Singapore Outlet At Ion On Sept 22 – Infofortech",
+      "llm_company": "Cinnabon",
+      "source_link": "https://infofortech.com/cinnabon-to-shutter-last-singapore-outlet-at-ion-on-sept-22/",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Cinnabon's last Singapore outlet at Ion is slated to shut on Sept 22, an announced future Singapore closure implying job losses; follow-up coverage reusing the existing event id."
+    },
+    {
+      "original_company": "Softening Labour Market To Limit Aggressive Mas Tightening—report | Singapore Business Review",
+      "llm_company": "Softening Labour Market To Limit Aggressive Mas Tightening—report | Singapore Business Review",
+      "source_link": "https://sbr.com.sg/economy/in-focus/softening-labour-market-limit-aggressive-mas-tightening-report",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Market/economy analysis piece on how a softening labour market affects MAS monetary tightening; no specific company layoff event, no named employer, and it is essentially macroeconomic commentary tied to policy.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Singapore's Labour Market Has A New Vulnerable Group: Credentialed Workers | The Straits Times",
+      "llm_company": "Singapore's Labour Market Has A New Vulnerable Group: Credentialed Workers | The Straits Times",
+      "source_link": "https://www.straitstimes.com/opinion/singapores-labour-market-has-a-new-vulnerable-group-credentialed-workers",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a Straits Times Opinion piece offering commentary/analysis on Singapore's labour market and a vulnerable group of credentialed workers, not a report of a specific company's layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "S'pore Labour Market Growing, Even Though",
+      "llm_company": "S'pore Labour Market Growing, Even Though",
+      "source_link": "https://mothership.sg/2026/09/singapore-labour-market-growth-q2-2026/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article is a labour market overview reporting Singapore employment growth for Q2 2026, not a specific company layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Sionna To",
+      "llm_company": "Sionna Therapeutics",
+      "source_link": "https://www.stocktitan.net/sec-filings/SION/8-k-sionna-therapeutics-inc-reports-material-event-7d80f632ef6c.html",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Sionna Therapeutics is a US-based biotech filing an 8-K about cutting 46 staff; the report contains no Singapore entity, office, or workforce, so there is no Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "As 59% Fewer Pharma Companies",
+      "llm_company": "As 59% Fewer Pharma Companies",
+      "source_link": "https://labdb.org/as-59-fewer-pharma-companies-cut-staff-in-q2-in-2026-job-postings-rise-15/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a sector-wide labour market report on pharma industry retrenchment trends and job postings, not a specific company layoff event with a Singapore nexus.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Novo's Workforce Reduction Climbs To 13,000 To Fuel R&d Work - Biospace",
+      "llm_company": "Novo Nordisk",
+      "source_link": "https://www.biospace.com/job-trends/novos-workforce-reduction-climbs-to-13-000-to-fuel-r-d-work",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Wipro layoffs affecting 2 Singapore roles, reported via Insider and tracked by layoffsg.com; treated as follow-up to the June 2026 event with an estimated Singapore headcount."
+      "notes": "BioSpace reports Novo Nordisk's workforce reduction reaching 13,000, a global layoff figure. Novo Nordisk has Singapore operations, so it has a Singapore nexus, but the disclosed number is global, not Singapore-specific."
+    },
+    {
+      "original_company": "Novo",
+      "llm_company": "Novo",
+      "source_link": "https://www.irishtimes.com/business/2026/09/21/novo-cuts-13000-jobs-in-a-year/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Company name 'Novo' is incomplete and ambiguous, and there is no Singapore nexus in the article; it appears to be a summary/statistics piece about global job cuts over a year, not a specific Singapore layoff event.",
+      "rejection_reason": "vague"
+    },
+    {
+      "original_company": "Singapore — Healthcare And Biotechnology Labor Market Forecast (6 ..",
+      "llm_company": "Singapore — Healthcare And Biotechnology Labor Market Forecast (6 ..",
+      "source_link": "https://careerproof.ai/atlas-daily/report/2026-09-17",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a labor market forecast/report on Singapore's healthcare and biotechnology sector, not a report of a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Uk And Singapore Launch Negotiations For New Agreement On Pharmaceutical Goods Manufacturing - Gov.uk",
+      "llm_company": "Uk And Singapore Launch Negotiations For New Agreement On Pharmaceutical Goods Manufacturing - Gov.uk",
+      "source_link": "https://www.gov.uk/government/news/uk-and-singapore-launch-negotiations-for-new-agreement-on-pharmaceutical-goods-manufacturing",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Government press release about UK-Singapore trade negotiations on pharmaceutical goods; it is a policy/diplomatic announcement with no layoff event, no named company, and no job cuts.",
+      "rejection_reason": "policy"
     }
   ]
 }
