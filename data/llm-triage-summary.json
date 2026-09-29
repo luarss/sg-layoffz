@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-09-28",
+  "run_date": "2026-09-29",
   "providers": [
     {
       "name": "deepseek",
@@ -11,378 +11,274 @@
     }
   ],
   "timed_out": false,
-  "total": 37,
-  "confirmed": 4,
-  "rumored": 0,
-  "rejected": 33,
+  "total": 27,
+  "confirmed": 7,
+  "rumored": 1,
+  "rejected": 19,
   "needs_review": 0,
   "remaining_queue": 0,
   "rows": [
     {
-      "original_company": "Canon Consolidates Singapore Operations At Regional Headquarters | Singapore Business Review",
-      "llm_company": "Canon",
-      "source_link": "https://sbr.com.sg/exclusive/canon-consolidates-singapore-operations-regional-headquarters",
+      "original_company": "Can Singapore Households Still Afford To Repay Their Home Loans If",
+      "llm_company": "Can Singapore Households Still Afford To Repay Their Home Loans If",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOeXdZUEFYQ1ZhZXI1ek51cDM5UkRnVUlCMHRFeFo2VS1vMnpvRDhyeXhCMXFIYlBmdC1PRlM3NDhLQU8zUVVWandwRzM2VW9mV3FHb1dTQVlGTWVubVdIdFBlWkpIT0hORENRTTY3eEFZTHNzc3RjbnRaYkQ2aTNZQ1IySzJ5d2VEc1YxUjVpb3dVRnF0N05wSV9oNF9JUnFfbWxqNUw3Y0FLUGpQMGljWms4QmZGQQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a commentary/analysis piece about Singapore household mortgage affordability, not a report of a specific company's layoff or closure.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "A Millennial Making $746,000 By Working 5 Remote Jobs Says Tech Layoffs Have Made Him Feel Guilty About Overemployment - Yahoo Lifestyle",
+      "llm_company": "A Millennial Making $746,000 By Working 5 Remote Jobs Says Tech Layoffs Have Made Him Feel Guilty About Overemployment - Yahoo Lifestyle",
+      "source_link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPZHpGXzhIeWFBQU9SM0lHc0hfMEpsNm5DWjk5VkhZNHVBazgwRVFDZVlBTkc5TUVmSlp4cEVkcGVjSXlFd2hycVJWcV9xMHd3MnpmbzFJWkh6R2JLeTVMUFo1NDlJTXRWcVhmUmdrYXNlLXdXMmlCNmlUdGZIcVFYUA?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "First-person lifestyle piece about an individual's overemployment guilt amid tech layoffs; no specific company layoff event and no Singapore nexus.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Shopee, The Amazon Of Southeast Asia, Laying Off Staff: Reports - Business Insider",
+      "llm_company": "Shopee",
+      "source_link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQb0YyLTgxcFVNOXZCcHAyUnhHZXR4WWU3Z2hvaFMwWFl6S0NEMV9Jei1yMGtYNEdvT2pES0pTalJJTVFPVldBemVzUHRpTXh4RUNGUWNFWWYwYWJPMy1ja1o3eUNFYjdadURHN1JqMWZYT0M5WjNUd1NOR3RoZ2VrZ1c0RU01aERHaXNIZWd2R0lRenM5eHc?oc=5",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Canon is consolidating its Singapore operations at its regional headquarters, a restructuring that implies office/role consolidation and Singapore job losses. Treated as a confirmed Singapore restructuring event; no headcount disclosed."
+      "notes": "Credibly reported layoffs underway at Singapore-based Shopee, with reports indicating staff cuts; no specific Singapore headcount disclosed."
     },
     {
-      "original_company": "Real Estate Veteran Desmond Sim Quits From Ceo Roles At Realion, Etc - The Business Times",
-      "llm_company": "Realion",
-      "source_link": "https://www.businesstimes.com.sg/property/real-estate-veteran-desmond-sim-quits-ceo-roles-realion-etc",
+      "original_company": "Biontech Closes Four Sites After Failed Sale Process As Post-covid Vaccine Sales Slump - Manufacturing Chemist",
+      "llm_company": "BioNTech",
+      "source_link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQaGtUZjRKQjQwWkV2MlEwWjZLV05mTE4ybUpqQW96Tk1tb3RrdFl3clpXWnBicTRVRHJGSDZ3dnBIYUpDNS11V2o5eTZZRl9WX2l4TkJSTmViaDd6M2F2MnlKRGtLdVY0dnFFc2YzTzFFTjRwbnp3eGxFWENDczNrYWlsNXJjakUtNmdGYS1n?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Follow-up coverage of BioNTech's four-site closure/restructuring (event biontech-2026-09), a real and underway job-cut event at a company with Singapore operations (Asia-Pacific HQ). No headcount disclosed, so both cut figures are null."
+    },
+    {
+      "original_company": "Nissan Launches Tekton Suv In South Africa After Plant Closure, Lifestyle News - Asiaone",
+      "llm_company": "Nissan",
+      "source_link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOMU92WjNKLXF1WmZjckNSNjh5bkRYM3JMTGhRd19aWlFFeWNyVFpMM20zWm15bFFXSGxTRUptSVhiU1F4MHBJMkF0NFlwNW1WUFJYaElKWTNHR3ZRdjgwWVd1WlRIY0NfdW9QOGh5SkhiRGh6NWEtZGE1QlBteXlLZ0x4SzgtN0FsQXpodHcwejJVeVhPM2N4Yw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is coverage of an executive (Desmond Sim) resigning from CEO positions, not a layoff, retrenchment, or closure event. No job cuts are reported.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Mom: 4.5k Singapore Workers Were Laid Off As",
-      "llm_company": "Mom: 4.5k Singapore Workers Were Laid Off As",
-      "source_link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOLTE2eVlzUFZzcnd4MlE2cS1vR2xfakpOSElmTkhac3Bwb3E3SGl2Qk13TGJ5S1EyakRqV3BBbngtdjd3anMzVFFYa2t6cWRsVnlvRGh3TEktMTA5T0c4U0pSMHFFMWVmR0dYMXNDbVdzZHJUamRYUGFIekxqY2lRV0V5ZDN5ZXBXYlQyR25FZGNjdnNJVE9lWWQxSUZtMUJyRzlUR1VXSEF0anNBOHBaQWItand5bGp6ZTBuNFE1azY1aHM?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a labour market statistics report citing MOM data on aggregate layoffs (4,500 workers), not a specific company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "'i Saved 11 Months Of Salary': Singaporean Workers Share How They Are Bracing For Sudden Layoffs - The Independent",
-      "llm_company": "'i Saved 11 Months Of Salary': Singaporean Workers Share How They Are Bracing For Sudden Layoffs - The Independent",
-      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxONWExc1Jpa3ZqUl9DZ0dQcF9HQ3Z3S1hjeWZIOUUzZ3FrZWFVaTVTOVpEeVdWWndqNGZsNkR3U3hzTnR2akZGS0NYazJLSU54d1FlQWRRdlU2Wng2V2xtdzZFVmIyR3ZvQ1lsLXRldGFYMEVMT2VYbHVRMXNUS0M4YjEzMHp2b3NEQ3lVVDJHRFRlX2pmcS1NOGMtM1I1QXFJZXdaLVdYZXNmdDNIWU5LSUpJZmRoeXNCQ05V?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Personal first-person story about workers' savings and anxiety over potential layoffs, with no specific company, no announced job cuts, and no identifiable layoff event.",
-      "rejection_reason": "personal"
+      "notes": "Article concerns a Nissan vehicle launch in South Africa following a plant closure there; the layoff event is entirely outside Singapore with no Singapore entity or office affected.",
+      "rejection_reason": "not-sg"
     },
     {
       "original_company": "Commentary: What Happens After",
       "llm_company": "Commentary: What Happens After",
-      "source_link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPSWVNSTlVM2NoOHUwdGxUNDc5QmRXR1E2ZE5CVlBiNktkX2I0WjRxUUNwUmd1Rmt0QnZ0bFdjVFhEV1FWUEFOTVFoa2NyZU9VWUxOSW5uTjM4VDlzalhBcVZzTUI4Z0RZZkE0ZnZqOWFPYVEzODhxMGdRVWt4emlfQ2lkOGpUZXdKbkNPS2taTUU4WHoxYUpwdTdVcW9aYXU2N2RxT1h6TUJzR0lEZi1B?oc=5",
+      "source_link": "https://www.channelnewsasia.com/commentary/singapore-retrenchments-jobs-pmet-pay-cut-career-conversion-6415396",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The piece is explicitly labelled a commentary discussing what happens after retrenchment, i.e. an opinion/analysis article with no single company layoff event.",
+      "notes": "This is a CNA commentary/opinion piece about what happens after retrenchment, not a report of a specific company's layoff event.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Ex-manager Says 'ai Is Just A Cover Story' For Amazon Layoffs - The Independent",
-      "llm_company": "Amazon",
-      "source_link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPeXJGY1pFT3hoc183Sl94YzhHbUNNR3dMOXd2VW9HdTVMRUgtTVl3MEJxb3YtZnpkWW9ja1k2ME1nVUJKdVJKQ3YzYTdSdFduNFhHcnhFWlFhV194N19MQWp6QjJQeElvbThTeVlNcWdteHZteEkxUUszb2RPRlczaGVzNFNSQnd3YUdGQnNR?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an ex-manager's personal opinion/commentary claiming AI is a 'cover story' for Amazon layoffs, not a report of a new layoff event. It matches the commentary and personal-anecdote rejection rules.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Not Everyone Is Hiring: Layoffs Rock Shopee, S'pore-based Crypto.com As Startups Bleed Jobs - Vulcan Post",
-      "llm_company": "Shopee, Crypto.com",
-      "source_link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOcHpudmtnSjRxMklybDdlS3BCNFpUeEc1M09DRjNSQWFsSlJlRU9HY3RXclh6YjREa3VkSjVpSEJjVUx2Q3g5ZWszQktiNGJuU1NWSWZZdmZ2SkVuU1lDazI3MnFOekFLSGFfWFRZVlVrRjc1OUo3bHdRa3pORkxaNi1n?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Roundup article covering layoffs across multiple companies (Shopee, Crypto.com) rather than a single specific layoff event, so it is an aggregator piece.",
-      "rejection_reason": "aggregator"
-    },
-    {
-      "original_company": "Sia Group Offers Jobs To 300 Jetstar Asia Staff As Budget Airline Shuts Down Operations In July 2025 - Goody Feed",
-      "llm_company": "Jetstar Asia",
-      "source_link": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFBEZmhfaC1JVnk0ZXpzSjRkSjhRRWQ1YTRnZmdWTzhLWEZYQzV4V21zRmxaNDZtVExjY19oSTlmZG1PX2l1Sy1lQ2dySUxQMVpjTzFreTNTOA?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of the already-reported Jetstar Asia shutdown in Singapore (ceasing operations end-July 2025), a Singapore closure implying job losses; the 300 figure is staff offered redeployment by SIA Group, not a disclosed cut count, so headcount fields are left null."
-    },
-    {
-      "original_company": "Biontech To Close 3 Sites In Germany After Failed Buyer Search - Fierce Pharma",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOYWh6OC0zaVBRR1ZXMF9BOTVpZUxuMUxIUGQxeXFna29OSFMzbGRVdFJtU09ncnppeE92WGFxNW01emgySlN3ZEZ2bjRiSDJUY21CeDhoSmxpQ3dqQTFfSk9vWlEtdnNrMV8xSGdEckZMSTR3RC1YUVZZWC1LdjBXR0pNYnk0bHFTM0FoanNoVHlfc2s3X0l2S2pDQnFka1BZanc?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "BioNTech is closing three sites in Germany after failing to find a buyer; the closures and resulting job losses are entirely in Germany with no Singapore entity, office, or staff affected.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Japan Tobacco Eyes Closure Of Two European Plants - Yahoo News",
-      "llm_company": "Japan Tobacco",
-      "source_link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQLWFWRU5qU2wtWWRlRW1HRmVFYmxXREl0WnRVc0JjbS1GdjBFZGJBQTBuY0JELWNaSjlUSUJQc2wtQmw3a3N5am5RcWJHU25oQVJrSlJDWkttY001QTBxQklGZGZxbDJzVlVXaWRLb1VEMVl4Q1FucTduSDBseWVROEdVN3IyX2Q5VlJmYnBDeGV4NGhUM0ZqUWt4dnJiQ2tf?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Announced closure of two European plants with no Singapore entity, office, or job impact mentioned.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Nitrous.io Is Shutting Down Its Cloud Ide On November 14 - Venturebeat.com",
-      "llm_company": "Nitrous.io",
-      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOY0t6WUZrOUpxdXNISG1HMjlxWks2dGhFMEpYRENDdWc4ejBSNTV4dklyV2tWTjhTLXNmVk56aUxTZG9IU2prTTJJX0NLbWhTTmpYSkNrMjB1ZEFteWJCbV9hR3pMeDczbXRCUXI5MXBRX2lVMEJJUXpFZWRpRkNNMF9KZWozbDNVMUZXd2J3LXJEM2s?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Nitrous.io shutting down its cloud IDE service is not a Singapore-specific layoff event and has no clear Singapore nexus.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Qoo10裁员结束 人力部：有受影响员工求助 - 8world",
-      "llm_company": "Qoo10",
-      "source_link": "https://www.8world.com/singapore/qoo10-retrenchment-upd-2566031",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Qoo10's retrenchment exercise in Singapore has concluded, and MOM reported that affected employees are seeking assistance. This is a confirmed Singapore layoff event involving a named company with local operations."
-    },
-    {
-      "original_company": "'insane To Manage': Singaporean Says Workload Becomes Unbearable After Half His Team Is Laid Off - Amkio",
-      "llm_company": "'insane To Manage': Singaporean Says Workload Becomes Unbearable After Half His Team Is Laid Off - Amkio",
-      "source_link": "https://www.amkio.com/insane-to-manage-singaporean-says-workload-becomes-unbearable-after-half-his-team-is-laid-off/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "First-person account of an unnamed Singaporean worker's workload after team layoffs; no named company or verifiable layoff event.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "Fusionex To Shutter Following Court Order",
-      "llm_company": "Fusionex",
-      "source_link": "https://theedgemalaysia.com/node/694986",
-      "verdict": "rejected",
+      "original_company": "Popular Homegrown Patisserie Luna To Close On Dec 31 Due To Rising Costs | The Straits Times",
+      "llm_company": "Luna",
+      "source_link": "https://www.straitstimes.com/singapore/popular-homegrown-patisserie-luna-to-close-on-dec-31-due-to-rising-costs",
+      "verdict": "rumored",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Report concerns the Malaysian data-analytics firm Fusionex being wound up under a Malaysian court order; the source (The Edge Malaysia) and the event point to a Malaysian entity with no indicated Singapore operations, so there is no clear Singapore nexus.",
-      "rejection_reason": "not-sg"
+      "notes": "Singapore patisserie Luna announced it will close on Dec 31 due to rising costs, implying job losses; the closure is a future/announced event, so classified as rumored. No headcount disclosed."
     },
     {
-      "original_company": "Corporate Banking In Apac: A Guide For European Firms - The European Business Review",
-      "llm_company": "Corporate Banking In Apac: A Guide For European Firms - The European Business Review",
-      "source_link": "https://www.europeanbusinessreview.com/a-guide-to-corporate-banking-entering-the-apac-market/",
+      "original_company": "Biontech To Close Germany And Singapore Sites After Sale Fails By Investing.com",
+      "llm_company": "BioNTech",
+      "source_link": "https://uk.investing.com/news/stock-market-news/biontech-to-close-germany-and-singapore-sites-after-sale-fails-93CH-4885695",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "BioNTech is closing its Singapore (and Germany) sites after a proposed sale fell through, a site closure implying Singapore job losses. Headcount not disclosed; this is follow-up coverage of the existing event biontech-2026-09."
+    },
+    {
+      "original_company": "Biontech To Close Germany, Singapore Sites After Failed Sale Process",
+      "llm_company": "BioNTech",
+      "source_link": "https://tradersunion.com/news/financial-news/show/3540632-biontech-closes-germany-singapore-sites/",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Credibly reported closure of BioNTech's Singapore site following a failed sale process; a Singapore site closure implying job losses counts as a layoff event. Follow-up coverage of the existing biontech-2026-09 event, so that event_id is reused."
+    },
+    {
+      "original_company": "Biontech To Shut Germany And Singapore Plants After Failing To Find Buyers · Business Upturn",
+      "llm_company": "BioNTech",
+      "source_link": "https://businessupturn.com/usa/money/us-markets/biontech-to-shut-germany-and-singapore-plants-after-failing-to-find-buyers/",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "BioNTech is shutting its Singapore plant (along with German sites) after failing to find buyers, a confirmed Singapore site closure implying job losses. No headcount disclosed; follow-up coverage of existing event biontech-2026-09."
+    },
+    {
+      "original_company": "Where Does The Ceo Of Tiktok Live: Shifting Headquarters And The Ceo Behind The Curtain - Carney",
+      "llm_company": "TikTok",
+      "source_link": "https://bilt.carney.co/where-does-the-ceo-of-tiktok-live-shifting-headquarters-and-the-ceo-behind-the-curtain",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is an explanatory market guide on corporate banking in APAC for European firms, not a report of any layoff event or company-specific job cuts.",
+      "notes": "Article discusses where TikTok's CEO lives and possible headquarters shifts; it reports no retrenchment, closure, or any Singapore job cut. There is no layoff event to track and no Singapore nexus.",
+      "rejection_reason": "vague"
+    },
+    {
+      "original_company": "'insane To Manage': Singaporean Says Workload Becomes Unbearable After Half His Team Is Laid Off | The",
+      "llm_company": "'insane To Manage': Singaporean Says Workload Becomes Unbearable After Half His Team Is Laid Off | The",
+      "source_link": "https://thesingapore.org/news/insane-to-manage-singaporean-says-workload-becomes-unbearable-after-half-his-team-is-laid-off",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "First-person account of a Singaporean employee whose workload increased after half his team was laid off; no specific company named and the subject is a personal anecdote rather than a reported layoff event.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Techshots | <!-- -->peter Thiel-backed Velocity",
+      "llm_company": "Velocity",
+      "source_link": "https://www.techshotsapp.com/business/peter-thiel-backed-velocity-cuts-14--of-staff-amid-revenue-based-financing-challenges",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Article reports that Singapore-based revenue-based financing startup Velocity, backed by Peter Thiel, is cutting 14% of its staff. The event is company-specific with a Singapore nexus and is described as already happening, so it is classified as confirmed. No absolute headcount is given."
+    },
+    {
+      "original_company": "Vividthree Faces Going Concerndisclaimer, S$7.25 Million Impairment And S$2 Million Convertible Bonds – Minichart",
+      "llm_company": "Vividthree",
+      "source_link": "https://www.minichart.com.sg/2026/09/23/vividthree-faces-going-concerndisclaimer-s7-25-million-impairment-and-s2-million-convertible-bonds/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article concerns a going concern disclaimer, impairment, and convertible bonds, not a layoff or retrenchment event; no Singapore job cuts are announced.",
       "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Cimb Closes India Representative Office In Mumbai",
-      "llm_company": "CIMB",
-      "source_link": "https://theedgemalaysia.com/article/cimb-closes-india-representative-office-mumbai",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Closure concerns CIMB's India representative office in Mumbai, with no Singapore nexus; Singapore jobs are unaffected by this event.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Gomechanic - The Economic Times",
-      "llm_company": "Gomechanic",
-      "source_link": "https://economictimes.indiatimes.com/topic/gomechanic",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an Economic Times topic page for Gomechanic, an Indian company, with no clear Singapore nexus and no specific Singapore layoff event or headcount reported.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Biontech To Shutter Sites In Germany, Singapore As No Buyers Emerge |",
-      "llm_company": "BioNTech",
-      "source_link": "https://www.devdiscourse.com/article/international/3983217-biontech-to-shutter-sites-in-germany-singapore-as-no-buyers-emerge",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "BioNTech is shutting down its Singapore site along with German sites after failing to find buyers, an officially reported closure implying job losses at its Singapore operations. No headcount figure was disclosed in the source."
-    },
-    {
-      "original_company": "Biontech To Shutter Four Manufacturing Sites After Sale Efforts Fail · Trustfinance News",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.trustfinance.com/news/en-US/biontech-to-shutter-four-manufacturing-sites-after-sale-efforts-fail",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports BioNTech shuttering four manufacturing sites globally, but provides no Singapore nexus or mention of Singapore operations being affected.",
-      "rejection_reason": "not-sg"
     },
     {
       "original_company": "Singapore",
       "llm_company": "Singapore",
-      "source_link": "https://www.sbeu.org.sg/news/Singapore-retrenchments-rise-to-highest-level-since-2020-as-job-vacancies-fall/",
+      "source_link": "https://www.siseu.org.sg/news/Singapore-retrenchments-rise-to-highest-level-since-2020-as-job-vacancies-fall/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article reports aggregate national retrenchment figures rising to their highest level since 2020 with falling job vacancies — labour market statistics, not a specific company layoff event.",
+      "notes": "Article reports aggregate MOM-style labour market statistics on retrenchments rising to their highest level since 2020, not a specific company's layoff event.",
       "rejection_reason": "statistics"
     },
     {
-      "original_company": "Ai Is Rewriting The Economics Of Marketing Agencies — And The Fixed Retainer May Be Its First Casualty - Dei",
-      "llm_company": "Ai Is Rewriting The Economics Of Marketing Agencies — And The Fixed Retainer May Be Its First Casualty - Dei",
-      "source_link": "https://dei.com.sg/ai-is-rewriting-the-economics-of-marketing-agencies-and-the-fixed-retainer-may-be-its-first-casualty/",
+      "original_company": "Senior Associate / Account Manager - Advertising | Ogilvy | Singapore | September 2026",
+      "llm_company": "Ogilvy",
+      "source_link": "https://jobera.com/job/ogilvy-senior-associate-account-manager-advertising-39014b3c/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is an opinion/analysis piece about how AI is changing marketing agency economics and retainer models; it announces no specific company layoff event.",
-      "rejection_reason": "commentary"
+      "notes": "This is a job posting for a Senior Associate / Account Manager role at Ogilvy Singapore, not a layoff or closure event.",
+      "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Bitget Suspends Withdrawals After Hackers Take Us$352 Million - The Business Times",
-      "llm_company": "Bitget",
-      "source_link": "https://www.businesstimes.com.sg/wealth/crypto-alternative-assets/bitget-suspends-withdrawals-after-hackers-take-us352-million",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This article concerns a crypto exchange security breach and withdrawal suspension, not a job cut or closure event. No layoff or retrenchment is reported, so it falls outside the tracker's scope.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "Cdl To Unlock Hidden Empire Worth $6b To Deploy Into Better Yielding Assets | The Straits Times",
+      "original_company": "Cdl Shares Dip 6% After Strategic Review Release - The Business Times",
       "llm_company": "City Developments Limited (CDL)",
-      "source_link": "https://www.straitstimes.com/business/cdl-to-unlock-hidden-empire-worth-6b-to-deploy-into-better-yielding-assets",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article concerns CDL unlocking and redeploying real estate assets worth about $6b into higher-yielding investments; it is a corporate strategy/analysis piece with no mention of retrenchment, closures, or job cuts.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Hdb Awards 2026: Why This S'pore Builder Earned Hdb Accolades For Its First Bto Project | The Straits Times",
-      "llm_company": "Vico Construction",
-      "source_link": "https://www.straitstimes.com/singapore/tampines-greenopal-hdb-bto-awards-vico-construction",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Feature story about a construction firm winning HDB awards for a BTO project; contains no layoff, retrenchment, or closure news of any kind.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Cdl To Divest S$6 Billion Over 3 Years, Ceo Pledges 'unwavering Focus' On Exe",
-      "llm_company": "City Developments Limited (CDL)",
-      "source_link": "https://www.channelnewsasia.com/singapore/cdl-kwek-family-divestments-investments-6414536",
+      "source_link": "https://www.businesstimes.com.sg/companies-markets/cdl-shares-dip-6-after-strategic-review-release",
       "verdict": "rejected",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "This is a corporate strategy/asset divestment announcement (S$6 billion over three years), not a retrenchment or Singapore outlet/business closure implying job losses; no headcount reduction is disclosed.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "Desmond Sim To Leave Realion Group After Steering Etc-orangetee Merger - Yahoo News",
-      "llm_company": "Realion Group",
-      "source_link": "https://sg.news.yahoo.com/desmond-sim-leave-realion-group-084819461.html",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Executive departure news, not a layoff or retrenchment event; no Singapore job cuts announced.",
-      "rejection_reason": "personal"
-    },
-    {
-      "original_company": "'my Grandfather's Legacy': Sherman Kwek Lays Out Three-year Plan For Cdl To Drive Returns - The Business Times",
-      "llm_company": "City Developments Limited (CDL)",
-      "source_link": "https://www.businesstimes.com.sg/property/my-grandfathers-legacy-sherman-kwek-lays-out-three-year-plan-cdl-drive-returns",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "This is a corporate strategy/management feature on CDL's three-year plan to drive returns, with no reported job cuts or closure; it is commentary rather than a layoff event.",
+      "notes": "Article reports CDL's share price falling 6% after a strategic review; it is market/stock commentary with no reported job cuts, retrenchment, or Singapore closure, so it does not describe a layoff event.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Techshots | <!-- -->logistics Startup Fareye Downsizes",
-      "llm_company": "FarEye",
-      "source_link": "https://www.techshotsapp.com/people/logistics-startup-fareye-downsizes-cuts-90-jobs-in-second-round-of-layoffs-in-8-months",
+      "original_company": "Jbb Builders (1903) Profit Warning: Swings To Rm1 Million Loss For Fy2026 As Revenue And Margins Slide – Minichart",
+      "llm_company": "JBB Builders",
+      "source_link": "https://www.minichart.com.sg/2026/09/16/jbb-builders-1903-profit-warning-swings-to-rm1-million-loss-for-fy2026-as-revenue-and-margins-slide/",
       "verdict": "rejected",
-      "confidence": "medium",
+      "confidence": "high",
       "provider": "deepseek",
-      "notes": "FarEye is an India-headquartered logistics SaaS startup; the reported 90-job cut shows no Singapore entity, office, or Singapore-specific headcount, so there is no clear Singapore nexus for this tracker.",
+      "notes": "This is a profit warning about FY2026 financial results (RM1 million loss), not a layoff or retrenchment announcement. No job cuts are reported and JBB Builders is a Malaysia-focused construction firm with no clear Singapore layoff nexus.",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Semiconductor Firm Vsmc Opens First S$8.5 Billion Plant In Singapore, Expected To Create 1,600 Jobs - Cna",
+      "original_company": "Gopuff Layoffs Spark Urgent Questions: Job",
+      "llm_company": "Gopuff",
+      "source_link": "https://bilt.carney.co/gopuff-layoffs-spark-urgent-questions-job-cuts-signal-shift-in-gig-economy-giants-future",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Gopuff is a US-based delivery firm with no Singapore operations, so there is no Singapore nexus; the piece is also commentary analysing what the layoffs mean for the gig economy rather than a Singapore layoff report. Source is a low-credibility aggregator-style page.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Vsmc's New Us$7.8b Chip Plant To Create 1,600 Jobs In Singapore - The Business Times",
       "llm_company": "VSMC",
-      "source_link": "https://www.channelnewsasia.com/singapore/vsmc-semiconductor-wafer-plant-microchip-6415241",
+      "source_link": "https://www.businesstimes.com.sg/videos/vsmc-s-new-us-7-8b-chip-plant-to-create-1-600-jobs-in-singapore/6405866265112",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This article reports a new S$8.5 billion semiconductor wafer plant opening in Singapore expected to create 1,600 jobs — an expansion/hiring announcement with no layoff or retrenchment component.",
+      "notes": "This is a job creation announcement — VSMC's new US$7.8b Singapore chip plant is expected to create 1,600 jobs, not cut them. No layoff event.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Vsmc Opens First Semiconductor Plant In Singapore | The Straits Times",
+      "original_company": "Vanguard, A Tsmc Subsidiary, Considering Second Semiconductor Plant In Singapore - The Asia Business Daily",
+      "llm_company": "Vanguard International Semiconductor (VIS)",
+      "source_link": "https://www.asiae.co.kr/en/article/2026092815211302210",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article concerns a possible second TSMC-affiliated semiconductor plant in Singapore — an investment/expansion and hiring story, not a job-cut or closure event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Vsmc Opens 300mm Chip Fab In",
       "llm_company": "VSMC",
-      "source_link": "https://www.straitstimes.com/business/semiconductor-firm-vsmc-opens-first-plant-in-singapore-to-create-1600-jobs",
+      "source_link": "https://technode.global/2026/09/28/taiwan-dutch-venture-vsmc-opens-7-8-billion-specialty-chip-fab-in-singapore/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This article reports a new semiconductor plant opening in Singapore expected to create 1,600 jobs — a hiring/expansion announcement, not a layoff event.",
+      "notes": "Article covers the opening of a new US$7.8B specialty chip fab in Singapore by the VIS-NXP joint venture VSMC — an investment and job-creation/hiring announcement, not a layoff or closure.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Vsmc Celebrates The Grand Opening Of Its First 300mm Fab In Singapore | Singapore Edb",
-      "llm_company": "VSMC (VisionPower Semiconductor Manufacturing Company)",
-      "source_link": "https://www.edb.gov.sg/en/news-and-insights/vsmc-celebrates-the-grand-opening-of-its-first-300mm-fab-in-singapore",
+      "original_company": "Vsmc Opens Tampines Fab, 1,600 Jobs Targeted · Recordowl News",
+      "llm_company": "VSMC",
+      "source_link": "https://recordowl.com/news/vsmc-opens-tampines-wafer-fab-1600-jobs",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is a grand-opening announcement for VSMC's first 300mm wafer fab in Singapore — an investment/expansion and hiring milestone, not a retrenchment or closure event of any kind.",
+      "notes": "Article covers VSMC opening a new Tampines wafer fab and targeting 1,600 hires — a job creation/hiring announcement, not a layoff event.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Tsmc Affiliate Already Eyes Expansion As First Singapore Plant 'sells Out' - Nikkei Asia",
-      "llm_company": "Vanguard International Semiconductor (TSMC affiliate)",
-      "source_link": "https://asia.nikkei.com/business/tech/semiconductors/tsmc-affiliate-already-eyes-expansion-as-first-singapore-plant-sells-out",
+      "original_company": "Broadcom, Toppan Open Singapore's First Advanced Chip Substrate Facility - Nikkei Asia",
+      "llm_company": "Broadcom / Toppan",
+      "source_link": "https://asia.nikkei.com/business/technology/broadcom-toppan-open-singapore-s-first-advanced-chip-substrate-facility",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article concerns expansion of a semiconductor plant in Singapore on strong demand, not job cuts or a closure — no layoff event to track.",
+      "notes": "This article reports on the opening of a new advanced chip substrate facility in Singapore by Broadcom and Toppan — an expansion/job-creation announcement, not a layoff event.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Ex-employee Sues Globalfoundries For Wrongful Dismissal Claim | The Straits Times",
-      "llm_company": "GlobalFoundries",
-      "source_link": "https://www.straitstimes.com/singapore/courts-crime/ex-employee-sues-globalfoundries-for-at-least-528k-alleging-wrongful-dismissal",
+      "original_company": "Vanguard Considers Second Singapore Chip Plant As First Fab Sells Out Before Full Production",
+      "llm_company": "Vanguard International Semiconductor",
+      "source_link": "https://cryptobriefing.com/vanguard-second-singapore-chip-plant/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article covers a wrongful dismissal lawsuit filed by a former employee against GlobalFoundries, not a new layoff/retrenchment event. Legal dispute coverage.",
-      "rejection_reason": "legal"
-    },
-    {
-      "original_company": "Vis-nxp Jv Chip Fab Enters Initial Production Stage - Focus Taiwan",
-      "llm_company": "VisionPower Semiconductor Manufacturing Company (VIS-NXP JV)",
-      "source_link": "https://focustaiwan.tw/business/202609280015",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports that the VIS-NXP joint venture wafer fab in Singapore has entered initial production — an investment/expansion milestone, not a layoff or retrenchment event. No job cuts are announced, contemplated, or implied.",
+      "notes": "This is a capacity expansion story about considering a second Singapore chip fab after the first sold out; it is a hiring/investment announcement, not a layoff or closure.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "The Chips Aren't Down | Singapore Edb",
-      "llm_company": "Singapore Economic Development Board (EDB)",
-      "source_link": "https://www.edb.gov.sg/en/news-and-insights/the-chips-arent-down",
-      "verdict": "rejected",
-      "confidence": "high",
+      "original_company": "India Business Journal - Amid Centenary Celebrations, Mckinsey Announces 10% Layoffs Worldwide",
+      "llm_company": "McKinsey & Company",
+      "source_link": "https://indiabusinessjournal.com/full-story/2400/Amid-centenary-celebrations,-McKinsey-announces-10%-layoffs-worldwide",
+      "verdict": "confirmed",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": "This is an EDB commentary/insights piece on the semiconductor industry outlook ('The Chips Aren't Down'), not a report of any specific company's layoff or closure in Singapore.",
-      "rejection_reason": "commentary"
+      "notes": "McKinsey, which has a Singapore office, announced a 10% worldwide workforce reduction, so Singapore staff are within scope; the source disclosed only a percentage, not an absolute headcount, so no number is recorded."
     },
     {
-      "original_company": "Singapore Launches National Semicon Brand Initiative, Inks R&d Deals - The Business Times",
-      "llm_company": "Singapore Launches National Semicon Brand Initiative, Inks R&d Deals - The Business Times",
-      "source_link": "https://www.businesstimes.com.sg/singapore/singapore-launches-national-semicon-brand-initiative-inks-rd-deals",
+      "original_company": "Head Of Strategy 3, Singapore At Ipsos — Singapore | Jobspring",
+      "llm_company": "Ipsos",
+      "source_link": "https://jobspring.pro/job/j12147228/head-of-strategy-3-singapore-ipsos/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article covers a Singapore government-led national semiconductor branding initiative and R&D agreements; it is a policy/industry development announcement with no job cuts or retrenchment event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Singapore Semiconductor Industry Commits Over S$500m To R&d As Global Chip Race Intensifies - Cna",
-      "llm_company": "Singapore Semiconductor Industry",
-      "source_link": "https://www.channelnewsasia.com/singapore/semiconductor-chips-industry-research-development-6410456",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article covers an industry-wide S$500m R&D investment commitment in Singapore's semiconductor sector; it reports no job cuts or retrenchment event and concerns no specific named company's layoff.",
-      "rejection_reason": "commentary"
+      "notes": "This is a job posting for a Head of Strategy role at Ipsos in Singapore, not a layoff event.",
+      "rejection_reason": "job-posting"
     }
   ]
 }
