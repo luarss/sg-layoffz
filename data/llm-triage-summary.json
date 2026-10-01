@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-09-30",
+  "run_date": "2026-10-01",
   "providers": [
     {
       "name": "deepseek",
@@ -11,341 +11,257 @@
     }
   ],
   "timed_out": false,
-  "total": 34,
-  "confirmed": 10,
-  "rumored": 0,
-  "rejected": 23,
-  "needs_review": 1,
-  "remaining_queue": 1,
+  "total": 26,
+  "confirmed": 11,
+  "rumored": 1,
+  "rejected": 11,
+  "needs_review": 3,
+  "remaining_queue": 3,
   "rows": [
     {
-      "original_company": "Jobless In 15 Minutes? Singapore-based Muslim Pro Owner Bitsmedia",
-      "llm_company": "Bitsmedia",
-      "source_link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPN3ZaTGc2MFdiUEtVaThBenhjMEdWdjZRYUlGSmlGVk1qd1VtV1pQMVpWN2x5YXpVRGNhS25TWnkxUEVxTFFrTUlxMTNiZXpmLUd4bS1jVFR2U2dBTE44UkZvUUlTZkZQNWRwWXBLc2lldE11WEFwN1kydUZRcXFpRnlmbTMwbldkcGpGaXF2TEhheGpwcFE?oc=5",
+      "original_company": "Radiant",
+      "llm_company": "Radiant World",
+      "source_link": "https://www.miningweekly.com/article/radiant-cuts-more-jobs-after-founder-loses-control-of-firm-2026-09-30",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of the Bitsmedia layoff event (bitsmedia-2026-09). Bitsmedia is Singapore-based (owner of Muslim Pro) and the article reports job cuts, so the event is confirmed."
+      "notes": "Follow-up coverage of Radiant World's ongoing retrenchments following the founder's loss of control of the firm; treated as a continuation of the existing Singapore-tracked event rather than a new round. No headcount figures disclosed and no Singapore-specific number given."
+    },
+    {
+      "original_company": "More Layoffs, Higher Productivity Or A Bust? How Singapore's Prime Office Market Could Take To Ai Trends - The Business Times",
+      "llm_company": "More Layoffs, Higher Productivity Or A Bust? How Singapore's Prime Office Market Could Take To Ai Trends - The Business Times",
+      "source_link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOcFRXTVZBZlljNWJKVFRtYk5ydDl0WlBfdlc3WjB2dFBjVGxyaDRwSXJpSEpndE1JUU8yMHEtZXQzYUJmR2pEemZnSHZoZFdNR3JKTlRDdndoa1pnUkV0NDliUVRBWWR6Q2dfbzJoRzljZ3Q5dnEzN0FJSnlDMEE2WkZGUEZrU0RpWEVEVENmOUVjdkdaWFlRdDlQcERFbjd1SGFrYnpRcE12ajJ1ei1tWGpHdGpiNmtkbmFxd25xOFNmUktKeXRjT3cyNXlOc3RIaVFwcw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a market analysis/commentary piece on how AI and layoff trends could affect Singapore's prime office market, not a report of a specific company's layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Radiant World",
+      "llm_company": "Radiant World",
+      "source_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQNHctc2N2QW1JbVM3R0x0cHpGbEFON2hvQXJqNXFXVmdtY2FUcTkwT2ZiaUgzanhGY01iSzRVV1RJelZ6d01LWEtXX1ZjbU5CeHhXVXBvNzJXbEt2Smp0S0FNN3hVVzJEVTNLemhSck1TUFpBUVBnQ1VWRFg5THFUUmIwazJSVWNuU2Z2VVFPQk1KbWNVQUJOdHVKV1lYQ2xvZW40XzZMRDI5WUc5MVNsemlOM1VPdXhDZC13OUJUcVlkQdIBxwFBVV95cUxObUZITVNZY2hNX2JkYWJuV2RLOUZxTnpPRERwSGFncUxaYXVmdUItWXA1YXpGdlJtRml5ZEZyemNYRElYa1h1eUYzUXhnOHJaR0hfN1hUYTJSSk9XMEk4b01pX2RVUUFTZEpCeTJ5MWhFUmJ1TkJGTXVBbE5jWHVoN0tYeE1GNEwxdW5DR2dkQ2pUZ085OEtWU2dQZTJDV1l4ZXhOTlgzUU5jWkFtTFp4cHhiNjgzblU2SDBYdkZiNmE3UXFESktR?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Follow-up coverage of Radiant World's previously reported layoffs; a specific named company with an existing Singapore layoff event. Headcount figures are not disclosed in the snippet."
+    },
+    {
+      "original_company": "H&m Moves South-east Asia Hq To Malaysia, Triggers Singapore Layoffs - Sea.peoplemattersglobal.com",
+      "llm_company": "H&M",
+      "source_link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPbDNjUGNLVUF4RW1uMDFScTZ2SkxkZjVuNi0yMEh6bjBFLURJaUZWa0pEVWdkZzZYYWNVMlhlYnNHeGVzOUZINXhwclBjd2ZsbjNWc2FGRjZNbThuUzRHcmxJLURpMlhGazU5VXhvdkxjVmNuNzl5QkwwbnZwR3V3MDYtdWlVRGtmT1JHS09acG1EaC1UdXN1YXo4b3V4T2NaLS1lUmx3a0V0cmRzX2tGaXhva0NVQktqb1BLanZfem5ZSU0?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "H&M is relocating its South-east Asia regional headquarters from Singapore to Malaysia, resulting in Singapore layoffs — a credibly reported, Singapore-nexus event already tracked as h-m-2026-05. No headcount disclosed for the Singapore roles."
+    },
+    {
+      "original_company": "Jetstar Asia Closure To Impact More Than 500 Employees - Hcamag.com",
+      "llm_company": "Jetstar Asia",
+      "source_link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQVTQzbGhCMW9GOV9ySU9Id3k0S2tlWTB5eHVabHJyb2JlZ2g5bjQxcjFMOTR0eHBZSHJlVlFYRzlRNGN3LUVaczl0VkJ6RW1zdWpldjNwcFlfb0gtaUd0dkYwV2ZrdEpmMU9JSi1KQlZZNHN6Tkw0NzBLWFUxUS02cl8xc0dOdkZXbk42SXJ1ZTBLVWV4TjJ0RmZTSU9zWU9tWktNUEU3d2JWdWpKLWhRWGVOMDc0dkZMNUNsRnloX1h3WEU?oc=5",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Follow-up coverage of Jetstar Asia's Singapore-based closure, affecting more than 500 Singapore employees. This confirms the previously reported event, so the existing event_id is reused."
+    },
+    {
+      "original_company": "Wearing Tudungs With Public Service Uniforms Should Be Discussed Behind Closed Doors: Masagos - The Independent",
+      "llm_company": "Wearing Tudungs With Public Service Uniforms Should Be Discussed Behind Closed Doors: Masagos - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQYi1mS29oWk1GS3hsRzV2d2pQdi1aT1Q1elgtNkJQc1oyc295RjJmbHpuLUFfZkF6cHV3c2h0dWp2RXJ1X21tbkY0RGg2bEM0eE0yUWNnLXVHcVFQYWp1Rk9YSUN3UEFYaEJVc1FvTURmNmpOUzhnTWtwbjZsalh5OEJsYzBiYjBKTXZKTDZWMWxsTV84SUgxMGl0d2xtYWxweFRDWERDSEhmcXJhbUNNVUxaSnJ5QzdwNGg0?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This article concerns a parliamentary/policy discussion about wearing tudungs with public service uniforms, not a layoff event.",
+      "rejection_reason": "policy"
     },
     {
       "original_company": "Radiant World Deepens Job",
       "llm_company": "Radiant World",
-      "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxObUZITVNZY2hNX2JkYWJuV2RLOUZxTnpPRERwSGFncUxaYXVmdUItWXA1YXpGdlJtRml5ZEZyemNYRElYa1h1eUYzUXhnOHJaR0hfN1hUYTJSSk9XMEk4b01pX2RVUUFTZEpCeTJ5MWhFUmJ1TkJGTXVBbE5jWHVoN0tYeE1GNEwxdW5DR2dkQ2pUZ085OEtWU2dQZTJDV1l4ZXhOTlgzUU5jWkFtTFp4cHhiNjgzblU2SDBYdkZiNmE3UXFESktR0gHHAUFVX3lxTE5tRkhNU1ljaE1fYmRhYm5XZEs5RnFOek9ERHBIYWdxTFphdWZ1Qi1ZcDVhekZ2Um1GaXlkRnJ6Y1hESVhrWHV5RjNReGc4clpHSF83WFRhMlJKT1cwSThvTWlfZFVRQVNkSkJ5MnkxaEVSYnVOQkZNdUFsTmNYdWg3S1h4TUY0TDF1bkNHZ2RDalRnTzk4S1ZTZ1BlMkNXWXhleE5OWDNRTmNaQW1MWnhweGI2ODNuVTZIMFh2RmI2YTdRcURKS1E?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of existing event; duplicate.",
-      "rejection_reason": "duplicate"
-    },
-    {
-      "original_company": "Radiant Deepens Job",
-      "llm_company": "Radiant World",
-      "source_link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQbHhBZWtuUWM1ZnNGOUFBOWRDQ00xN0FOSS1sTjd6cGxOVlllcG05NFpRZV9zRnliRFFCQS1ldGJsdFlvanpXcGw1Vk43Ym95NzE3eWpMUDB4ZDVCTVFUMDFBUnlFMkVSUzhIYUtkd3JIS2YtTDNtR0FzSTBqVTVycS1wMEZ6UlNJYk9vWGNObGdlMDg4aEs3Si1BUFd6bDVtZzVsUlBvMUtKcERrVlYycQ?oc=5",
+      "source_link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPYUxLbXF1NTZwWjczU3pVUGc5aTc5bnRwaVdtSnlid1kyc0Nkd29xdzJmRW84Z3V5NDJ6QTk3ME4xRm91MnNmTmNxTDlwSzg3cU1tejRwbjF3cHJ0THYwRll1ek1VXzFSYUdtUnZKZTk5QjI5TXdZZlRyMzU4bG9fX0lBVTZqTEs0VDhpcWI1VFpnZXBBT0dGU2hyc1BtN0ZIRzJpRVl1MFlRS1kzLVFoWEMwb0U3MU9jOGlKZXdydw?oc=5",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage indicating Radiant World has deepened previously reported job cuts; no headcount details disclosed. Reusing existing event_id per instructions."
+      "notes": "Follow-up coverage of the confirmed Radiant World layoff event; no new headcount disclosed."
     },
     {
-      "original_company": "Us Job Openings Edged Down In June, Layoffs Remained Limited - Yahoo Finance",
-      "llm_company": "Us Job Openings Edged Down In June, Layoffs Remained Limited - Yahoo Finance",
-      "source_link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOTlhpN0h6RWpxOVNyU2djNzZQdE04ZUJDb1B4VFdBamUtR3NBa09FcjVGa2dkZ2FtVUM4d0JGZGhwWWZEVzNjZWNQdnU5dmJTbzJFUkFXblc5eDJCVjBZbUx3ZGJUd3E0RWVCWHR4Wl9kN2VWLVNiVWpjeGQyZ2hCTw?oc=5",
+      "original_company": "Jobless In 15 Minutes? Singapore-based Muslim Pro Owner ..",
+      "llm_company": "Bitsmedia",
+      "source_link": "https://www.asiaone.com/singapore/muslim-pro-owner-bitsmedia-lays-off-21-staff-retrenchment",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Follow-up coverage of Singapore-based Bitsmedia (owner of Muslim Pro) laying off 21 staff, matching existing event bitsmedia-2026-09; the event_id is reused rather than minting a new slug."
+    },
+    {
+      "original_company": "Joyful Frog Digital Incubator Shutters Accelerator Programme",
+      "llm_company": "Joyful Frog Digital Incubator",
+      "source_link": "https://theedgemalaysia.com/article/joyful-frog-digital-incubator-shutters-accelerator-programme",
+      "verdict": "confirmed",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "JFDI, a Singapore-based digital incubator, has shuttered its accelerator programme. This closure implies job losses and is classified as a confirmed layoff event; no headcount was disclosed."
+    },
+    {
+      "original_company": "News Reader Archives - Vulcan Post",
+      "llm_company": "Vulcan Post",
+      "source_link": "https://vulcanpost.com/category/news/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is US labour market statistics reporting on job openings and limited layoffs, not a specific company layoff event, and has no Singapore nexus.",
+      "notes": "This is an archive/category listing page from Vulcan Post, not a specific layoff event or single-company report.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Retrenchments In Singapore Hit Their Highest Level Since 2020 ..",
+      "llm_company": "Retrenchments In Singapore Hit Their Highest Level Since 2020 ..",
+      "source_link": "https://sg.news.yahoo.com/live/retrenchments-in-singapore-hit-their-highest-level-since-2020-feet-on-seats-and-loud-music-on-buses-can-draw-fines-of-up-to-500-from-23-sept-singapore-live-news-020000334.html",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a broad labour-market statistics report on aggregate Singapore retrenchment levels, not a single company's layoff event.",
       "rejection_reason": "statistics"
     },
     {
-      "original_company": "Biontech To Close German Manufacturing Plants After Failing To Find Buyers - Biospace.com",
+      "original_company": "Biontech Closes Four Sites After Failed Sale Process As Post ..",
       "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOeVpMZGF1eHc5MW9yakFSVUNSUG9QTDBzbHlZM1NIYkhLbXNnMFY1TjdKVFRPcmdhdjRkTDNMdm0zUXA1TUd2OHFXUFpZeV91WktPeWxRRGNXWEdMcEhFN2wxMXRDVVNnTzRORzFLR3FyYU4zd19CcURqRnhOSUMxRmxRdmdHQ1F2UllCUzlOcVo5cE9kbFJvUUFDbEIyRXVUSTJSYkV3ZDktN3IzbFhxVzlZOA?oc=5",
+      "source_link": "https://manufacturingchemist.com/biontech-closes-four-sites-failed-sale-covid-vaccine",
       "verdict": "rejected",
-      "confidence": "high",
+      "confidence": "medium",
       "provider": "deepseek",
-      "notes": "This is follow-up coverage of BioNTech closing German manufacturing plants, a foreign-only event with no Singapore operations or Singapore job impact. No clear Singapore nexus, so it is rejected for this Singapore layoff tracker.",
+      "notes": "Article covers BioNTech closing four sites following a failed sale process, but no Singapore entity, office, or Singapore-based roles are implicated — the affected sites are foreign (German/European operations).",
       "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Biontech To Shut Germany And Singapore Plants After Failing To Find Buyers - Business Upturn",
-      "llm_company": "BioNTech",
-      "source_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVkdtQXplR2NaNmYxQUZzOGR4c0VzTG5FZllOX1FFZ3kwSFdkVWRJbGM0dFA5WFNYRXoyMEpYc2Zmd1NsUnZmNUV1dkt2akdDSEFDanczSzJLaTJpdW9Jbmw3MDdnX29GODhpbl9nYmdqVXZfeFMwWkJ4Z21LVENZb2MxLUZ5eXhrZEFtSmVlMFJRTzJLTk9sYk1uVWxIV0s0SlpBbVNVV2FQT005c3JzeWlRZDlldUNwZDhLNVdORi0?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "BioNTech is shutting its Singapore plant after failing to find buyers, a Singapore closure implying job losses; follow-up coverage of the existing biontech-2026-09 event, so the event_id is reused. No headcount disclosed."
-    },
-    {
-      "original_company": "Crystal Jade Holding Companies Placed Under Receivership; Restaurants Remain Open",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.channelnewsasia.com/singapore/crystal-jade-restaurants-singapore-hong-kong-business-receivership-6420451",
+      "original_company": "Canon Consolidates Singapore Operations At Regional Headquarters |",
+      "llm_company": "Canon",
+      "source_link": "https://sg.headtopics.com/news/canon-consolidates-singapore-operations-at-regional-88044374",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of the ongoing Crystal Jade Singapore distress event: the holding companies have now been placed under receivership, a material escalation of the previously reported outlet closure. Restaurants remain open and no headcount is disclosed, so both figures are null; event_id reused per instructions."
+      "notes": "Canon's consolidation of its Singapore operations at its regional headquarters implies restructuring and job losses at the Singapore entity; this is follow-up coverage of the existing canon-singapore-consolidation-2026-09 event, so that event_id is reused. No headcount figure was disclosed."
     },
     {
-      "original_company": "Crystal Jade Holding Companies In Singapore, Hong Kong Placed Under Receivership",
-      "llm_company": "Crystal Jade",
-      "source_link": "http://www.asiaone.com/money/crystal-jade-holding-companies-receivership",
-      "verdict": "confirmed",
+      "original_company": "One Consolidates Regional Headquarters For Asia In Singapore - Itj | International Transport Journal",
+      "llm_company": "Ocean Network Express (ONE)",
+      "source_link": "https://transportjournal.com/2026/10/01/one-consolidates-regional-headquarters-for-asia-in-singapore/",
+      "verdict": "rejected",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Receivership of Crystal Jade's Singapore/Hong Kong holding companies is a reported insolvency event that implies closures and job losses at the Singapore F&B chain; the snippet identifies it as follow-up coverage of the existing Crystal Jade closure event, so that event_id is reused. No headcount disclosed."
+      "notes": "This article reports a headquarters consolidation/relocation of ONE's Asia regional HQ to Singapore, i.e. a corporate expansion/relocation into Singapore rather than a job-cut event; no retrenchment or Singapore layoff is described.",
+      "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Cutting Costs Or Hobbling Growth? A Business-side View On Ai And Headcount",
-      "llm_company": "Cutting Costs Or Hobbling Growth? A Business-side View On Ai And Headcount",
-      "source_link": "https://www.fytconsultants.com/single-post/cutting-costs-or-hobbling-growth-a-business-side-view-on-ai-and-headcount",
+      "original_company": "Schneider Electric Spends S$25m On Tuas Hub · Recordowl News",
+      "llm_company": "Schneider Electric",
+      "source_link": "https://recordowl.com/news/schneider-electric-25-million-automate-tuas-logistics-hub",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is a business-side opinion/analysis piece weighing whether AI-driven cost cutting helps or harms growth; it contains no specific company layoff announcement.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Biontech Shuts Germany, Singapore Sites As Covid Vaccine Production Winds Down",
-      "llm_company": "BioNTech",
-      "source_link": "https://medicaldialogues.in/news/industry/pharma/biontech-shuts-germany-singapore-sites-as-covid-vaccine-production-winds-down-180351",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "BioNTech is shutting down its Singapore (and Germany) production sites as Covid vaccine manufacturing winds down, a Singapore closure implying job losses; follow-up coverage of the existing biontech-2026-09 event."
-    },
-    {
-      "original_company": "Crystal Jade Holding Companies In S'pore, Hong Kong Placed Under Receivership | The Straits Times",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.straitstimes.com/business/companies-markets/crystal-jade-holding-companies-in-spore-hong-kong-placed-under-receivership",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Receivership of Crystal Jade's Singapore and Hong Kong holding companies signals business failure/wind-down implying job losses in Singapore; treated as follow-up coverage of the existing Crystal Jade closure event, so the event_id is reused. No headcount disclosed."
-    },
-    {
-      "original_company": "Biontech To Close Sites In Germany After Failed Sale",
-      "llm_company": "BioNTech",
-      "source_link": "https://www.fiercepharma.com/pharma/biontech-close-sites-germany-singapore-after-failed-buyer-search",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "BioNTech is closing sites in Germany and Singapore after failing to find a buyer, a firm company decision reported as an action rather than a plan; the Singapore site closure implies Singapore job losses, and the source URL confirms the Singapore nexus. This is follow-up/same coverage of the existing event biontech-2026-09, so that event_id is reused; no headcount was disclosed."
-    },
-    {
-      "original_company": "Nasdaq-listed Sei Opens Singapore Office To Grow Asian Private-market Business - The Business Times",
-      "llm_company": "Sei",
-      "source_link": "https://www.businesstimes.com.sg/companies-markets/nasdaq-listed-sei-opens-singapore-office-grow-asian-private-market-business",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an expansion/hiring story about Sei opening a new Singapore office to grow its Asian private-market business, not a layoff or closure event.",
+      "notes": "Article reports a S$25m investment to automate Schneider Electric's Tuas logistics hub in Singapore — an expansion/capital investment announcement with no job cuts, retrenchment, or closure involved.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Stakk Limited Secures Entire A$55.2 Million Fy2027 Revenue Forecast Via Recurring Contracts And Launches Singapore Hub",
-      "llm_company": "Stakk Limited",
-      "source_link": "https://kalkinemedia.com/au/news/announcements/stakk-limited-secures-entire-a552-million-fy2027-revenue-forecast-via-recurring-contracts-and-launches-singapore-hub",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Announcement concerns revenue contracts and the launch of a new Singapore hub — an expansion/hiring move, not a layoff or closure.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Sei Opens Singapore Office To Support Growing Asset Management Sector In Asia — Tradingview News",
-      "llm_company": "SEI",
-      "source_link": "https://www.tradingview.com/news/prnewswire:462b451a2755e:0-sei-opens-singapore-office-to-support-growing-asset-management-sector-in-asia/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an office opening/expansion announcement, not a layoff event; it is a hiring/expansion item with no job cuts reported.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Yyforce Posts 26.8% Revenue Growth But Withdraws Fy2026 Guidance | The Datatech Times",
-      "llm_company": "Yyforce",
-      "source_link": "https://datatech.disruptsmedia.com/enterprise-software/yyforce-posts-268-revenue-growth-withdraws-fy2026-guidance",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports revenue growth and withdrawn FY2026 guidance, with no mention of layoffs, retrenchment, or Singapore job cuts.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Moneyhero Shareholder Urges Board To Explore Sale After Stock Slump | E27",
-      "llm_company": "MoneyHero",
-      "source_link": "https://e27.co/moneyhero-shareholder-urges-board-to-explore-sale-after-stock-slump-20260930/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article concerns a shareholder pressing MoneyHero's board to explore a sale after a stock slump; it reports no job cuts, retrenchment, or Singapore closure, so it is not a layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Radiant",
-      "llm_company": "Radiant",
-      "source_link": "https://www.miningweekly.com/article/radiant-cuts-more-jobs-after-founder-loses-control-of-firm-2026-09-30",
+      "original_company": "One Restructures In Key Ocean Region - Freightwaves",
+      "llm_company": "Ocean Network Express",
+      "source_link": "https://www.freightwaves.com/news/one-restructures-in-key-ocean-region",
       "verdict": "needs_review",
       "confidence": "low",
-      "provider": "none",
-      "notes": "All providers failed: deepseek: response truncated (finish_reason=length) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
+      "provider": "deepseek",
+      "notes": "Article title indicates ONE (Ocean Network Express) is restructuring in a key ocean region, but it is unclear whether this involves layoffs or affects Singapore-based roles. Insufficient information to classify as a confirmed/rumored layoff event."
     },
     {
-      "original_company": "Byjus News",
-      "llm_company": "Byju's",
-      "source_link": "https://m.economictimes.com/tech/byjus/5",
+      "original_company": "One To Restructure Asia, Africa Regional Headquarters",
+      "llm_company": "Ocean Network Express",
+      "source_link": "https://www.joc.com/article/one-to-restructure-asia-africa-regional-headquarters-6296959",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": "The headline describes a restructuring of ONE's Asia/Africa regional headquarters but the snippet gives no indication of job cuts, closures, or specific headcount. It is unclear whether this reorganization entails Singapore layoffs or is merely a functional realignment."
+    },
+    {
+      "original_company": "More Global Brands Are Betting On Singapore As A Gateway To ..",
+      "llm_company": "More Global Brands Are Betting On Singapore As A Gateway To ..",
+      "source_link": "https://www.edb.gov.sg/en/news-and-insights/more-global-brands-are-betting-on-singapore-as-a-gateway-to-high-growth-asian-markets",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The article is only a generic Byju's news/topic page with no specific layoff event, Singapore nexus, headcount, or verifiable details.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "Bitcoin Suisse Announces Major Workforce Reduction As Operations Move Overseas - Asiaconnect Magazine",
-      "llm_company": "Bitcoin Suisse",
-      "source_link": "https://asiaconnectmagazine.com/bitcoin-suisse-workforce-reduction/",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Swiss crypto firm Bitcoin Suisse is cutting staff as it relocates operations overseas; the report discloses no Singapore entity, office, or Singapore-specific layoffs, so there is no clear Singapore nexus.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Animoca Brands Pauses Currenc Merger, Delaying Nasdaq Listing | Tokenpost",
-      "llm_company": "Animoca Brands",
-      "source_link": "https://www.tokenpost.com/news/business/23509",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports pausing a merger and delaying a Nasdaq listing; it does not announce or report any layoffs or Singapore job cuts.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "City Developments Plans $5 Billion Capital Deployment, $6 Billion Asset Sales By 2029",
-      "llm_company": "City Developments Limited",
-      "source_link": "https://www.briefasia.com/en/article/city-developments-5-billion-capital-deployment-6-billion-asset-sales",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article covers CDL's capital deployment and asset divestment strategy through 2029; it announces no job cuts, retrenchment, or Singapore business closure implying layoffs.",
+      "notes": "This is an EDB market/investment piece about global brands expanding into Singapore as a regional gateway — it describes entry and growth, not job cuts, and names no specific company making layoffs.",
       "rejection_reason": "commentary"
     },
     {
-      "original_company": "Singapore",
-      "llm_company": "Singapore",
-      "source_link": "https://www.ntuc.org.sg/surawu/news/Singapore-retrenchments-rise-to-highest-level-since-2020-as-job-vacancies-fall/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports aggregate national retrenchment figures (highest since 2020) from labour market data rather than a specific company's layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "1,600 Jobs Are Expected In Sg As Visionpower Semiconductor Manufacturing Opens S$8.5 Billion Plant In Singapore | The Independent",
-      "llm_company": "Visionpower Semiconductor Manufacturing",
-      "source_link": "https://theindependent.sg/1-600-jobs-are-expected-in-sg-as-visionpower-semiconductor-manufacturing-opens-s-8-5-billion-plant-in-singapore",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This article reports a new S$8.5 billion semiconductor plant opening that is expected to create 1,600 jobs in Singapore — a job creation/hiring announcement, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "New Tampines Wafer Fab To Create 1,600 Jobs And 44,000 Semiconductor Wafers A Month By 2029 - Red Hot",
-      "llm_company": "New Tampines Wafer Fab To Create 1,600 Jobs And 44,000 Semiconductor Wafers A Month By 2029 - Red Hot",
-      "source_link": "https://www.redhot.sg/new-tampines-wafer-fab-to-create-1-600-jobs-44-000-semiconductor-wafers-a-month-by-2029-722804.html",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This article reports a new wafer fab creating 1,600 jobs — a hiring/job-creation announcement, the opposite of a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Vsmc's New Singapore Fab Expected To Create Around 1,600 Jobs By 2029 | Human Resources Online",
-      "llm_company": "VSMC (VisionPower Semiconductor Manufacturing Company)",
-      "source_link": "https://www.humanresourcesonline.net/vsmc-s-new-singapore-fab-expected-to-create-around-1-600-jobs-by-2029",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article reports a new VSMC Singapore fab expected to create ~1,600 jobs by 2029 — a hiring/expansion announcement, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Singapore Fab Hits Full Capacity As Joint Venture Eyes Expansion",
+      "original_company": "Equity Or Exit: Start-up Fired Worker Who Refused To Give Up Shares | Human Resources Director",
       "llm_company": "Unknown",
-      "source_link": "https://www.briefasia.com/en/article/singapore-fab-full-capacity-joint-venture-expansion",
+      "source_link": "https://www.hcamag.com/asia/specialisation/employment-law/equity-or-exit-start-up-fired-worker-who-refused-to-give-up-shares/591983",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article concerns a Singapore semiconductor fab reaching full capacity and its joint venture eyeing expansion — an operational/hiring story with no layoff or retrenchment element, and the company is not even named.",
+      "notes": "Article is an employment-law/legal case discussion about an unnamed start-up firing a worker over shares, not a Singapore layoff event. Rejected under legal case/commentary and vague unnamed company rules.",
+      "rejection_reason": "legal"
+    },
+    {
+      "original_company": "Manus Seeks $4b Valuation In New $500m Fundraise As It Resumes ..",
+      "llm_company": "Manus",
+      "source_link": "https://techcrunch.com/2026/09/18/manus-seeks-4b-valuation-in-new-500m-fundraise-as-it-resumes-independent-ops/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a fundraising/valuation story about Manus resuming independent operations, not a layoff or retrenchment event; no job cuts are reported.",
       "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Remarks By Minister For Trade And Industry (energy And Industry) Dr Tan See Leng At Vsmc Grand Opening Ceremony | Ministry Of Trade And Industry",
-      "llm_company": "VSMC",
-      "source_link": "https://www.mti.gov.sg/newsroom/remarks-by-minister-for-trade-and-industry--energy-and-industry--dr-tan-see-leng-at-vsmc-grand-opening-ceremony/",
+      "original_company": "Why Flock Safety's Massive Buyout Plan Won't Save Its Surveillance Business",
+      "llm_company": "Flock Safety",
+      "source_link": "http://www.singularitymoments.com/content/why-flock-safetys-massive-buyout-plan-wont-save-its-surveillance-business/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is a government ministerial speech at VSMC's grand opening ceremony — an investment/opening event, not a layoff or retrenchment announcement of any kind.",
-      "rejection_reason": "policy"
+      "notes": "This is an opinion/analysis piece about Flock Safety's buyout plan and business prospects, not a report of Singapore job cuts or a Singapore closure. It also lacks a Singapore nexus.",
+      "rejection_reason": "commentary"
     },
     {
-      "original_company": "Ast Completes Singapore's First High-end Fc-bga Substrate Facility To Meet Growing Ai Chip Demand | Singapore Edb",
-      "llm_company": "AST",
-      "source_link": "https://www.edb.gov.sg/en/news-and-insights/ast-completes-singapore-first-high-end-fc-bga-substrate-facility-to-meet-growing-ai-chip-demand",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an EDB announcement about AST completing a new high-end FC-BGA substrate facility in Singapore — an expansion/capex and hiring story, not a layoff or closure event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Kpmg Uk Proposes 200 Job",
-      "llm_company": "KPMG UK",
-      "source_link": "https://anz.peoplemattersglobal.com/news/strategic-hr/kpmg-uk-proposes-200-job-cuts-in-advisory-business-52149",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The proposed 200 job cuts concern KPMG's UK advisory business only, with no Singapore entity or Singapore office impact reported.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Cost-",
-      "llm_company": "HSBC",
-      "source_link": "https://newswav.com/article/cost-cutting-measure-hsbc-tells-more-than-100-staffers-in-malaysia-of-accen-A2609_SwVqYp",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article concerns HSBC headcount reductions in Malaysia (100+ staffers), a foreign office with no Singapore nexus and no Singapore-specific job cuts disclosed.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Fewer Laid-off Singaporeans And Prs Are Able To Find Jobs Within 6 Months: From 60.7% In Q1 To 54.9% In Q2 2026 | Human Resources Online",
-      "llm_company": "Fewer Laid-off Singaporeans And Prs Are Able To Find Jobs Within 6 Months: From 60.7% In Q1 To 54.9% In Q2 2026 | Human Resources Online",
-      "source_link": "https://production.humanresourcesonline.net/fewer-laid-off-singaporean-and-prs-are-able-to-find-jobs-within-6-months-from-60-7-in-q1-to-54-9-in-q2-2026",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a labour market statistics report on re-employment rates of laid-off Singaporeans and PRs, not a specific company layoff event.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Fujifilm Business Innovation",
-      "llm_company": "Fujifilm Business Innovation",
-      "source_link": "https://layoffsg.com/feed?event=6abc9ef89281ecff346264ab",
+      "original_company": "Tech Workers Left Hanging As Sea E-commerce Arm Shopee Rescinds Job Offers | Euronews",
+      "llm_company": "Shopee",
+      "source_link": "https://www.euronews.com/2022/09/06/sea-redundancies-shopee",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Credibly reported retrenchment of 35 Singapore roles at Fujifilm Business Innovation, a named company with Singapore operations; specific Singapore headcount disclosed."
+      "notes": "Follow-up coverage of Sea/Shopee redundancies (including rescinded job offers) at the Singapore-based e-commerce firm; reuses the existing Shopee event_id. No headcount figure disclosed, so job numbers are left null."
     },
     {
-      "original_company": "Ares Management",
-      "llm_company": "Ares Management",
-      "source_link": "https://layoffsg.com/feed?event=6abc9ee98a04895a9722caab",
+      "original_company": "Arcadis To",
+      "llm_company": "Arcadis",
+      "source_link": "https://nltimes.nl/2026/09/29/arcadis-cut-1000-jobs-divest-china-operations-new-reset-strategy",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Credibly reported layoff at Ares Management with 5 Singapore roles cut, per Insider via layoffsg.com; named company with Singapore nexus and event already occurred."
+      "notes": "Arcadis announced a restructuring involving 1,000 job cuts globally plus divestment of its China operations; the company has Singapore operations, so a Singapore nexus exists, but the headcount is a global figure placed in jobs_cut_global."
+    },
+    {
+      "original_company": "Santorini Hair Spa Closes Marsiling Outlet | Stomp",
+      "llm_company": "Santorini Hair Spa",
+      "source_link": "https://www.stomp.sg/singapore-seen/salon-closes-marsiling-outlet-concerns-arise-over-prepaid-packages-and-alleged-unpaid-salaries",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Singapore outlet closure reported by Stomp; closure implies job losses and counts as a layoff event. No headcount disclosed."
+    },
+    {
+      "original_company": "Late Salary Payments, Staff Out-of-pocket Expenses: Haus Coffee Owner Steps Down, Singapore News - Asiaone",
+      "llm_company": "Haus Coffee",
+      "source_link": "https://www.asiaone.com/singapore/haus-coffee-owner-steps-down-late-salary-payments",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "deepseek",
+      "notes": "Singapore F&B operator reported with late salary payments, staff out-of-pocket expenses and the owner stepping down — signs of financial distress that may imply job losses or closures, but the snippet discloses no retrenchment or closure event, so it cannot be confirmed as a layoff story."
+    },
+    {
+      "original_company": "Pizza Studio Tamaki Singapore To Close On Oct 31 | The Straits Times",
+      "llm_company": "Pizza Studio Tamaki",
+      "source_link": "https://www.straitstimes.com/life/food/another-one-bites-the-crust-tokyo-neapolitan-pizzeria-pizza-studio-tamaki-to-close-on-oct-31",
+      "verdict": "rumored",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Singapore outlet of the Tokyo Neapolitan pizzeria chain is slated to shut on Oct 31, an announced future closure implying job losses; no headcount disclosed."
     }
   ]
 }
