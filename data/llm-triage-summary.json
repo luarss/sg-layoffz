@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-10-03",
+  "run_date": "2026-10-04",
   "providers": [
     {
       "name": "deepseek",
@@ -11,218 +11,156 @@
     }
   ],
   "timed_out": false,
-  "total": 22,
-  "confirmed": 11,
+  "total": 15,
+  "confirmed": 3,
   "rumored": 2,
-  "rejected": 8,
+  "rejected": 9,
   "needs_review": 1,
   "remaining_queue": 1,
   "rows": [
     {
-      "original_company": "One Restructures In Key Ocean Region - Freightwaves",
-      "llm_company": "Ocean Network Express (ONE)",
-      "source_link": "https://www.freightwaves.com/news/one-restructures-in-key-ocean-region",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of ONE's Asia-Africa HQ restructure, a tracked layoff event; no Singapore-specific or global headcount disclosed."
-    },
-    {
       "original_company": "Unicredit Singapore: Strategic Realignment",
-      "llm_company": "UniCredit",
+      "llm_company": "Unicredit Singapore: Strategic Realignment",
       "source_link": "https://btw.media/en/unicredit-singapore-strategic-realignment",
       "verdict": "needs_review",
       "confidence": "low",
-      "provider": "deepseek",
-      "notes": "Title indicates a strategic realignment at UniCredit Singapore but provides no explicit layoff, closure, or headcount details, making it genuinely ambiguous whether this is a layoff event."
+      "provider": "none",
+      "notes": "All providers failed: deepseek: response truncated (finish_reason=length) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
     },
     {
-      "original_company": "Employee Urges Coworkers Not To Work Harder After Layoffs - Yahoo Lifestyle",
-      "llm_company": "Employee Urges Coworkers Not To Work Harder After Layoffs - Yahoo Lifestyle",
-      "source_link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNQ1JDa2phNC1OcXdjRnR1ZHdvYmVsMERGTk5kcmNhVDkwcDF4dGM0SHU2eHc2MzlUSlB6cFRTSVhyU09ZMXN4RG1Hc0pVUzBnUGZQd3ozZEJ0SzR6MjI5M2F5VDhLcnFFM09pMzJ2eU83OV9Xb0djTzVjOHhWU3JOTWduWQ?oc=5",
+      "original_company": "Retrenchment In Singapore: How Ntuc Supports Workers Before, During And After Job Loss - Ntuc Uportal",
+      "llm_company": "Retrenchment In Singapore: How Ntuc Supports Workers Before, During And After Job Loss - Ntuc Uportal",
+      "source_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNclRiOUlOWFV3ZFJUejI1cUdOMmdvOVRieDVyVlNlTmM5V1JwY3Z6RmtXdXIxTTBnTzJ1SkEydGRNVWpRUVRyMWNYbTVaVXhCXzBKV0FfVHdZdkt2OTNOSWhLdWpjV2FGWUdtZ1FKa2xQLXVlZlZ1Q3IyWGJlVm9vY2F0MWdZMmhFM1ZHRURFbi1JVHJXazlV?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is a Yahoo Lifestyle human-interest/commentary piece about an individual employee's reaction to layoffs, not a report of a specific company's job cuts in Singapore.",
+      "notes": "This is an NTUC explainer on union support mechanisms for retrenched workers, not a report of any specific company's layoff event; it concerns general union/policy assistance rather than an identifiable Singapore employer cutting jobs.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "'survived Layoffs, Now This': Sg Worker React As Pip Notices Issued Across Company - The Independent",
+      "llm_company": "'survived Layoffs, Now This': Sg Worker React As Pip Notices Issued Across Company - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPeWw1U2hCUmk2S19CV1VaY0lXcURNM2lsZmRiMnFMaFNFTm54VGZTYVlMX25QaWtvVmxCSUxiWk1qMTdqa2k1TTlrV1o5ajBtQ3JaZEl0SkY2LUMtVVFVVlpyU1NRS2xyYnFLTk51a2hyejJTX1ZDbUh1djlGYmxLNnZ6c2ZnN2JuT0wxcDdqUklZSy0tUmg2a0JKNW5kdDlvaDdvZ1JwOA?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a personal/first-person story about a Singapore worker's reaction to PIP (performance improvement plan) notices being issued across an unnamed company, not a reported layoff event. It matches the personal-anecdote and unnamed-company rejection rules.",
       "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Nike Plans More Job",
+      "llm_company": "Nike",
+      "source_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQdTk5OGNzcHRvQ1h5VWc1Nll4a3kxdk1WTkEzNTctdFQ0QTQtM2RfaWxtWnAtNXNGMlNYdVk4N1huNXcySjBxREhMWGVUMEU5eHJzWUMwRzFteXFrVnItaDNSWGNpVVNyV2d0ZG8xTzU0dmJ4V3hpcUJXUGtqdjdVdnpHQU00Um1fQkJraTVvYTZrcVVVSkxDVnVMcFZCMFJudV93VkFqS1dkM0NxaF9WeGJoaVdOT3FVTHc4c1dfTFFSdGJpcE1aeFhB?oc=5",
+      "verdict": "rumored",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Nike plans more job cuts, reported as follow-up to event nike-2026-10. Planned cuts indicate rumored status; no specific headcount given."
     },
     {
       "original_company": "Tiktok",
       "llm_company": "TikTok",
-      "source_link": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxNdkdXMnNjaDFHMWpUWDhQMWdKNWVBM2RzSlF5ZXFab2dHV1ROeFRXendJVG9tODNnT0RvcWdTdTBtX25GRlNfeDBnRzN0WlhWaDhHNUNaMzRScHA3ZUxMWXhKa2hTRFA0MDNEbzRQVmNZcTdxWkRmVUtLX1lUWWpydEFiUVEyTFpDX3NYaFA0ZVV0Y2t4Q2VPcW4xVzJKZXVVc1NGVXRmaVZXb2R0S1VETTN4N09jWEV5LUY5U1R3MzV3WllwUlhiaDlTY28yVHg2bXJBLWs5QmFQSlFvNzF0ZExrakFuUQ?oc=5",
+      "source_link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQcHRnR3dQS3FRVk5vbUZUTG1UZ1ZpUUJQRDlyRnF1NGtISFAwaDN5cTJRamZzRldrQWdQbm1GaXpqeHFWUW12eXRDLWtfeFNNaFZ6QkItSFBpYldXWDRld1FoU1RrRTZoTVJaMDlPenBfWjNJMDFudGtUd3BiMUlHM1VCOTdvWVpqdnNMdEVNQkVfb1pMZE53eHktR3ItREkzcHBVVkRGMU1WRHg5ZXJoMmRhTS00YVBzb1Y5SjJyTjZNRXZNUG8zV2lFdTJQQQ?oc=5",
       "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of TikTok laying off Singapore employees, matching the existing event tiktok-2026-07 announced 2026-07-03; no headcount disclosed."
+      "notes": "Follow-up coverage of TikTok's Singapore trust-and-safety job cuts already logged as event tiktok-2026-07; reusing that event_id. Singapore nexus is clear and the cuts are actively underway, so classified confirmed."
     },
     {
-      "original_company": "National Australia Bank",
-      "llm_company": "National Australia Bank",
-      "source_link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPSm9LenllTHJwRWppR0phLWhZUXNiM3A3OGxaNmVRS1dUT1luMGpMNkZjdmxXbEdTQXh5REJ4UnRRa3dkeWJWaVhZRy1nT1lueFRBUndnblNIVE15NTlZOThYSDE4dElfQUloYlpHazFDMTNtYmk5V2taN0RFZlgtem4tZXk3dVFZ?oc=5",
+      "original_company": "Retrenchments Rise In Singapore As Pmets See Sharper Job Cuts In 2025 - The Independent",
+      "llm_company": "Retrenchments Rise In Singapore As Pmets See Sharper Job Cuts In 2025 - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxORFlmZk1MQUd5UVJ1LURpeEcwa3FkWGplMUFicDlxNUphdjF4amMyV0Rta21PZi1XcmRJazR1QzJ3S2dpd053RC05cGdvekpQWjVhU0FIY0hfREY0aWJMT2JiSWJIOFJGZk1IYzBDdTJkNXU1WDQ5WnJ6TlJDTTc0cDFFNENENmdNTGxZNXVpOVFuaHhiYzg3aXhTVQ?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Reports NAB cutting 410 jobs, but no Singapore nexus is indicated; this is a foreign (Australian) workforce reduction with no clear Singapore impact.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Sg Vc Iterative",
-      "llm_company": "Iterative",
-      "source_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOTGlUWFhmN09kN0s0bkRtTzFiai11dnRYNWxFcFg2RzB6YmlpdkNVNWtuWnY2MmNiZFlock5qdDV3RHhwRWJTV3NkZUMtcGpPaHhUX3cweldGeFhRNmVzWEwxOTJ2SVZBMmxkaGNsa21YV0xkTHNpS0IzYmdycFlCZ3RZTG1CVXZ0S3h3?oc=5",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Credibly reported cuts/team narrowing at Singapore-based VC Iterative; follow-up coverage of existing event iterative-2026-06. No headcount disclosed."
-    },
-    {
-      "original_company": "Tessa Therapeutics Dissolves After Raising More Than $200m - Fiercebiotech.com",
-      "llm_company": "Tessa Therapeutics",
-      "source_link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNSDZiRWhXeXVXUkZ2LXp3STlldkZXeWFwc2UyODI4ci11MXlISXNlV2ZUZFRWV0RuaWtlVXZkUHJNOEFqQ0ExdXctTG9GQmkwTEZlbm95UGNjWVBpN2FZblNYYVNxendIcU1rekIxdkZJam9ILVI1X3I3MDBXbzlaNlNGLU9LR3NmcjRMQUpJem9BcDVQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Tessa Therapeutics, a Singapore-based biotech, dissolved/wound down, implying job losses. This is a confirmed Singapore-linked closure event with no disclosed headcount."
-    },
-    {
-      "original_company": "Singapore's Large Gyms Struggle To Stay In Shape As Smaller Chains Win Over Customers - Vnexpress",
-      "llm_company": "Singapore's Large Gyms Struggle To Stay In Shape As Smaller Chains Win Over Customers - Vnexpress",
-      "source_link": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxQQ0tOLW96UEMxVWpCS0p1UW5QR042X1BucWZHbGNGV3lmdGhpcjBJc0xNME1mOHBKQ0o3MHluTEhXRlU2M01DYUMzSWx6TUVYT3ptM3ZJT3JtaEpTVi1DZ3Z5SXBuZ1RBSUlNZXI1TjRjUVpoZ2lGYmcyUkdSTVA1N3VKTmpRRGRrMjRScTdTVnk5Y1BHRk9NbEtlLW5STjVMUFc1c2VuMlJXS2p5cUY5aE1BazBBWGUtcGd2d2tUVVhTdnFIb25TYVZrZlVOTDFmTGYwc2tkVDF2YnYy?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a market overview/analysis of Singapore's gym industry competition rather than a report of a specific layoff event; it names no company announcing job cuts.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Gridblaze To Close After 7-figure Tech Deal - The Next Web",
-      "llm_company": "Gridblaze",
-      "source_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQUmYtV3lKalFnYThXVUdJS3UzNUYzcmVJTTgyajM5QmtGZDBCNkZndlR1aDJ4Wmc0LWtxcGxRS2JtdFhMR1ludkNRNnV2cVhZRVJvTHJlSFJkajAtOWd2NV9MRG9kc0FvcmxoLXNHQmRreWVmcTJLU1BRQndSN196ek05TWQydTdPdF9Ib3ZXaDBWVE9oeE9FUTlCUWVnWG1kaXZUOVdDTWg3Q3UwblQxSkhBRjZWZHZSQWl6VmdIVVlYUVZYYWhjSWZB?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Singapore-based cloud gaming startup Gridblaze was reported to be closing following a 7-figure acquisition deal, implying job losses. Classified as rumored because the closure is announced/future."
-    },
-    {
-      "original_company": "Singapore Layoffs In Q3 2026 So Far: 967 Jobs, And Why The Small",
-      "llm_company": "Singapore Layoffs In Q3 2026 So Far: 967 Jobs, And Why The Small",
-      "source_link": "https://layoffsg.com/insights/singapore-layoffs-q3-2026-so-far",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Aggregate quarterly roundup of Singapore layoff totals (967 jobs) across multiple companies rather than a single specific company event; matches the statistics/aggregator rejection rules.",
+      "notes": "Article reports aggregate retrenchment figures/trends for PMETs in Singapore in 2025, i.e. labour market statistics rather than a single company's layoff event.",
       "rejection_reason": "statistics"
     },
     {
-      "original_company": "Singapore",
-      "llm_company": "Singapore",
-      "source_link": "https://news.theonlinecitizen.com/2026/09/21/singapore-retrenchments-hit-highest-level-since-2020-as-job-vacancies-fall-in-q2",
+      "original_company": "'where's The Urgency When It Comes To Making Sure Ordinary Citizens Can Actually Keep Their Jobs?' Netizen Asks After Friend In Tech Gets Laid Off Over The Phone - The Independent",
+      "llm_company": "'where's The Urgency When It Comes To Making Sure Ordinary Citizens Can Actually Keep Their Jobs?' Netizen Asks After Friend In Tech Gets Laid Off Over The Phone - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMikgJBVV95cUxNaHpYX2o4X2ZxcUV4ckw0Sll5VFU2bDJuTTJUNkVkV0xtWFB3MnpTaVJhb2VIeEN3R0Ffd1FoeVF4XzRpS3lfZ21jbFE0cVVBWmxDMHNLWm9CVnAxVXVQdndfbUxYeWRiMzhjYkVBLS0xMG9GbUpCRXd6RGJaa2cwbTkzMFdubzNsY1pZUTVFLWFVQ1JVZEttS2tGdWZZWnVUNmtJZVduWUNUbWpOQkNRdGFOZDVSb0xna1lsTGJjNkRQWlFoVnVWMHNoRzA4YWdxUV8wTVdhTk9ua3h1WllnRlJkQW1DaUQxbWQ5QWUzSmRfZjRYMnV6R0Z2VzZBcV9BMVBac0tQMUVEekRJM09nTTBR?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Article reports aggregate national retrenchment figures (MOM Q2 labour market data) rather than a specific company's layoff event, and names no identifiable employer.",
-      "rejection_reason": "statistics"
+      "notes": "Netizen commentary built on a personal anecdote about a friend's layoff at an unnamed tech firm, with no specific company named — matches both the personal-anecdote and vague/unnamed-company rejection rules.",
+      "rejection_reason": "personal"
     },
     {
-      "original_company": "Sp Mobility Starts Chargeco Charger Switchover · Recordowl News",
-      "llm_company": "SP Mobility",
-      "source_link": "https://recordowl.com/news/sp-mobility-integrates-chargeco-chargers-october",
+      "original_company": "2 Michelin-starred Restaurants Shut Down In Singapore - Vnexpress",
+      "llm_company": "Unknown",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNb05aMkhYaTNUYUVyZGk3aTNmSkczQm5kN25mQzZEa3kyeTNZaHNxVWVnS0FUTENxN2NyQ0hBVTdGWktvVlhfQ2JXb05Za2pVRkF3QzJPUHpTaUV6aDZhVmJCay0yQzVzYkIwc3U2QzhNOUR3bXVKN05GQXY2X2FpdXpiUUFyMndsUGN4SlV1R1BGUkZrX0cweFdoTkdzWFZUWWJyOEE3cExqd2J6ZXJKT0ViVnk1Zw?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This article is about an EV charger switchover by SP Mobility, not a layoff, retrenchment, or Singapore business closure. No job-cut event is reported.",
+      "notes": "The article reports the closure of two Michelin-starred restaurants in Singapore but does not name the specific companies, making the subject a generic descriptor rather than an identifiable company.",
       "rejection_reason": "vague"
     },
     {
-      "original_company": "趣天网陷财务困境 八成新加坡员工丢饭碗_综合信息网",
-      "llm_company": "Qoo10",
-      "source_link": "http://www.tbmtalks.com/news/20261002_58856.html",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Report states 趣天网 (Qoo10) is in financial difficulty and that about 80% of its Singapore employees have lost their jobs, a Singapore-specific retrenchment that is already underway. Headcount is given only as a percentage of the Singapore workforce, so no absolute figure is recorded and the 80% is applied to the Singapore office."
-    },
-    {
-      "original_company": "Uber Is Shutting Down Regional Headquarters In",
-      "llm_company": "Uber",
-      "source_link": "https://markedium.com/uber-is-shutting-down-regional-headquarters-in-singapore/",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Report states Uber is shutting down its Singapore regional headquarters, a Singapore office/operation closure that implies job losses at a specifically named company; no headcount disclosed so both figures are null."
-    },
-    {
-      "original_company": "Why China's Firms Opt For A Singapore-based Strategic Core With 'limbs' In South-east Asia - The Business Times",
-      "llm_company": "Why China's Firms Opt For A Singapore-based Strategic Core With 'limbs' In South-east Asia - The Business Times",
-      "source_link": "https://www.businesstimes.com.sg/opinion-features/why-chinas-firms-opt-singapore-based-strategic-core-limbs-south-east-asia",
+      "original_company": "Nike Shifts Asia Pacific Hub From China To Singapore | Interestana",
+      "llm_company": "Nike",
+      "source_link": "https://interestana.com/articles/nikes-asia-pacific-plan-shift-out-of-china-new-focus-on-singapore-raises-doubt-00di12ub",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This is an opinion/analysis feature on why Chinese firms set up Singapore-based regional headquarters, not a report of any actual or planned layoff event.",
-      "rejection_reason": "commentary"
+      "notes": "Article concerns Nike shifting its Asia Pacific hub from China to Singapore, which indicates relocation/hiring rather than Singapore layoffs. No job cuts or retrenchment event is reported.",
+      "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Crystal Jade Holding Companies In S'pore, Hong Kong Placed Under Receivership - The Business Times",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.businesstimes.com.sg/singapore/crystal-jade-holding-companies-spore-hong-kong-placed-under-receivership",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Receivership of Crystal Jade's Singapore (and Hong Kong) holding companies is a Singapore-nexus corporate collapse implying further outlet closures and job losses, consistent with the group's existing 2026 restructuring event; follow-up coverage, so the existing event_id is reused."
-    },
-    {
-      "original_company": "New Horse Noodles Closing After 5 Months, Ex-fintech Hawker Says: 'the Lifestyle Is Not What We Really Want' - 8days",
-      "llm_company": "New Horse Noodles",
-      "source_link": "https://www.8days.sg/eatanddrink/hawkerfood/new-horse-noodles-closing-chinatown-complex-fintech-hawkers-864101",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "A Singapore F&B outlet (hawker stall at Chinatown Complex) is closing after five months, which under the closure rule counts as a Singapore layoff event implying job losses; headcount unstated."
-    },
-    {
-      "original_company": "Singapore's Jumbo Seafood Closes Its Og East Coast Outlet After 39 Years — And Raises S$313,280 For Charity | Malay Mail",
-      "llm_company": "Jumbo Seafood",
-      "source_link": "https://www.malaymail.com/news/singapore/2026/10/03/singapores-jumbo-seafood-closes-its-og-east-coast-outlet-after-39-years-and-raises-s313280-for-charity/237471",
-      "verdict": "confirmed",
+      "original_company": "Hivebotics Secures $6m Funding For Abluo Restroom Cleaning Robot | Commercial Ai",
+      "llm_company": "Hivebotics",
+      "source_link": "https://airoboticdaily.com/ai-robotic-products/hivebotics-abluo-cleaning-robot-236",
+      "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of the closure of Jumbo Seafood's OG East Coast outlet in Singapore, an already-closed Singapore outlet closure implying job losses; reuses the existing event_id. No headcount disclosed, so both figures are null."
+      "notes": "Article reports a $6m funding round for Hivebotics' Abluo restroom cleaning robot — a growth/funding announcement, not a layoff, retrenchment, or closure event.",
+      "rejection_reason": "job-posting"
     },
     {
-      "original_company": "Dbs Expects Ai To Remove About 4,000 Contract And Temporary Roles Over Three Years, Its Chief Exe",
-      "llm_company": "DBS Bank",
-      "source_link": "https://aiimpacted.org/post/dbs-expects-ai-to-remove-about-4-000-contract-and-temporary-roles-over-three-yea",
+      "original_company": "Jll Is Closing Its Uk Planning Team. A Year Ago It Was Recruiting For More Than 70 Planners",
+      "llm_company": "JLL",
+      "source_link": "https://www.realtytoday.com/articles/115028/20261001/jll-closing-its-uk-planning-team-year-ago-it-was-recruiting-more-70-planners.htm",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The reported closure concerns JLL's UK planning team, a foreign office with no Singapore nexus, so it falls outside this Singapore layoff tracker.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "'it's Exhausting': Owners Of Lao Liang Pork Trotter Jelly To Retire After 45 Years, Lifestyle News - Asiaone",
+      "llm_company": "Lao Liang Pork Trotter Jelly",
+      "source_link": "https://www.asiaone.com/lifestyle/lao-liang-pork-trotter-jelly-closure",
       "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "DBS CEO said the bank expects AI to remove about 4,000 contract and temporary roles over three years — an anticipated future reduction rather than cuts already underway, so rumored. Figure is a group-wide/global projection, not Singapore-specific, and the story is follow-up coverage reusing the existing dbs-2026-09-ai event."
-    },
-    {
-      "original_company": "Anz Bank Restructuring Exit Hong Kong Singapore Australia",
-      "llm_company": "ANZ Bank",
-      "source_link": "https://headlinesbriefing.com/market/bloomberg-markets/anz-bank-restructuring-exit-hong-kong-singapore-australia-380292f3",
-      "verdict": "confirmed",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of ANZ's restructuring that involves exiting/slimming operations across Hong Kong, Singapore and Australia, implying Singapore job losses. Reusing the existing event_id; no headcount disclosed so figures are null."
+      "notes": "Announced closure of a Singapore F&B business after 45 years as owners retire; counts as a layoff/closure event with Singapore nexus, but framed as an announced/future closure rather than an already-completed one, so rumored."
     },
     {
-      "original_company": "Singapore Finance Industry To Train 80,000 Workers In Ai Skills By 2028 | Crowdfund Insider",
-      "llm_company": "Singapore Finance Industry To Train 80,000 Workers In Ai Skills By 2028 | Crowdfund Insider",
-      "source_link": "https://www.crowdfundinsider.com/2026/09/313571-singapore-finance-industry-to-train-80000-workers-in-ai-skills-by-2028/",
+      "original_company": "Cost-",
+      "llm_company": "HSBC",
+      "source_link": "https://www.scoop.my/news/299319/cost-cutting-measure-hsbc-tells-more-than-100-staffers-in-malaysia-of-accenture-transfer/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "This article covers an industry-wide AI upskilling initiative to train 80,000 finance workers by 2028 — a workforce development programme, not a layoff or retrenchment event at any specific company.",
-      "rejection_reason": "policy"
+      "notes": "Article concerns HSBC staff in Malaysia being transferred to Accenture, with no Singapore entity, office or Singapore-specific headcount involved.",
+      "rejection_reason": "not-sg"
     },
     {
-      "original_company": "Crystal Jade Receivership Puts F&b Workforce Planning In The Spotlight | Human Resources Director",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.hcamag.com/asia/news/general/crystal-jade-receivership-puts-fb-workforce-planning-in-the-spotlight/592029",
+      "original_company": "Five Guys Closes Ion Orchard Outlet, Now Down To Just One Singapore Branch - 8days",
+      "llm_company": "Five Guys",
+      "source_link": "https://www.8days.sg/eatanddrink/newsandreviews/five-guys-closes-ion-orchard-outlet-down-one-singapore-branch-864071",
       "verdict": "confirmed",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of the Crystal Jade receivership and Great World outlet closure, a Singapore F&B job-loss event already tracked; reusing the existing event_id as instructed. Headcount not disclosed."
+      "notes": "Singapore closure of Five Guys' Ion Orchard outlet, leaving only one Singapore branch, implying job losses at the shuttered outlet. Classified as a confirmed closure-layoff event."
+    },
+    {
+      "original_company": "Famous Tokyo Pizzeria Pst Closing Singapore Outlet After 16 Months - 8days",
+      "llm_company": "PST (Pizza Studio Tamaki)",
+      "source_link": "https://www.8days.sg/eatanddrink/newsandreviews/famous-tokyo-pizzeria-pst-closing-singapore-outlet-after-16-months-864006",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Singapore outlet of Tokyo pizzeria PST is closing, a Singapore business closure that implies job losses and counts as a layoff event; headcount not disclosed."
     }
   ]
 }
