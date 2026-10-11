@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-10-10",
+  "run_date": "2026-10-11",
   "providers": [
     {
       "name": "deepseek",
@@ -11,10 +11,10 @@
     }
   ],
   "timed_out": false,
-  "total": 24,
+  "total": 25,
   "confirmed": 4,
   "rumored": 0,
-  "rejected": 18,
+  "rejected": 19,
   "needs_review": 2,
   "remaining_queue": 2,
   "rows": [
@@ -25,232 +25,242 @@
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "deepseek",
-      "notes": "Article title suggests a strategic realignment at UniCredit Singapore, but no explicit layoff information is provided; cannot determine if it is a layoff event."
-    },
-    {
-      "original_company": "Wpp Media Sees Two Senior Apac Leadership Exits",
-      "llm_company": "WPP Media",
-      "source_link": "https://www.contentgrip.com/wpp-media-apac-leadership-exits/",
-      "verdict": "confirmed",
-      "confidence": "low",
-      "provider": "deepseek",
-      "notes": "Coverage of senior APAC leadership departures tied to WPP's ongoing restructuring; treated as follow-up of the existing WPP event and event_id reused. No headcount disclosed, so both jobs fields are null."
-    },
-    {
-      "original_company": "Revolut Commits S$350 Million To Singapore As Fintech Exits Co-working Era",
-      "llm_company": "Revolut",
-      "source_link": "https://www.briefasia.com/en/article/revolut-commits-350-million-singapore-fintech-exits-co-working-era",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an expansion/investment announcement (S$350 million commitment to Singapore) and a commercial real estate/office-space story, not a layoff or closure event. No job cuts, retrenchment, or Singapore business closure is reported.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Quick News And Shorts By Tabla - Tabla.com.sg",
-      "llm_company": "Quick News And Shorts By Tabla - Tabla.com.sg",
-      "source_link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFB1cW9TQVlYU01aYWQySUlMQXlqUWtpTEhxdGp2c3ozYTJCdV80alk0UUV2d1lqZzNiaFo4Z0RoQjZ4amJpdC1pWUxrc1M2M1FoUTd2UWxB?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a generic news-roundup/'quick news and shorts' aggregation page with no identifiable company or layoff event; no Singapore layoff nexus is established.",
-      "rejection_reason": "aggregator"
-    },
-    {
-      "original_company": "Singapore",
-      "llm_company": "Unknown",
-      "source_link": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxQRGM1UnJuWUg3U1hGbzZwMjBSeDQ1RHRReDJiNlpxQXlXYnF5dDRDTDd2NlM1NHQxc3NnckRSRHpjWk5YUDZRVHJBdVVmZ1A4V3NLdmFzU2VSOElHVkNtMlNsNUhDNzRrbXV5b1FXa3ZKYlZlenBVQjljelM5NkU3TzBwM09jRHkyVEFEaHFIVTZ4ZXFfak56aVRTRzBndWI5VXJkOTRHM3RvQk9HZTduc0s5U2VzNlJ6dXlydzJWWm5mYlVTZURDeEM1QWJpYXRCUHRQQ1lBWHo1bTM0eUVzQnFRSDB5YUU3ZTdYU3l1NmR1RWFkcFQ0?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article discusses retrenched PMETs facing prolonged job searches, a general labour market commentary with no specific company or layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Tech Talent Still In Demand In Singapore Despite Mass Layoffs, Say Analysts - Cna",
-      "llm_company": "Tech Talent Still In Demand In Singapore Despite Mass Layoffs, Say Analysts - Cna",
-      "source_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxONDVFejY2S1pPR2Uyb2pQMUtRbFNRX2ItV0VITDRncmN1NVhRSV81Rll5andFRmFiYnc0NjhLcWQwdEpxX2J1ZUwxSi1CMU1ZMFZTdWhOckg1UDlmSUMyX2FvU3hsYzE2UVpyNGlrdnhxSW5CdVJZZzFnS2ZtQUJGdDhiWElveVdFYU1WeW9sZkozRFg5amZwQlh2Tkw3blFja1ZR?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an analyst commentary/market overview about tech talent demand amid layoffs, not a report of a specific company's layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Starbucks",
-      "llm_company": "Starbucks",
-      "source_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOYkRTMndUQTUzSHZ5TldFT3RRcF8wV0RfRnFxWElLN3dmdnNkM2tpR3J0cDRhZ1Z4cU8tZkVyZVVJOU1iQmJRYU4tbVAyVDJmaktCSXExSUxRV21yR0I4UG1qU0NnUHU3X0gtYng5X0lCcXNtZFU1VDVIcWlEOVNCNkd1amhZVlF5NEpRSFNaeW9qcVk5TTNVa2JZVHNfMEtFZ0tKUWtHOUlzNzVoWWlGeHRnb256NTZjakFhczNMNTF3NUp4ZzJlVHFmWEV3Y2Zx?oc=5",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Coverage concerns Starbucks office cuts in London and Hong Kong only, with no Singapore entity, office or staff implicated in the report.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Microsoft, Google Are Latest Tech Giants To Hit Brakes On Hiring - The Straits Times",
-      "llm_company": "Microsoft, Google",
-      "source_link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOZGU2aVp0ZkNpUnVId1J4akFpc1YxRF8xNVNyNkJoXzRVUTRiejAtMjlRVVJseTRCaWZTTjZhUkV2cVFtOXlTVF9nVzNZZThhemVLM1l0ZERlNGNvUTE5eUZEMEp6Wl9fTmFSRFVNak54bG5Kbjk2UW9CdUNPVk5VWm5JbWJrQnZoTnZ3b3ZwSTJUQlZqdlh3aUYwbUppUndzQVRKTjAzUGZ1c1d1WXNYRmlVRXc?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article is a multi-company market overview of tech hiring slowdowns/hiring freezes rather than a single specific layoff event at a named Singapore entity; it reports hiring brakes, not retrenchments.",
-      "rejection_reason": "aggregator"
-    },
-    {
-      "original_company": "Passport Asia Shuts Down Gym Memberships, Sends Customers To Rival Kfit - Tech In Asia",
-      "llm_company": "Passport Asia",
-      "source_link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPc3kxa1pOX0hncVJpX2tSN0NqNERhQmtGVG42Vk9wdlJRMlZZOGtaU3RwTVQ3NW5NV3F6WGlVUlYxLWtPdFd4dEZBRHlHbzBLbGVnMTFtVEhrYmtWR1pFR0Y5LVFLNEVNNDVkZXFvR3NTMUxaUGQtM0ZqZHVyZVBmdmdYUQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Passport Asia, a Singapore fitness startup, shut down its gym membership service and transferred customers to Kfit, implying job losses; under the rules, a Singapore business closure counts as a layoff event."
-    },
-    {
-      "original_company": "Debate On How To Protect Workers Will Move From Ensuring Benefits To Finding New Jobs As",
-      "llm_company": "Debate On How To Protect Workers Will Move From Ensuring Benefits To Finding New Jobs As",
-      "source_link": "https://www.straitstimes.com/singapore/politics/debate-on-how-to-protect-workers-will-move-from-ensuring-benefits-to-finding-new-jobs-as",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article covers a parliamentary/policy debate on how to protect workers, moving from benefits to finding new jobs — government policy discussion, not a specific company layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Crystal Jade",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://sea.peoplemattersglobal.com/news/business/crystal-jade-cuts-120-jobs-in-singapore-as-four-outlets-close-52631",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of Crystal Jade's previously reported closure of four Singapore outlets, with 120 Singapore jobs cut. This matches the existing event crystal-jade-outlet-closures-2026-10, so that event_id is reused."
-    },
-    {
-      "original_company": "Ai Startup Manus Raises $500 Million After China Nixed Meta's $2 Billion Acquisition | Newsgather",
-      "llm_company": "Manus",
-      "source_link": "https://newsgather.com/news/ai-startup-manus-raises-500-million-after-china-nixed-meta-s-2-billion-acquisiti-f3edb64db0caee134b715d2470d86a8a",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Funding announcement about Manus raising $500M; no layoff or job-cut event is reported.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Korean Food Chain To Close Last Outlet In Singapore After 18 Years - Vnexpress",
-      "llm_company": "Korean food chain (company name not given in provided snippet)",
-      "source_link": "https://e.vnexpress.net/news/travel/food-recipes/korean-food-chain-to-close-last-outlet-in-singapore-after-18-years-5120523.html",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Reported closure of a Korean F&B chain's last Singapore outlet after 18 years, which is a Singapore layoff event (closure implying job losses) and it has already happened/is actively closing. Headcount is undisclosed, so both jobs fields are null; the chain name is not present in the supplied snippet but the article subject is a specific chain's Singapore closure."
-    },
-    {
-      "original_company": "Marketing Lead, Vaccines And Pharma At Caraway Therapeutics | Emploive",
-      "llm_company": "Caraway Therapeutics",
-      "source_link": "https://emploive.com/jobs/6727333/marketing-lead-vaccines-pharma-caraway-therapeutics",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a job posting for a Marketing Lead role, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Next&bio Expands Singapore R&d Operations To Advance Translational Cancer Research In Asia",
-      "llm_company": "Next&bio",
-      "source_link": "https://www.biospectrumasia.com/news/26/28500/nextbio-expands-singapore-rd-operations-to-advance-translational-cancer-research-in-asia.html",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article covers Next&bio expanding its Singapore R&D operations for cancer research — an expansion/hiring announcement with no job cuts, so it is not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Novartis Outsources Singapore Eye-care Sales As October's Data And Deals Stack Up",
-      "llm_company": "Novartis",
-      "source_link": "https://www.ad-hoc-news.de/boerse/news/unternehmensnachrichten/novartis-outsources-singapore-eye-care-sales-as-october-s-data-and-deals-stack-up/70284887",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Aggregator-style article about October deals; Novartis outsourcing Singapore eye-care sales is not a layoff/retrenchment event and no job cuts are reported.",
-      "rejection_reason": "aggregator"
-    },
-    {
-      "original_company": "Numerical Literacy Increasingly Needed In Media Industry, Says Mec's Soh",
-      "llm_company": "Numerical Literacy Increasingly Needed In Media Industry, Says Mec's Soh",
-      "source_link": "https://theedgemalaysia.com/article/numerical-literacy-increasingly-needed-media-industry-says-mec%E2%80%99s-soh",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a commentary/opinion piece about the need for numerical literacy in the media industry, with no layoff event, no named company cutting jobs, and no Singapore nexus.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "More Layoffs, Higher Productivity Or A Bust? How Singapore's Prime Office Market Could Take To Ai Trends – Tee And Co",
-      "llm_company": "More Layoffs, Higher Productivity Or A Bust? How Singapore's Prime Office Market Could Take To Ai Trends – Tee And Co",
-      "source_link": "https://teeco.sg/more-layoffs-higher-productivity-or-a-bust-how-singapores-prime-office-market-could-take-to-ai-trends/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a market commentary/analysis piece from Tee & Co on how Singapore's prime office market might respond to AI-driven layoff trends, not a report of an actual layoff event at a specific company.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Ethereum Layer-2 Firms Polygon And Immutable",
-      "llm_company": "Polygon and Immutable",
-      "source_link": "https://mempoolbrief.com/articles/ethereum-layer-2-firms-polygon-and-immutable-cut-staff-56518ba4",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Report of staff cuts at crypto firms Polygon and Immutable, but nothing in the article indicates a Singapore entity, Singapore office, or Singapore-based roles; the coverage concerns their global/foreign operations. No clear Singapore nexus established.",
-      "rejection_reason": "not-sg"
+      "notes": "Title references a 'strategic realignment' at UniCredit's Singapore operations, which may imply restructuring/job losses, but no snippet details confirm actual layoffs, closure, or headcount. Genuinely ambiguous whether this is a real cut or a strategy/analysis piece."
     },
     {
       "original_company": "Zerobase Ceo Announces Layoffs, Ending Dat And Perpetual Contract Work | Weex Crypto News",
-      "llm_company": "Zerobase Ceo Announces Layoffs, Ending Dat And Perpetual Contract Work | Weex Crypto News",
+      "llm_company": "Zerobase",
       "source_link": "https://www.weex.com/news/detail/zerobase-ceo-announces-layoffs-ending-dat-and-perpetual-contract-work-hmt2eyk92i9pdondar1j9jki",
+      "verdict": "rejected",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Reports Zerobase CEO announcing layoffs and ending certain contract work, but the article provides no Singapore operations or Singapore nexus, so it is outside this Singapore layoff tracker.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Singapore's",
+      "llm_company": "Singapore's",
+      "source_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQQ1RVMUp6LUNIN19IM3NuR0d0V2k5NF9aY05HaGhKaUplYU1YY04wRkJWVHVFVVZ3VzVHWkEwLVpwVTVwUHMwb3ZHb0hhRHBKcmsxdkF5QW9nd2twMnNEREl0aWZRXy1HbkZISXltRUJYOFV3STF6dEtIdXRhZ2JWY3ZBMUhjY01FMGVNSTVlNTBuNTBWUGhYZXZJUUU4UGgxSnlTbWplMFRQdndZUnk0LVQ0cEh0VkZZR0xweFNFOVZDUVh6d2k5UmdxSTIySnRZ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports Singapore's overall retrenchment rate hitting a high — labour market statistics rather than a specific company's layoff event, and no named company is involved.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Crystal Jade Issues Termination Notices To 120 Workers Amid Restructuring - Hrsea.economictimes.indiatimes.com",
+      "llm_company": "Crystal Jade",
+      "source_link": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxQeDZwUE5qeXRocHA1U0VtNjVfa0o0T0FsVmNVU3YydWFoak5JeGdreUY2YTY2N3BRTlB2OUpQMUl4Y2c5WW5uYzVfdFJLZDJhYmpMQVhGQm5IcHducDBZYVRFaHhJa1hGQU5JN2IwWUotaG9sb1ZNV0RBdVByWlRRbnpTRlZ0WTQ5ZF84a2o3a0k4U0FvNEhrMnRVSzQxM0swbjVPem9iZHFqQ05pVmVqZmVQRVItRHdhX1ZvMkpRSHRMajhJRVZUY1VUSXljSGlpc0pUOHVyVdIB3AFBVV95cUxQcjZRTlNfYlpQRWJDSEtTci1FYzc3bkpLa3htRlpjMkRVMGcxWUpsN0RFaFZFS0dEYTR1YnhLSW1iaVpRSVp1cVpxdzF6Y0Z5bmdYaEw3b1VILWI0TW83UHQyMnNYVXZ0NFBNa3U0NlpTMGxiSF9kM01iN3RQVVQ4bV9QMVdWWmU1Ukl4Z1owcFppUlZNRzVNOXV3bFhpWUFkZHV2cTBxa0RoQVh6dXpINHBhcmQ5UWR3TzJXTHJsX294amlDT1VWQTBHTkVsRUlZaUpURTI1R28yZlBp?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Crystal Jade, a Singapore-based restaurant group, issued termination notices to 120 workers as part of its restructuring and outlet closures, matching the existing Singapore closure event. Treated as follow-up coverage of the same event rather than a new round."
+    },
+    {
+      "original_company": "5 Issues Raised In Parliament On How Singapore Can Better Support",
+      "llm_company": "5 Issues Raised In Parliament On How Singapore Can Better Support",
+      "source_link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNTmpfdDVfNU5EeW82WVo0ZEt3dU84My1zOVlvV2Jad3NCcG1tTlhaVjlrOFFTUTNfU0QxSkVEblFSZmtHbF9oME1DTm1SaUc0bkUxaktCZHhkOEZMZlRHN0VtMnJ0Wkw0MXNJamk2U2w2QVY1TGVybGxPNEZZelhuSVluYWJDMEx3T0E?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article covers parliamentary debate on how Singapore can better support workers, which is a government policy discussion with no specific company or layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Wsib Closing Offices",
+      "llm_company": "WSIB (Workplace Safety and Insurance Board)",
+      "source_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNXzViU2JueDA5Q1MzWDc1ZXJuY2JlekRyLXptN0RibjZKUWV3U196YW1pTXl0bGNpZVdwRUFJLThfN3hJRzEwMzRGNkZZVURTZmJOOUpxSGgtME1BeWZZYzVfR0JwNzlUMTdVNDhfUUNJX0d3RE9laC1teU0wNGxnbmlMWFJGYk9JLXVaOHFoTndCbEJEXzJsNlZaMDJNaUF2VEYtZHF0VWJicnZrU0E?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "WSIB is the Ontario (Canada) workplace safety and insurance agency closing offices in Canada; there is no Singapore entity, office or employee impact, so the article lacks a Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "'if Nobody Is Going To Plan For Them, Then We Have To': Parents Step In As Vocational Options Shrink - Cna",
+      "llm_company": "'if Nobody Is Going To Plan For Them, Then We Have To': Parents Step In As Vocational Options Shrink - Cna",
+      "source_link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNYXBHTzlCNnZKblRnWTJNd1NGamdRcXJZOXJucEo5blh2a3UwejJoeXM1Y3NTc0ExWV9rTGUwSFFXcGZna0VNVUlHUnl5U29PMW4zUHJwZFRiNzliVEhQNU1ZcnBLZVNhS253V2Vac3RBZkFvMlhXREhDZVdBX2lHWDA2b203M1VFVWc1RVc3NWpYX3I1MElFN0d0NFhfc1NfRFJGOVpoRy1yRDcyNlY5OXlmVU0?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "CNA feature on parents navigating shrinking vocational options for their children; it is a general education/social commentary piece with no specific company, no layoff announcement, and no Singapore job-cut event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Singapore's Razer Gives Up Costly E-wallet Battle In Southeast Asia - Caixin Global",
+      "llm_company": "Razer",
+      "source_link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPYk56RTdnWV9jSm5vOWVobkJSYUVCSHFYUVJGUlB5b3Zzb2Z2Sndta2FXeUNtSXg5N29EZDROZTF1ejRuemJUOE1RZlFXMmpRQ0lITi1yNEFBeFBNSXp4eXVISFhVWkNBZXJDNV96cTdENkdiQkZPZkxEcVppTWcwcktHeERDaHpFai1RZzFoZDlVUHd1Q3F5WTFOTFkyNUdpQWEyTEk0aEthZ1hvUndaRjNpQUZINFVIZ21zYWZR?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Razer is reported to be abandoning its e-wallet business in Southeast Asia, implying closure of its Singapore-based Razer Pay service and associated job losses. No headcount disclosed."
+    },
+    {
+      "original_company": "Internet Services To Face Temporary Disruption From April 9 To 13 - The Daily Star",
+      "llm_company": "N/A",
+      "source_link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPcng1RzBSVTVSb3FpM3BrczhsMDEyQlowQU1aalh4ZUVJT2R5YmJ3d1d6U2JTTFRFaFEyTkcwRlNWVmIwb3RFU2dSWGVJUTBha28zNDhRTnBiV1NiRExrVkpPc19ZQWpXTkJxb21URl9UVnprTDNLcGttcnBHZkl2QjkxdU5kRnI2Q3VQa2VHNU1GbFZ3MTdWOW1ycGsxNEI5dERWdzZpVTFjWEhrVC1uTkRiUTU?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article concerns temporary internet service disruption (Bangladeshi outlet, The Daily Star), not a layoff or closure; no company named and no Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Hike Shutdown: Kavin Bharti Mittal Shuts Down Startup After India's Ban On Real Money Gaming, Lets Go - Latestly",
+      "llm_company": "Hike",
+      "source_link": "https://news.google.com/rss/articles/CBMihwJBVV95cUxPOVB5QjRrZm5qSkVqZkpKbDZBZTVwbmw4WFBxNloyQ29TeEFVRzlNTG1jRkJoS3JtNjViV2ZuVnN4ckRNZkVuX05RX2FIY002Wm9OMk80ZGV0bjVVVVkxTG8tV3BTU3YtNUZUZGhueldIaThVbDhESlA0ckNCd2lIaGJxU1M0WkF3R0dPME1yWk1OVVhreVYwT0VVdHB0MENha3V2WnhUT2UybHVrUG9wY29oODl3Q0FwZzNrSVVNLVBab2YzbHZ5NFBzUTRKZ3NFT2NUUWhzRS02dnBxMkp2eXFEb3ZRRHBEUFhhVzhkcFNqZEtRc05JaGdlamhCQzczQkF4bW5wONIBjAJBVV95cUxPOGJlVWZoOWQ3ZkdsMTdodTRDYk1tS2tPRjY5TDNnRGVBdk9aMENqQkZZaUNSOEdpbjlSQnh2WUFFNUk4NGsydDdpNUJmSzZzZFIxUkQzWjdRQVZoSU16M3ZHbmNMOGJHU05MVGg3bm9UTFVSSFhVczNpMWk1YVpGMlc0NXRfSjhPak51NDA0LWZJRlA4TllfeHdlS3RqNnJ5TkhOWnlHOHdYMVRpRDlaLTViNDE3QURGVHU2eGxPOU1rWEpyZTAxcTF1bVV4WVZPU2E3RWlDVDVRamEyUWR6OW5LNFdfRVdwMnRpREJnRFJuRmthUmF3b01DRlBVa3liQ2E1MkdhMmJEV2dt?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Hike is an India-based messaging/gaming startup shutting down following India's real money gaming ban; there is no Singapore entity, office, or Singapore nexus to the layoff. Verdict rejected for no Singapore nexus.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Tiktok",
+      "llm_company": "TikTok",
+      "source_link": "https://ceofrontier.com/articles/tiktok-cuts-singapore-roles-in-trust-and-safety-overhaul-b83cc6ac",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Reported job cuts specifically affecting TikTok's Singapore trust and safety roles, a new October 2026 event distinct from the earlier 2026 events in the list. No headcount disclosed in the snippet."
+    },
+    {
+      "original_company": "Crystal Jade Has",
+      "llm_company": "Crystal Jade",
+      "source_link": "https://business-news-today.com/crystal-jade-has-cut-roughly-a-third-of-its-singapore-workforce-what-happens-to-the-restaurant-group-now/",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Credibly reported Singapore workforce reduction of roughly a third at Crystal Jade, tied to its Singapore outlet closures; headcount not specified so only the percentage is recorded. Treated as follow-up coverage of the existing Crystal Jade Singapore outlet-closure event rather than a new round."
+    },
+    {
+      "original_company": "Manus Raises More Than $500 Million After Unwinding Meta Deal | Dealroom News",
+      "llm_company": "Manus",
+      "source_link": "https://dealroom.co/news/info-tugym8-manus-raises-more-than-500-million-after-unwinding-meta-deal/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a funding announcement (Manus raising over $500 million after unwinding a Meta deal), not a layoff or retrenchment event. No job cuts are reported.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Singapore Logistics Firms Brace For Tougher Times, But Ev Adopters Yet To Feel The Pinch",
+      "llm_company": "N/A",
+      "source_link": "https://qrmh8.com/article/singapore-logistics-firms-brace-for-tougher-times-but-ev-adopters-yet-to-feel-the-pinch",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Industry outlook/commentary piece on Singapore logistics firms facing tougher conditions, with no specific named company and no actual layoff announcement, so it is not a trackable layoff event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Pharmaceutical Sales Representative (training Provided, No Exp Needed, Bms) X 1 / Permanent / Singapore - Online Jobs - Recruit Express",
+      "llm_company": "Recruit Express",
+      "source_link": "https://www.recruitexpress.com.sg/job/pharmaceutical-sales-representative-training-provided-no-exp-needed-bms-2388/HDC",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a pharmaceutical sales representative, not a layoff event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Singapore",
+      "llm_company": "Singapore",
+      "source_link": "https://meyka.com/blog/singapore-retrenchments-hit-post-pandemic-high-mom-weighs-action-on-benefits-0810/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports aggregate MOM retrenchment statistics reaching a post-pandemic high and government policy deliberation on benefits, not a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Generative Ai Ad Flood: Brand And Agency Risk — Mart Signal",
+      "llm_company": "Singapore Generative Ai Ad Flood: Brand And Agency Risk — Mart Signal",
+      "source_link": "https://martsignal.com/articles/singapore-generative-ai-ad-flood-triggers-brand-agency-warning-ae9fcaf6",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is an opinion/analysis piece about generative AI ad flooding and brand/agency risk in Singapore, not a report of any actual layoff event; no company, headcount, or job cuts are involved.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Singapore Mulls Penalising Firms Dodging",
+      "llm_company": "Singapore Mulls Penalising Firms Dodging",
+      "source_link": "https://www.internationalemploymentlawyer.com/news/singapore-mulls-penalising-firms-dodging-retrenchment-payments",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article concerns Singapore government deliberations on penalising firms that dodge retrenchment payments — a policy/legislative debate with no specific company or actual layoff event.",
+      "rejection_reason": "policy"
+    },
+    {
+      "original_company": "Senior Project Manager / Associate Director - Corporate Fit-out And Critical Facilities At Turner And Townsend | Emploive",
+      "llm_company": "Turner & Townsend",
+      "source_link": "https://emploive.com/jobs/6707490/senior-project-manager-associate-director-corporate-fit-out-critical-facilities-",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job posting for a Senior Project Manager / Associate Director role at Turner & Townsend, not a layoff event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "An Anonymous Analyst's Views: The Real Reasons Why Cdl Lost $1 Billion In Market Cap | Governance For Stakeholders",
+      "llm_company": "City Developments Limited",
+      "source_link": "https://governanceforstakeholders.com/2026/10/02/an-anonymous-analysts-views-the-real-reasons-why-cdl-lost-1-billion-in-market-cap/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Opinion/commentary piece by an anonymous analyst about CDL's market cap decline; no layoff, retrenchment, or Singapore job-cut event is reported.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Workforce Planning Manager At Delivery Hero",
+      "llm_company": "Delivery Hero",
+      "source_link": "https://sottava.com/j/workforce-planning-manager-at-delivery-hero-17459",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a job listing for a Workforce Planning Manager role at Delivery Hero, not a layoff event. Job postings and hiring announcements are explicitly excluded.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Kopi-c With Cfo Of Singpost: Rebuilding The Network Behind Singapore's Mail | Securities Investors Association",
+      "llm_company": "Singapore Post (SingPost)",
+      "source_link": "https://sias.org.sg/latest-updates/kopi-c-with-cfo-of-singpost-rebuilding-the-network-behind-singapores-mail/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a CFO interview/commentary about SingPost's mail network and business strategy, not a layoff announcement or reported retrenchment event.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Uparcel Launches End-to-end Marketplace Outsourcing Service | Global News Scanner",
+      "llm_company": "Uparcel",
+      "source_link": "https://globalnewsscanner.com/agp-article/946662420-uparcel-launches-end-to-end-marketplace-outsourcing-service",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article announces a new marketplace outsourcing service launch by Uparcel; it contains no job cuts, retrenchment, or Singapore closure, so it is not a layoff event.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Redmart Quadruples Fleet For East Singapore Expansion",
+      "llm_company": "Redmart",
+      "source_link": "https://www.newsflashasia.com/redmart-quadruples-fleet-for-east-singapore-expansion/",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article covers Redmart expanding its delivery fleet in East Singapore, a hiring/expansion announcement with no job cuts.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Ltk Layoffs: Creator Platform Pivots Toward Brand-facing Tech — Revshare Report",
+      "llm_company": "Ltk Layoffs: Creator Platform Pivots Toward Brand-facing Tech — Revshare Report",
+      "source_link": "https://revsharereport.com/articles/ltk-cuts-staff-as-softbank-backed-creator-platform-shifts-toward-brand-tech-95052dfc",
       "verdict": "needs_review",
       "confidence": "low",
       "provider": "none",
       "notes": "All providers failed: deepseek: response truncated (finish_reason=length) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
-    },
-    {
-      "original_company": "Senior Staff Engineer, Payment At Okx · Singapore | Feeny",
-      "llm_company": "OKX",
-      "source_link": "https://feeny.ai/job/senior-staff-engineer-payment-okx-singapore-1s3fpf8dwxxe",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a job posting for a Senior Staff Engineer role at OKX in Singapore, not a layoff event.",
-      "rejection_reason": "job-posting"
-    },
-    {
-      "original_company": "Half Of Developers Moderately Concerned About Labour Costs: Survey | Singapore Business Review",
-      "llm_company": "Half Of Developers Moderately Concerned About Labour Costs: Survey | Singapore Business Review",
-      "source_link": "https://sbr.com.sg/building-engineering/in-focus/half-developers-moderately-concerned-about-labour-costs-survey",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a survey report on developers' sentiment about labour costs, not a specific layoff event at a named company.",
-      "rejection_reason": "statistics"
-    },
-    {
-      "original_company": "Painting Robots And Heritage Buildings: Wee Hur Construction's Andy Lu On Tackling Complex Projects - Yahoo News",
-      "llm_company": "Wee Hur Construction",
-      "source_link": "https://sg.news.yahoo.com/painting-robots-heritage-buildings-wee-230000666.html",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a profile/interview piece with a Wee Hur Construction executive about tackling complex projects and using painting robots; it contains no layoff, retrenchment, or closure news.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Hdb's New Robots Aim To Speed Up Bto Construction",
-      "llm_company": "Housing & Development Board (HDB)",
-      "source_link": "https://propertynewsasia.com/hdb-turns-to-robots-and-smart-hoists-to-speed-up-bto-construction/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a construction-technology story about HDB deploying robots and smart hoists to speed up BTO building; it contains no job cuts, retrenchment, or closure and is not a layoff event.",
-      "rejection_reason": "commentary"
     }
   ]
 }
