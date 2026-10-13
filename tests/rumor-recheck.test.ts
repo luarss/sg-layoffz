@@ -7,7 +7,7 @@ import {
   classifyRumor,
   buildResultRow,
 } from '../scripts/rumor-recheck';
-import { applyResults, RecheckResult } from '../scripts/apply-rumor-results';
+import { applyResults, applyResultsSafely, RecheckResult, WarningAnalyzer } from '../scripts/apply-rumor-results';
 import type { LayoffEntry } from '../src/lib/types';
 import type { CsvRow } from '../src/lib/csv';
 
@@ -213,5 +213,44 @@ describe('applyResults — patches layoffs rows defensively', () => {
     ];
     const { rows: out } = applyResults(rows, results);
     expect(out[0].notes).toBe('see https://confirm already');
+  });
+});
+
+describe('applyResultsSafely — holds back changes that add integrity warnings', () => {
+  function baseRows(): CsvRow[] {
+    return [
+      { company: 'Acme', date_announced: '2026-06-01', status: 'rumored', notes: 'planned cuts' },
+      { company: 'Globex', date_announced: '2026-05-01', status: 'rumored', notes: 'rumored move' },
+    ];
+  }
+
+  const flagConfirmedGlobex: WarningAnalyzer = (rows) =>
+    rows.flatMap((row, i) =>
+      row.company === 'Globex' && row.status === 'confirmed'
+        ? [{ type: 'unarchived-confirmed' as const, eventIds: [], rows: [i + 1], identity: 'globex', message: 'bad source' }]
+        : []
+    );
+
+  const results: RecheckResult[] = [
+    { company: 'Acme', date_announced: '2026-06-01', new_status: 'confirmed', evidence_url: 'https://a' },
+    { company: 'Globex', date_announced: '2026-05-01', new_status: 'confirmed', evidence_url: 'https://g' },
+  ];
+
+  it('reverts only the change that introduces a new warning', () => {
+    const outcome = applyResultsSafely(baseRows(), results, flagConfirmedGlobex);
+    expect(outcome.patched).toBe(1);
+    expect(outcome.rows[0].status).toBe('confirmed');
+    expect(outcome.rows[1]).toMatchObject({ status: 'rumored', notes: 'rumored move' });
+    expect(outcome.heldBack).toHaveLength(1);
+    expect(outcome.heldBack[0].result.company).toBe('Globex');
+    expect(outcome.heldBack[0].warnings[0].type).toBe('unarchived-confirmed');
+  });
+
+  it('keeps changes whose warnings already existed before the apply', () => {
+    const rows = baseRows();
+    rows[1].status = 'confirmed';
+    const outcome = applyResultsSafely(rows, results, flagConfirmedGlobex);
+    expect(outcome.heldBack).toHaveLength(0);
+    expect(outcome.patched).toBe(2);
   });
 });
