@@ -46,24 +46,42 @@ comma (`rumoredKee Wah Bakery`), is row gluing — flag it immediately.
 npx tsx .claude/skills/audit-layoff-data/scripts/scan.ts
 ```
 
-It reports malformed rows (field count different from the header's own column count →
-row gluing) across both CSVs, exact
-`company+date` duplicates, and same-company clusters worth a manual double-count look.
-Non-zero exit means a glued row exists. This bundles the checks so you don't re-derive
-them each time.
+It groups companies with the same `companyKey` that `validate` and dedup use (so
+`DBS` / `DBS Bank` or the True Fitness / True Yoga variants are one cluster), and reports:
+
+- **Malformed rows** across both CSVs (field count different from the header's own
+  column count → row gluing). Non-zero exit means a glued row exists.
+- **Same company+date split across different `event_id`s.** Rows that already share an
+  `event_id` are linked coverage of one event and are not listed.
+- **Same-company clusters as event lists**: each `event_id` with its row count, date
+  range and statuses, plus every event pair within the double-count review window
+  marked `✓ distinct` (listed in `data/distinct-events.csv`) or `? review`. Clusters with
+  open pairs sort first.
+- **`data/distinct-events.csv` state**: how many pairs are suppressed, and any that name
+  an `event_id` no longer in `layoffs.csv` (stale after a merge).
 
 ### 3. Run the repo's own gates
 
 ```bash
-npm run validate    # hard errors (bad status/date/missing fields) + integrity warnings
-npm test            # vitest: unit logic + the committed-data golden gate
+npm run validate                          # hard errors + integrity warnings + summary table
+npm run validate -- --verbose             # list every per-row advisory, not just 5 per type
+npm run validate -- --baseline HEAD~1     # fail only on warnings NEW since HEAD~1
+npm test                                  # vitest: unit logic + the committed-data golden gate
 ```
 
-`validate` **errors** must be zero. **Warnings** (possible double-counts, unarchived
-sources, vague company, contradictory verdicts) are advisories — triage them, don't
-treat them as blockers. The near-date confirmed pairs validate flags are the real
-double-count candidates; decide per pair whether it's two genuine rounds or one event
-counted twice, and consolidate if it's the latter.
+`validate` **errors** must be zero. **Warnings** are advisories — triage them, don't
+treat them as blockers. Pair warnings (`duplicate`, `double-count`, `superseded-rumor`,
+`possible-same-event`) are reported once per `event_id` pair with both ids, their
+earliest dates, the day gap and the rows involved. Decide per pair: if it is one event
+counted twice, give the rows one `event_id`; if it is two genuine rounds, append the
+pair to `data/distinct-events.csv` (`event_id_a,event_id_b,why`) to silence it.
+Per-row advisories (`unarchived-confirmed`, `contradictory-verdict`, `global-figure`,
+`vague-company`, `cross-file-contradiction`) print as a count plus five examples.
+
+To audit just the latest scrape commit, use `--baseline HEAD~1`: it computes the warnings
+for the CSVs at that ref and exits 1 listing any warning whose fingerprint is new
+(type + sorted event-id pair for pair warnings; type + normalized source URL for per-row
+ones — never row numbers, so reordering or Wayback-archiving a link is not "new").
 
 ### 4. Repair corruption directly
 
@@ -81,8 +99,11 @@ After editing, re-run step 2 and step 3 to confirm clean.
 A corruption that shipped means a guardrail failed. Inspect:
 
 - **`.github/workflows/scheduled-scrape.yml`** — the validate step must NOT be
-  `continue-on-error: true`, or it flags problems and commits anyway. The auto-commit
-  step should be gated on validate succeeding.
+  `continue-on-error: true`, or it flags problems and commits anyway. It runs
+  `npm run validate -- --baseline HEAD`, so a scrape that adds a new double-count or a
+  new unrecognised-source confirmed row fails before the auto-commit, which is gated on
+  `steps.validate.outcome == 'success'`. `rumor-recheck.yml` and `wayback-archive.yml`
+  follow the same pattern.
 - **`.github/workflows/test.yml`** — its `paths:` filter must include `data/**`, else
   data-only commits never run tests or validate on push. It should also run
   `npm run validate`.
@@ -99,9 +120,9 @@ Summarize for the user in this shape:
 
 ```
 ## Dupes
-- exact company+date dupes: <none | list>
+- company+date split across event_ids: <none | list>
 - corruption found: <none | row N: description, what was lost>
-- double-count candidates: <table of company / dates / verdict>
+- double-count candidates: <table of company / event_id pair / dates / verdict (merge or distinct)>
 
 ## Eval-suite gaps
 - <each guardrail that failed or is missing, with file:line and the fix>

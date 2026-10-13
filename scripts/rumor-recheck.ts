@@ -18,11 +18,12 @@
 //
 // Env vars: same LLM keys as llm-triage (see ./llm-provider), plus optional EXA_API_KEY.
 
-import type OpenAI from 'openai';
 import { readCsv, writeCsvRaw } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
-import { ProviderConfig, getProviderChain } from './llm-provider';
-import { searchGoogleNews, searchExa, searchTinyFish, searchKeenable, SearchHit } from './search';
+import { ProviderConfig, ChatClient, getProviderChain, callJsonWithChain, describeChain } from './llm-provider';
+import { searchGoogleNews, semanticSearch, SearchHit } from './search';
+import { sleep } from '../src/lib/async';
+import { DAY_MS, todayIso } from '../src/lib/dates';
 
 export const RECHECK_STATUSES = ['confirmed', 'denied', 'expired', 'still-rumored'] as const;
 export type RecheckStatus = (typeof RECHECK_STATUSES)[number];
@@ -82,7 +83,7 @@ export function parseArgs(argv: string[]): CliOptions {
 export function ageInDays(dateAnnounced: string, now: Date): number {
   const d = new Date(dateAnnounced);
   if (Number.isNaN(d.getTime())) return 0;
-  return Math.floor((now.getTime() - d.getTime()) / 86_400_000);
+  return Math.floor((now.getTime() - d.getTime()) / DAY_MS);
 }
 
 // Select the rumored rows this run should re-check. With --all, every rumor; otherwise
@@ -163,49 +164,29 @@ export function parseRecheckVerdict(raw: string): RecheckVerdict | null {
   };
 }
 
+function recheckRequest(rumor: LayoffEntry, hits: SearchHit[]) {
+  return { system: SYSTEM_PROMPT, user: buildUserPrompt(rumor, hits), parse: parseRecheckVerdict };
+}
+
 // Single LLM call against one client. Accepts an OpenAI-compatible client so tests can
 // inject a mock without touching the network. Returns null on API error or bad JSON.
 export async function classifyRumor(
-  client: Pick<OpenAI, 'chat'>,
+  client: ChatClient,
   model: string,
   rumor: LayoffEntry,
   hits: SearchHit[]
 ): Promise<RecheckVerdict | null> {
-  const response = await client.chat.completions.create({
-    model,
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(rumor, hits) },
-    ],
-    temperature: 0,
-    // Reasoning models (e.g. deepseek-v4-flash) spend hidden reasoning tokens against
-    // this cap; 512 truncated the JSON body and every recheck fell through to null.
-    // Budget for reasoning + the small JSON verdict.
-    max_tokens: 4096,
-    response_format: { type: 'json_object' },
-  });
-  // A truncated response (finish_reason=length) has an empty/partial body — return
-  // null so the chain falls through to the next provider rather than a bogus verdict.
-  if (response.choices[0]?.finish_reason === 'length') return null;
-  const rawText = response.choices[0]?.message?.content || '{}';
-  return parseRecheckVerdict(rawText);
+  const { value } = await callJsonWithChain([{ name: model, client, model }], recheckRequest(rumor, hits));
+  return value;
 }
 
-// Try each provider in order until one returns a valid verdict.
 async function classifyWithChain(
   chain: ProviderConfig[],
   rumor: LayoffEntry,
   hits: SearchHit[]
 ): Promise<RecheckVerdict | null> {
-  for (const provider of chain) {
-    try {
-      const verdict = await classifyRumor(provider.client, provider.model, rumor, hits);
-      if (verdict) return verdict;
-    } catch (err) {
-      process.stdout.write(` [${provider.name} failed, trying next]`);
-    }
-  }
-  return null;
+  const { value } = await callJsonWithChain(chain, recheckRequest(rumor, hits));
+  return value;
 }
 
 // Map a rumor + verdict into the flat result-CSV row.
@@ -237,42 +218,13 @@ async function gatherEvidence(rumor: LayoffEntry): Promise<SearchHit[]> {
   const gnews = await searchGoogleNews(query);
   hits.push(...gnews);
 
-  // Semantic tier on top of the free Google News RSS results, with fallbacks:
-  // Exa (paid) → TinyFish (free, keyed) → Keenable (free, keyless). We stop at
-  // the first tier that returns coverage.
-  const semanticQuery = `${rumor.company} Singapore layoffs update`;
-  const exaKey = process.env.EXA_API_KEY;
-  const tinyfishKey = process.env.TINYFISH_API_KEY;
-  let semanticOk = false;
-  if (exaKey) {
-    try {
-      const exa = await searchExa(exaKey, semanticQuery, {
-        numResults: 5,
-        maxCharacters: 1200,
-      });
-      hits.push(...exa);
-      semanticOk = true;
-    } catch (err) {
-      console.error(`    Exa search failed: ${(err as Error).message}`);
-    }
-  }
-  if (!semanticOk && tinyfishKey) {
-    try {
-      const tf = await searchTinyFish(tinyfishKey, semanticQuery, { numResults: 5 });
-      hits.push(...tf);
-      semanticOk = true;
-    } catch (err) {
-      console.error(`    TinyFish search failed: ${(err as Error).message}`);
-    }
-  }
-  if (!semanticOk) {
-    try {
-      const kb = await searchKeenable(semanticQuery, { numResults: 5 });
-      hits.push(...kb);
-    } catch (err) {
-      console.error(`    Keenable search failed: ${(err as Error).message}`);
-    }
-  }
+  const semantic = await semanticSearch(`${rumor.company} Singapore layoffs update`, {
+    exaKey: process.env.EXA_API_KEY,
+    tinyfishKey: process.env.TINYFISH_API_KEY,
+    numResults: 5,
+    maxCharacters: 1200,
+  });
+  hits.push(...semantic);
 
   // Dedup by URL, keep the first occurrence.
   const seen = new Set<string>();
@@ -286,7 +238,7 @@ async function gatherEvidence(rumor: LayoffEntry): Promise<SearchHit[]> {
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
   const now = new Date();
-  const checkedAt = now.toISOString().slice(0, 10);
+  const checkedAt = todayIso();
 
   const rows = readCsv('layoffs.csv') as LayoffEntry[];
   const stale = selectStaleRumors(rows, opts, now);
@@ -301,7 +253,7 @@ async function main() {
   }
 
   const chain = getProviderChain();
-  console.log(`Provider chain: ${chain.map((p) => `${p.name}(${p.model})`).join(' → ')}\n`);
+  console.log(`Provider chain: ${describeChain(chain)}\n`);
 
   const results: RecheckResultRow[] = [];
   for (let i = 0; i < stale.length; i++) {
@@ -327,7 +279,7 @@ async function main() {
     results.push(buildResultRow(rumor, verdict, checkedAt));
 
     // Gentle pacing between rows to be kind to the RSS/search endpoints.
-    await new Promise((r) => setTimeout(r, 500));
+    await sleep(500);
   }
 
   writeCsvRaw(

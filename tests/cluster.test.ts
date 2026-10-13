@@ -88,3 +88,46 @@ describe('resolveCluster', () => {
     }
   });
 });
+
+describe('resolveCluster scoring shared with rowQualityScore', () => {
+  const tokens = companyTokens(['Grab']);
+
+  function canonicalOf(nodes: ClusterNode[]): number {
+    const cluster = buildClusters(nodes, tokens).find((c) => c.members.length === nodes.length)!;
+    const res = resolveCluster(cluster);
+    return res.kind === 'canonical' ? res.canonicalIdx : -1;
+  }
+
+  it('prefers a non-Google-News source over a Google News wrapper', () => {
+    expect(
+      canonicalOf([
+        node({ idx: 0, date_announced: '2026-05-01', url: 'https://news.google.com/rss/articles/abc' }),
+        node({ idx: 1, date_announced: '2026-05-05', url: 'https://www.straitstimes.com/grab' }),
+      ])
+    ).toBe(1);
+  });
+
+  it('uses a working URL only as a tie-breaker below the shared signals', () => {
+    expect(
+      canonicalOf([
+        node({ idx: 0, date_announced: '2026-05-01', brokenUrl: true, jobs_cut: 100 }),
+        node({ idx: 1, date_announced: '2026-05-05', brokenUrl: false }),
+      ])
+    ).toBe(0);
+    expect(
+      canonicalOf([
+        node({ idx: 0, date_announced: '2026-05-01', brokenUrl: true }),
+        node({ idx: 1, date_announced: '2026-05-05', brokenUrl: false }),
+      ])
+    ).toBe(1);
+  });
+
+  it('ranks an event-rule match above every quality signal', () => {
+    expect(
+      canonicalOf([
+        node({ idx: 0, date_announced: '2026-05-01', jobs_cut: 100 }),
+        node({ idx: 1, date_announced: '2026-05-05', eventRuleMatched: true, url: 'https://news.google.com/rss/articles/x' }),
+      ])
+    ).toBe(1);
+  });
+});

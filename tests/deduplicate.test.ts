@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { isDuplicate, extractGnFingerprint } from '../scripts/deduplicate';
+import {
+  isDuplicate,
+  isDuplicateIndexed,
+  buildDedupIndex,
+  extractGnFingerprint,
+  DedupCandidate,
+} from '../scripts/deduplicate';
 import { LayoffEntry, ReviewEntry } from '../src/lib/types';
 
 function entry(over: Partial<LayoffEntry> = {}): LayoffEntry {
@@ -149,6 +155,54 @@ describe('isDuplicate', () => {
         existing,
         []
       )
+    ).toBe('new');
+  });
+});
+
+describe('isDuplicateIndexed', () => {
+  const existing = [
+    entry({ company: 'Grab', date_announced: '2026-05-01', source_link: 'https://x.com/article' }),
+  ];
+  const queue = [
+    review({ company: 'Shopee', date_announced: '2026-06-10', source_link: 'https://q.com/a', notes: 'title [gn:fp-9] x' }),
+  ];
+  const rejected = [
+    entry({ company: 'Lazada', date_announced: '2026-07-02', source_link: 'https://x.com/rejected', notes: '[gn:fp-rej]' }),
+  ];
+
+  const candidates: DedupCandidate[] = [
+    { source_link: 'https://X.com/Article' },
+    { source_link: 'https://x.com/article?utm_source=twitter' },
+    { source_link: 'https://web.archive.org/web/20260101000000/https://x.com/article' },
+    { source_link: 'https://x.com/rejected/' },
+    { notes: 'other wrapper [gn:fp-9]' },
+    { notes: '[gn:fp-rej]' },
+    { source_link: 'https://news.google.com/rss/articles/XYZ', company: 'Grab', date_announced: '2026-05-01' },
+    { source_link: 'https://news.google.com/rss/articles/ABC', company: 'Lazada', date_announced: '2026-07-02' },
+    { source_link: 'https://other.com/lazada', company: 'Lazada', date_announced: '2026-07-02' },
+    { company: 'Grab', date_announced: '2026-05-20', source_link: 'https://other.com/x' },
+    { company: 'Shopee', date_announced: '2026-06-28', source_link: 'https://other.com/y' },
+    { company: 'Zalora', date_announced: '2026-09-01', source_link: 'https://new.com/x' },
+    {},
+  ];
+
+  it('agrees with isDuplicate on every fixture candidate', () => {
+    const index = buildDedupIndex(existing, queue, rejected);
+    for (const candidate of candidates) {
+      expect(isDuplicateIndexed(candidate, index)).toBe(isDuplicate(candidate, existing, queue, rejected));
+    }
+  });
+
+  it('covers all three outcomes across the fixtures', () => {
+    const index = buildDedupIndex(existing, queue, rejected);
+    const outcomes = new Set(candidates.map((candidate) => isDuplicateIndexed(candidate, index)));
+    expect(outcomes).toEqual(new Set(['new', 'duplicate', 'potential-duplicate']));
+  });
+
+  it('does not flag a company-month match that only exists in rejected.csv', () => {
+    const index = buildDedupIndex(existing, queue, rejected);
+    expect(
+      isDuplicateIndexed({ source_link: 'https://other.com/lazada', company: 'Lazada', date_announced: '2026-07-02' }, index)
     ).toBe('new');
   });
 });

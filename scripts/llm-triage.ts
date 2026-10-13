@@ -14,9 +14,20 @@
 import fs from 'node:fs';
 import { readCsv, appendCsv, writeCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
-import { LLMVerdict, coerceVerdict } from '../src/lib/verdict';
-import { normalizeCompany } from './normalize';
-import { ProviderConfig, getProviderChain } from './llm-provider';
+import { companyKey, eventIdFor } from './normalize';
+import { todayIso } from '../src/lib/dates';
+import { ProviderConfig, getProviderChain, callJsonWithChain, describeChain } from './llm-provider';
+import {
+  SYSTEM_PROMPT,
+  buildUserPrompt,
+  formatEventHints,
+  hintedEventIds,
+  parseModelVerdict,
+  withEntryDefaults,
+  type EventHint,
+  type EventHints,
+  type ModelVerdict,
+} from './llm-prompt';
 import {
   buildClusters,
   resolveCluster,
@@ -25,17 +36,6 @@ import {
   type Cluster,
   type ClusterNode,
 } from './cluster';
-
-// Derive a kebab-case event_id from company + event month, used when the model does
-// not propose one (or proposes a blank).
-function eventIdFor(company: string, date: string): string {
-  const slug = normalizeCompany(company || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  const month = (date || '').slice(0, 7);
-  return `${slug || 'event'}-${month || 'unknown'}`;
-}
 
 interface SummaryRow {
   original_company: string;
@@ -48,104 +48,13 @@ interface SummaryRow {
   rejection_reason?: string;
 }
 
-const SYSTEM_PROMPT = `You are an expert analyst for a Singapore layoff tracking database. Evaluate news articles about potential Singapore layoff events and classify each one.
-
-## Classification Rules
-
-**CONFIRMED** — all must be true:
-- Officially announced or credibly reported job cuts/retrenchment
-- Specific named company with Singapore operations
-- Already happened or actively underway (not a future plan)
-
-**RUMORED** — same as confirmed but:
-- Planned, anticipated, or reported as likely ("plans to cut", "expected to retrench", "may lay off")
-
-**Closures count as layoff events.** A Singapore business, store, outlet, or branch
-closure that implies job losses IS a layoff event — even when the headcount is unstated
-and even when it is a single outlet of a continuing chain. Classify it CONFIRMED if it has
-already closed or is actively closing, RUMORED if it is an announced or future closure. Do
-NOT reject a Singapore closure as "not a layoff" or as having "no Singapore nexus".
-
-**REJECTED** — reject if ANY applies:
-- Commentary, opinion, analysis, or market overview about layoffs in general
-- Labour market statistics (MOM data, employment surveys, percentage reports)
-- Government or parliamentary policy debate (MAS, MOM proposals, union discussions)
-- Job posting or hiring announcement
-- No clear Singapore nexus (foreign company, foreign office only)
-- Personal anecdote or first-person story ("I got laid off…")
-- Aggregator article covering many companies (not a single specific event)
-- Legal case, court ruling, or severance policy debate
-- Duplicate of an already well-known event
-- Unnamed, anonymized, or placeholder company — the subject is a generic descriptor
-  ("an art firm", "another legacy bank", "unnamed AI startup", "a pension manager")
-  rather than a specific named company
-
-**NEEDS_REVIEW** — use ONLY as a last resort, for a genuinely ambiguous article where
-none of the rules above apply. Do NOT retreat to needs_review just to avoid a hard call:
-- If any REJECTED rule matches, return \`rejected\`.
-- If it is a Singapore closure or a credibly reported cut, decide \`confirmed\`/\`rumored\`.
-- A worldwide or foreign headcount does NOT make the verdict ambiguous — still classify
-  the event (accept when there is a Singapore nexus, reject when there is none) and put
-  the figure in jobs_cut_global.
-
-## Evaluation Dimensions (assess internally)
-1. singapore_nexus — does this involve a Singapore entity or Singapore office of a multinational?
-2. layoff_authenticity — is this a real layoff announcement (not commentary or statistics)?
-3. company_identifiable — is a specific company clearly named?
-4. date_extractable — is there a discernible announcement date?
-5. source_credibility — is the source a credible news outlet or company press release?
-6. not_commentary — not an opinion piece, explainer, or market report?
-7. not_policy_debate — not a parliamentary or government policy discussion?
-8. not_personal_anecdote — not a personal story?
-
-## Allowed Industries
-Tech, Finance, Manufacturing, Retail, F&B, Real Estate, Healthcare, Education, Other
-
-## Headcount Scope — Singapore vs global
-This tracker counts SINGAPORE jobs only. Split the headcount into two fields:
-- "jobs_cut_sg" — number of SINGAPORE roles cut (only when the figure is specifically
-  Singapore staff). Otherwise null.
-- "jobs_cut_global" — the worldwide/foreign/regional figure the source gave (e.g.
-  "18,000 jobs globally", "1,000 jobs in Britain", "8,000 back-office roles"). Otherwise null.
-A worldwide or foreign figure MUST go in jobs_cut_global, NEVER jobs_cut_sg. If the
-number is Singapore-specific, use jobs_cut_sg and leave jobs_cut_global null. If no
-headcount is disclosed, both are null.
-
-## Event date vs report date
-- "date_announced" — when the layoff event happened / was announced by the company.
-- "date_reported" — the article's publication date (may be later; follow-up coverage).
-
-## Event id
-"event_id" is a kebab-case slug identifying the underlying layoff EVENT (e.g.
-"standard-chartered-2026-ai"). If this story is follow-up coverage of an event that
-already appears in the "Existing events for this company" list below, REUSE that exact
-event_id. Only mint a new slug (company-YYYY-MM) when it is a genuinely new event.
-
-## Output
-Return ONLY a valid JSON object (no markdown, no extra text):
-{
-  "verdict": "confirmed" | "rumored" | "rejected" | "needs_review",
-  "confidence": "high" | "medium" | "low",
-  "company": "Company Name",
-  "industry": "<one of the allowed industries>",
-  "date_announced": "YYYY-MM-DD",
-  "date_reported": "YYYY-MM-DD",
-  "jobs_cut_sg": <integer or null>,
-  "jobs_cut_global": <integer or null>,
-  "pct_workforce": <number or null>,
-  "event_id": "kebab-case-slug",
-  "notes": "1–2 sentence reason for your decision",
-  "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal|vague> (only when verdict=rejected)"
-}`;
-
 // Existing events per normalized company — lets the model reuse an event_id when the
 // queue row is follow-up coverage of an already-tracked event.
-type EventHint = { event_id: string; date_announced: string; company: string };
 function buildEventIndex(layoffs: LayoffEntry[]): Map<string, EventHint[]> {
   const byCompany = new Map<string, Map<string, EventHint>>();
   for (const e of layoffs) {
     if (!e.event_id) continue;
-    const key = normalizeCompany(e.company || '').toLowerCase();
+    const key = companyKey(e.company || '');
     if (!byCompany.has(key)) byCompany.set(key, new Map());
     const seen = byCompany.get(key)!;
     if (!seen.has(e.event_id)) {
@@ -228,119 +137,61 @@ function clusterHintsFromClusters(
   return hints;
 }
 
-function buildUserPrompt(
+const MAX_LISTED_HINTS = 12;
+
+function selectEventHints(
   entry: LayoffEntry,
   eventIndex: Map<string, EventHint[]>,
   clusterHint: ClusterHint
-): string {
-  const lines: string[] = [
-    `Title/Company: ${entry.company}`,
-    `Date: ${entry.date_announced}`,
-    `Source URL: ${entry.source_link}`,
-  ];
-  const sg = entry.jobs_cut_sg;
-  const global = entry.jobs_cut_global;
-  if (sg != null) lines.push(`Jobs cut SG (scraped): ${sg}`);
-  if (global != null) lines.push(`Jobs cut global (scraped): ${global}`);
-  if (entry.pct_workforce != null) lines.push(`% workforce (scraped): ${entry.pct_workforce}`);
-  if (entry.notes) lines.push(`Notes/snippet: ${entry.notes}`);
-
-  if (clusterHint.primary) {
-    const p = clusterHint.primary;
-    lines.push(
-      `This appears to be follow-up coverage of event ${p.event_id} (${p.company}, ${p.date_announced}). ` +
-      `Reuse that exact event_id unless the article clearly describes a separate, later round of cuts.`
-    );
-  }
-
-  // Fallback hint list: exact-normalized-company existing events (original behaviour)
-  // plus any events linked to this row via clustering (catches cross-name variants,
-  // e.g. "Uber" vs "Uber Technologies", that an exact-key lookup misses). Skip the
-  // primary hint's event_id here so it isn't listed twice.
+): EventHints {
   const hintMap = new Map<string, EventHint>();
-  const exact = eventIndex.get(normalizeCompany(entry.company || '').toLowerCase());
+  const exact = eventIndex.get(companyKey(entry.company || ''));
   for (const h of exact || []) hintMap.set(h.event_id, h);
   for (const h of clusterHint.fallback) hintMap.set(h.event_id, h);
   if (clusterHint.primary) hintMap.delete(clusterHint.primary.event_id);
-
-  if (hintMap.size > 0) {
-    lines.push('Existing events for this company (reuse an event_id if this is follow-up coverage):');
-    for (const h of [...hintMap.values()].slice(0, 12)) {
-      lines.push(`  - ${h.event_id} (${h.date_announced})`);
-    }
-  }
-  return lines.join('\n');
+  return { primary: clusterHint.primary, listed: [...hintMap.values()].slice(0, MAX_LISTED_HINTS) };
 }
 
-// Try providers in order, falling back on API errors.
-// Returns the verdict and which provider ultimately succeeded.
+function allProvidersFailedVerdict(entry: LayoffEntry, errors: string[]): ModelVerdict {
+  return {
+    verdict: 'needs_review',
+    confidence: 'low',
+    company: entry.company,
+    industry: 'Other',
+    date_announced: entry.date_announced,
+    date_reported: entry.date_reported,
+    jobs_cut_sg: entry.jobs_cut_sg,
+    jobs_cut_global: entry.jobs_cut_global,
+    pct_workforce: entry.pct_workforce,
+    event_id: null,
+    notes: `All providers failed: ${errors.join(' | ')}`,
+  };
+}
+
+function logDiscardedEventId(entry: LayoffEntry, discarded: string, hintedIds: string[]): void {
+  const allowed = hintedIds.length > 0 ? hintedIds.join(', ') : 'none';
+  console.log(
+    `  ! ${entry.company.slice(0, 50)}: model proposed unlisted event_id "${discarded}" (allowed: ${allowed}) — treating as new event`
+  );
+}
+
 async function evaluateEntry(
   chain: ProviderConfig[],
   entry: LayoffEntry,
   eventIndex: Map<string, EventHint[]>,
   clusterHint: ClusterHint
-): Promise<{ verdict: LLMVerdict; provider: string }> {
-  const errors: string[] = [];
+): Promise<{ verdict: ModelVerdict; provider: string }> {
+  const hints = selectEventHints(entry, eventIndex, clusterHint);
+  const hintedIds = hintedEventIds(hints);
+  const { value, provider, errors } = await callJsonWithChain(chain, {
+    system: SYSTEM_PROMPT,
+    user: buildUserPrompt(entry, formatEventHints(hints)),
+    parse: (raw) => parseModelVerdict(raw, hintedIds),
+  });
 
-  for (const provider of chain) {
-    try {
-      const response = await provider.client.chat.completions.create({
-        model: provider.model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(entry, eventIndex, clusterHint) },
-        ],
-        temperature: 0,
-        // Providers in the chain (e.g. deepseek-v4-flash) are reasoning models whose
-        // hidden reasoning tokens count against max_tokens. At 512 the reasoning ate
-        // the whole budget, the response was cut off (finish_reason=length) with an
-        // empty/truncated JSON body, and every row silently fell to needs_review and
-        // piled up in the queue. Budget for reasoning + the small JSON verdict.
-        max_tokens: 4096,
-        response_format: { type: 'json_object' },
-      });
-
-      // A truncated response (reasoning overran the budget) yields empty/partial JSON
-      // that coerces to a bogus needs_review. Treat it as a provider failure so we
-      // fall through to the next provider instead of poisoning the queue.
-      if (response.choices[0]?.finish_reason === 'length') {
-        errors.push(`${provider.name}: response truncated (finish_reason=length)`);
-        process.stdout.write(` [${provider.name} truncated, trying next]`);
-        continue;
-      }
-
-      const raw = response.choices[0]?.message?.content || '{}';
-
-      try {
-        return { verdict: coerceVerdict(raw, entry), provider: provider.name };
-      } catch {
-        // Malformed JSON from this provider — treat as a soft failure and try the next
-        errors.push(`${provider.name}: JSON parse error (raw: ${raw.slice(0, 80)})`);
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      errors.push(`${provider.name}: ${msg}`);
-      process.stdout.write(` [${provider.name} failed, trying next]`);
-    }
-  }
-
-  // All providers failed
-  return {
-    verdict: {
-      verdict: 'needs_review',
-      confidence: 'low',
-      company: entry.company,
-      industry: 'Other',
-      date_announced: entry.date_announced,
-      date_reported: entry.date_reported,
-      jobs_cut_sg: entry.jobs_cut_sg,
-      jobs_cut_global: entry.jobs_cut_global,
-      pct_workforce: entry.pct_workforce,
-      event_id: entry.event_id,
-      notes: `All providers failed: ${errors.join(' | ')}`,
-    },
-    provider: 'none',
-  };
+  if (!value) return { verdict: allProvidersFailedVerdict(entry, errors), provider };
+  if (value.discardedEventId) logDiscardedEventId(entry, value.discardedEventId, hintedIds);
+  return { verdict: withEntryDefaults(value.verdict, entry), provider };
 }
 
 async function main() {
@@ -351,7 +202,7 @@ async function main() {
     fs.writeFileSync(
       'data/llm-triage-summary.json',
       JSON.stringify(
-        { run_date: new Date().toISOString().slice(0, 10), providers: [], total: 0, confirmed: 0, rumored: 0, rejected: 0, needs_review: 0, remaining_queue: 0, rows: [] },
+        { run_date: todayIso(), providers: [], total: 0, confirmed: 0, rumored: 0, rejected: 0, needs_review: 0, remaining_queue: 0, rows: [] },
         null,
         2
       ) + '\n'
@@ -372,7 +223,7 @@ async function main() {
   const clusterHints = clusterHintsFromClusters(clusters, existingLayoffs);
 
   const chain = getProviderChain();
-  const providerNames = chain.map((p) => `${p.name}(${p.model})`).join(' → ');
+  const providerNames = describeChain(chain);
   console.log(`LLM triage: ${queue.length} entr${queue.length === 1 ? 'y' : 'ies'}`);
   console.log(`Provider chain: ${providerNames}\n`);
 
@@ -507,7 +358,7 @@ async function main() {
   writeCsv('review-queue.csv', remaining);
 
   const summary = {
-    run_date: new Date().toISOString().slice(0, 10),
+    run_date: todayIso(),
     providers: chain.map((p) => ({ name: p.name, model: p.model })),
     timed_out: timedOut,
     total: summaryRows.length,

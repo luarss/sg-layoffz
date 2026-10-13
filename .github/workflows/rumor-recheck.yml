@@ -57,14 +57,14 @@ jobs:
       # rather than commit corruption if the rechecked data has hard errors.
       - name: Validate data integrity
         id: validate
-        if: steps.apply.outcome == 'success'
-        run: npm run validate
+        run: npm run validate -- --baseline HEAD
 
       - name: Set commit date
         id: meta
         run: echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
       - name: Commit results to main
+        if: steps.validate.outcome == 'success'
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           file_pattern: >-

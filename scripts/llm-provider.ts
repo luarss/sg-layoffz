@@ -1,5 +1,5 @@
-// Shared LLM provider chain, used by scripts/llm-triage.ts (review-queue triage) and
-// scripts/rumor-recheck.ts (rumor lifecycle). Both need the same DeepSeek → MiMo →
+// Shared LLM provider chain, used by scripts/llm-triage.ts (review-queue triage),
+// scripts/llm-evals.ts (benchmark) and scripts/rumor-recheck.ts (rumor lifecycle). All need the same DeepSeek → MiMo →
 // OpenRouter fallback wiring, so the client construction lives here once.
 //
 // Environment variables:
@@ -13,11 +13,34 @@
 //   LLM_PROVIDER        force a single provider: deepseek | mimo | openrouter
 
 import OpenAI from 'openai';
+import { sleep } from '../src/lib/async';
 
 export interface ProviderConfig {
   name: string;
   client: OpenAI;
   model: string;
+}
+
+export type ChatClient = Pick<OpenAI, 'chat'>;
+
+export interface ChatProvider {
+  name: string;
+  client: ChatClient;
+  model: string;
+}
+
+export interface JsonCallOptions<T> {
+  system: string;
+  user: string;
+  parse: (raw: string) => T | null;
+  attempts?: number;
+  log?: (message: string) => void;
+}
+
+export interface JsonCallResult<T> {
+  value: T | null;
+  provider: string;
+  errors: string[];
 }
 
 // Per-request ceilings shared by every provider client. The OpenAI SDK defaults to a
@@ -91,4 +114,70 @@ export function getProviderChain(): ProviderConfig[] {
   }
 
   return chain;
+}
+
+export function describeChain(chain: ChatProvider[]): string {
+  return chain.map((p) => `${p.name}(${p.model})`).join(' → ');
+}
+
+const RETRY_BACKOFF_MS = 500;
+
+type AttemptOutcome<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: string; notice: string | null };
+
+async function attemptProvider<T>(
+  provider: ChatProvider,
+  options: JsonCallOptions<T>
+): Promise<AttemptOutcome<T>> {
+  try {
+    const response = await provider.client.chat.completions.create({
+      model: provider.model,
+      messages: [
+        { role: 'system', content: options.system },
+        { role: 'user', content: options.user },
+      ],
+      temperature: 0,
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+    });
+    const choice = response.choices[0];
+    if (choice?.finish_reason === 'length') {
+      return {
+        ok: false,
+        error: `${provider.name}: response truncated (finish_reason=length)`,
+        notice: ` [${provider.name} truncated, trying next]`,
+      };
+    }
+    const raw = choice?.message?.content || '{}';
+    const value = options.parse(raw);
+    if (value !== null) return { ok: true, value };
+    return { ok: false, error: `${provider.name}: unparseable response (raw: ${raw.slice(0, 80)})`, notice: null };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `${provider.name}: ${message}`, notice: ` [${provider.name} failed, trying next]` };
+  }
+}
+
+export async function callJsonWithChain<T>(
+  chain: ChatProvider[],
+  options: JsonCallOptions<T>
+): Promise<JsonCallResult<T>> {
+  const attempts = Math.max(1, options.attempts ?? 1);
+  const log = options.log ?? ((message: string) => process.stdout.write(message));
+  const errors: string[] = [];
+
+  for (const provider of chain) {
+    let notice: string | null = null;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      const outcome = await attemptProvider(provider, options);
+      if (outcome.ok) return { value: outcome.value, provider: provider.name, errors };
+      errors.push(outcome.error);
+      notice = outcome.notice;
+      if (attempt < attempts) await sleep(RETRY_BACKOFF_MS * attempt);
+    }
+    if (notice) log(notice);
+  }
+
+  return { value: null, provider: 'none', errors };
 }

@@ -1,9 +1,8 @@
 import fs from 'node:fs';
-import { readCsv, appendCsv } from '../src/lib/csv';
-import { ReviewEntry } from '../src/lib/types';
-import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
-import { isDuplicate } from './deduplicate';
-import { searchExa, searchTinyFish, searchKeenable, titleFingerprint, SearchHit } from './search';
+import { DAY_MS, monthOf } from '../src/lib/dates';
+import { semanticSearch, SearchHit } from './search';
+import { dedupeHits, hitToReviewEntry, ingestCandidates } from './scrape-common';
+import { sleep } from '../src/lib/async';
 
 // Exa is semantic, so natural-language intent queries beat bare keywords.
 //
@@ -40,7 +39,7 @@ const ROTATING_QUERIES = [
 function dayOfYear(d: Date): number {
   const start = Date.UTC(d.getUTCFullYear(), 0, 0);
   const today = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-  return Math.floor((today - start) / 86_400_000);
+  return Math.floor((today - start) / DAY_MS);
 }
 
 function buildQueries(today: Date): string[] {
@@ -68,7 +67,7 @@ interface BudgetState {
 }
 
 function currentMonth(): string {
-  return new Date().toISOString().slice(0, 7);
+  return monthOf(new Date());
 }
 
 function loadBudget(): BudgetState {
@@ -91,96 +90,6 @@ function loadBudget(): BudgetState {
 
 function saveBudget(state: BudgetState): void {
   fs.writeFileSync(BUDGET_PATH, JSON.stringify(state, null, 2) + '\n');
-}
-
-function resultToReviewEntry(r: SearchHit, index: number): ReviewEntry {
-  const title = r.title || r.url;
-  const text = r.snippet || '';
-  const combined = `${title}. ${text}`;
-  const company = normalizeCompany(
-    title.split(/cuts?|lays? off|retrench|sheds?/i)[0] || title
-  );
-
-  return {
-    review_id: `exa-${Date.now()}-${index}`,
-    company,
-    date_announced: parseDate(r.publishedDate || '') || new Date().toISOString().slice(0, 10),
-    date_reported: parseDate(r.publishedDate || '') || new Date().toISOString().slice(0, 10),
-    // Scraped headcount is unscoped at ingestion; default to SG, re-scoped by triage.
-    jobs_cut_sg: extractJobsFromText(combined),
-    jobs_cut_global: null,
-    pct_workforce: null,
-    industry: 'Other',
-    source_link: r.url,
-    notes: `From Exa [gn:${titleFingerprint(title)}]`,
-    status: 'rumored',
-    event_id: '',
-    candidate_urls: r.url,
-    snippet: text.slice(0, 300),
-  };
-}
-
-// TinyFish fallback for a single query, with logging and error-swallowing so a
-// failed fallback never aborts the run (mirrors how Exa failures are handled).
-async function tinyFishFallback(
-  apiKey: string,
-  query: string,
-  startDate: string,
-  endDate: string
-): Promise<SearchHit[]> {
-  try {
-    const results = await searchTinyFish(apiKey, query, {
-      numResults: RESULTS_PER_QUERY,
-      startPublishedDate: startDate,
-      endPublishedDate: endDate,
-    });
-    console.log(`    [tinyfish] fallback returned ${results.length} results`);
-    return results;
-  } catch (err) {
-    console.error(`    TinyFish fallback failed: ${(err as Error).message}`);
-    return [];
-  }
-}
-
-// Keenable is keyless, so it's the guaranteed final tier. Errors are swallowed.
-async function keenableFallback(
-  query: string,
-  startDate: string,
-  endDate: string
-): Promise<SearchHit[]> {
-  try {
-    const results = await searchKeenable(query, {
-      numResults: RESULTS_PER_QUERY,
-      startPublishedDate: startDate,
-      endPublishedDate: endDate,
-    });
-    console.log(`    [keenable] fallback returned ${results.length} results`);
-    return results;
-  } catch (err) {
-    console.error(`    Keenable fallback failed: ${(err as Error).message}`);
-    return [];
-  }
-}
-
-// Fallback search chain used when Exa is unavailable or a query fails: try
-// TinyFish first (when keyed), then Keenable (keyless, always available).
-async function fallbackSearch(
-  query: string,
-  startDate: string,
-  endDate: string,
-  tinyfishKey: string | undefined
-): Promise<SearchHit[]> {
-  if (tinyfishKey) {
-    const tf = await tinyFishFallback(tinyfishKey, query, startDate, endDate);
-    if (tf.length > 0) return tf;
-  }
-  return keenableFallback(query, startDate, endDate);
-}
-
-function emitResult(newEntries: number, dupes: number, potential: number) {
-  console.log(
-    `SCRAPE_RESULT:source=exa,new_entries=${newEntries},duplicates=${dupes},potential_dupes=${potential}`
-  );
 }
 
 async function main() {
@@ -221,9 +130,6 @@ async function main() {
   const startDate = start.toISOString();
   const QUERIES = buildQueries(today);
   console.log(`  Query plan (${QUERIES.length} candidates, capped at ${allowance}):`);
-  const layoffs = readCsv('layoffs.csv');
-  const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
-  const rejected = readCsv('rejected.csv');
 
   const allResults: SearchHit[] = [];
   let issued = 0;
@@ -237,94 +143,35 @@ async function main() {
     console.log(`  Query: "${query}"`);
     issued++;
 
-    // Per query, use Exa while it has a key and budget; otherwise fall back to
-    // TinyFish. A mid-run Exa failure also falls through to TinyFish when keyed.
     const useExa = exaKey && budget.searches_used < budget.monthly_cap;
-    let results: SearchHit[] = [];
-
-    if (useExa) {
-      budget.searches_used++;
-      try {
-        results = await searchExa(exaKey, query, {
-          numResults: RESULTS_PER_QUERY,
-          startPublishedDate: startDate,
-          endPublishedDate: endDate,
-          maxCharacters: 800,
-        });
-      } catch (err) {
-        console.error(`    Failed: ${(err as Error).message}`);
-        results = await fallbackSearch(query, startDate, endDate, tinyfishKey);
-      }
-      // Persist after every call so a crash mid-run doesn't reset the counter.
-      saveBudget(budget);
-    } else {
-      results = await fallbackSearch(query, startDate, endDate, tinyfishKey);
-    }
+    if (useExa) budget.searches_used++;
+    const results = await semanticSearch(query, {
+      exaKey: useExa ? exaKey : undefined,
+      tinyfishKey,
+      numResults: RESULTS_PER_QUERY,
+      startPublishedDate: startDate,
+      endPublishedDate: endDate,
+      maxCharacters: 800,
+    });
+    if (useExa) saveBudget(budget);
 
     console.log(`    Found ${results.length} results`);
     allResults.push(...results);
-    await new Promise((r) => setTimeout(r, 500));
+    await sleep(500);
   }
 
   if (skipped > 0) {
     console.log(`  Skipped ${skipped} query(ies) to stay within budget/run-cap.`);
   }
 
-  // Dedup within this run: by URL, then by title fingerprint.
-  const seenUrls = new Set<string>();
-  const seenFingerprints = new Set<string>();
-  const unique = allResults.filter((r) => {
-    if (!r.url || seenUrls.has(r.url)) return false;
-    seenUrls.add(r.url);
-    const fp = titleFingerprint(r.title || r.url);
-    if (fp && seenFingerprints.has(fp)) return false;
-    if (fp) seenFingerprints.add(fp);
-    return true;
-  });
-
+  const unique = dedupeHits(allResults);
   console.log(`\n  Total unique results: ${unique.length}`);
 
-  const newEntries: ReviewEntry[] = [];
-  let dupes = 0;
-  let potentialDupes = 0;
-  const seenCompanyDates = new Set<string>();
-
-  for (let i = 0; i < unique.length; i++) {
-    const entry = resultToReviewEntry(unique[i], i);
-
-    const cdKey = `${normalizeCompany(entry.company).toLowerCase()}||${entry.date_announced}`;
-    if (seenCompanyDates.has(cdKey)) {
-      dupes++;
-      continue;
-    }
-
-    const result = isDuplicate(entry, layoffs, reviewQueue, rejected);
-
-    if (result === 'new') {
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-    } else if (result === 'duplicate') {
-      dupes++;
-    } else {
-      potentialDupes++;
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-      entry.notes = `${entry.notes} | POTENTIAL DUPLICATE - verify manually`;
-    }
-  }
-
-  if (newEntries.length > 0) {
-    appendCsv('review-queue.csv', newEntries as any);
-    console.log(`  ✅ Added ${newEntries.length} entries to review queue`);
-  } else {
-    console.log('  No new entries to add');
-  }
-
-  console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
+  const entries = unique.map((hit, i) => hitToReviewEntry(hit, i, { idPrefix: 'exa', notesPrefix: 'From Exa' }));
+  ingestCandidates('exa', entries);
   console.log(
     `  Budget after run: ${budget.searches_used}/${budget.monthly_cap} (${budget.monthly_cap - budget.searches_used} remaining).`
   );
-  emitResult(newEntries.length, dupes, potentialDupes);
 }
 
 main()

@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import Papa from 'papaparse';
 import { INDUSTRIES } from '../src/lib/types';
+import { readCsvFile } from '../src/lib/csv';
+import { monthOf } from '../src/lib/dates';
 
 // A small in-code fallback used only if data/company-aliases.csv is missing (e.g. a
 // fresh checkout that hasn't pulled data/, or a sandboxed test run with a stripped-down
@@ -29,11 +30,7 @@ function loadCompanyAliases(): Record<string, string> {
   const filePath = path.join(process.cwd(), 'data', 'company-aliases.csv');
   if (!fs.existsSync(filePath)) return { ...FALLBACK_ALIASES };
 
-  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n?/g, '\n');
-  const parsed = Papa.parse<{ alias: string; canonical: string; note?: string }>(raw, {
-    header: true,
-    skipEmptyLines: true,
-  });
+  const parsed = readCsvFile<{ alias: string; canonical: string; note?: string }>(filePath);
 
   const map: Record<string, string> = {};
   for (const row of parsed.data) {
@@ -62,6 +59,7 @@ const SUFFIXES = [
   'holdings',
   'group',
   'singapore',
+  'bank',
   'international',
 ];
 
@@ -168,6 +166,20 @@ export function normalizeCompany(raw: string): string {
     .join(' ');
 
   return name || raw.trim();
+}
+
+export function companyKey(name: string): string {
+  return normalizeCompany(name).toLowerCase().trim();
+}
+
+export function companyMonthKey(name: string, date: string): string {
+  return `${companyKey(name)}|${monthOf(date)}`;
+}
+
+export function eventIdFor(company: string, date: string): string {
+  const slug = companyKey(company || '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const month = monthOf(date);
+  return `${slug || 'event'}-${month || 'unknown'}`;
 }
 
 // Build a map of {canonicalKey -> word-bounded search variants} for matching

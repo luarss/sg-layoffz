@@ -437,3 +437,57 @@ export async function fetchKeenable(
     return { url: targetUrl, title: '', text: raw };
   }
 }
+
+export interface SemanticSearchOptions {
+  exaKey?: string;
+  tinyfishKey?: string;
+  numResults?: number;
+  startPublishedDate?: string;
+  endPublishedDate?: string;
+  maxCharacters?: number;
+}
+
+type DateWindow = Pick<SemanticSearchOptions, 'numResults' | 'startPublishedDate' | 'endPublishedDate'>;
+
+async function tinyFishFallback(apiKey: string, query: string, window: DateWindow): Promise<SearchHit[]> {
+  try {
+    const results = await searchTinyFish(apiKey, query, window);
+    console.log(`    [tinyfish] fallback returned ${results.length} results`);
+    return results;
+  } catch (err) {
+    console.error(`    TinyFish fallback failed: ${(err as Error).message}`);
+    return [];
+  }
+}
+
+async function keenableFallback(query: string, window: DateWindow): Promise<SearchHit[]> {
+  try {
+    const results = await searchKeenable(query, window);
+    console.log(`    [keenable] fallback returned ${results.length} results`);
+    return results;
+  } catch (err) {
+    console.error(`    Keenable fallback failed: ${(err as Error).message}`);
+    return [];
+  }
+}
+
+async function fallbackSearch(query: string, tinyfishKey: string | undefined, window: DateWindow): Promise<SearchHit[]> {
+  if (tinyfishKey) {
+    const results = await tinyFishFallback(tinyfishKey, query, window);
+    if (results.length > 0) return results;
+  }
+  return keenableFallback(query, window);
+}
+
+export async function semanticSearch(query: string, opts: SemanticSearchOptions = {}): Promise<SearchHit[]> {
+  const { exaKey, tinyfishKey, numResults = 10, startPublishedDate, endPublishedDate, maxCharacters = 800 } = opts;
+  const window = { numResults, startPublishedDate, endPublishedDate };
+  if (!exaKey) return fallbackSearch(query, tinyfishKey, window);
+
+  try {
+    return await searchExa(exaKey, query, { ...window, maxCharacters });
+  } catch (err) {
+    console.error(`    Failed: ${(err as Error).message}`);
+    return fallbackSearch(query, tinyfishKey, window);
+  }
+}

@@ -13,6 +13,7 @@
 
 import { readCsvRaw, writeCsvRaw, CsvRow } from '../src/lib/csv';
 import { RecheckStatus } from './rumor-recheck';
+import { companyKey } from './normalize';
 
 // The verdicts that actually mutate a row's status. "still-rumored" is intentionally
 // excluded — it means "leave the row as-is".
@@ -34,7 +35,7 @@ export interface ApplyOutcome {
 }
 
 function lookupKey(company: unknown, date: unknown): string {
-  return `${String(company ?? '').trim().toLowerCase()}||${String(date ?? '').trim()}`;
+  return `${companyKey(String(company ?? ''))}||${String(date ?? '').trim()}`;
 }
 
 // Append the evidence URL to a notes string, avoiding a duplicate if it is already there.
@@ -47,7 +48,7 @@ function appendEvidence(notes: unknown, url: string): string {
 
 // Pure application logic: given the current layoffs rows and the recheck results,
 // return a new row set with statuses patched and evidence appended. Rows are matched by
-// (company, date_announced), case-insensitive on company. Extra/unknown columns on each
+// (company, date_announced), comparing companies by companyKey. Extra/unknown columns on each
 // row are preserved untouched. Exposed for unit testing.
 export function applyResults(rows: CsvRow[], results: RecheckResult[]): ApplyOutcome {
   const index = new Map<string, CsvRow>();

@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { normalizeCompany } from '../scripts/normalize';
+import { companyKey, normalizeCompany } from '../scripts/normalize';
+import { checkIntegrity, eventPairKey } from '../scripts/validate';
+import { LayoffEntry } from '../src/lib/types';
 import knownDuplicatePairs from './fixtures/known-duplicate-pairs.json';
 
 // This fixture (tests/fixtures/known-duplicate-pairs.json) is the regression log for
@@ -74,15 +76,60 @@ const knownDistinctPairs: DuplicatePair[] = [
 describe('normalizeCompany — known duplicate pairs (regression fixture)', () => {
   for (const { a, b, why } of knownDuplicatePairs as DuplicatePair[]) {
     it(`collapses "${a}" and "${b}" to the same key (${why})`, () => {
-      expect(normalizeCompany(a).toLowerCase()).toBe(normalizeCompany(b).toLowerCase());
+      expect(companyKey(a)).toBe(companyKey(b));
     });
   }
+});
+
+function row(company: string, date: string, eventId: string, slug: string): LayoffEntry {
+  return {
+    company,
+    date_announced: date,
+    date_reported: date,
+    jobs_cut_sg: null,
+    jobs_cut_global: null,
+    pct_workforce: null,
+    industry: 'Other',
+    source_link: `https://www.straitstimes.com/${slug}`,
+    notes: '',
+    status: 'confirmed',
+    event_id: eventId,
+  };
+}
+
+describe('checkIntegrity — known duplicate pairs under separate event_ids', () => {
+  for (const { a, b } of knownDuplicatePairs as DuplicatePair[]) {
+    it(`reports "${a}" / "${b}" as one event-pair double-count`, () => {
+      const warnings = checkIntegrity(
+        [
+          row(a, '2026-05-01', 'event-a', 'a1'),
+          row(a, '2026-05-02', 'event-a', 'a2'),
+          row(b, '2026-05-10', 'event-b', 'b1'),
+          row(b, '2026-05-11', 'event-b', 'b2'),
+        ],
+        new Set()
+      );
+      const doubles = warnings.filter((w) => w.type === 'double-count');
+      expect(doubles).toHaveLength(1);
+      expect(doubles[0].eventIds).toEqual(['event-a', 'event-b']);
+      expect(doubles[0].rows).toEqual([1, 2, 3, 4]);
+    });
+  }
+
+  it('stays quiet once the pair is recorded as distinct', () => {
+    const [{ a, b }] = knownDuplicatePairs as DuplicatePair[];
+    const warnings = checkIntegrity(
+      [row(a, '2026-05-01', 'event-a', 'a1'), row(b, '2026-05-10', 'event-b', 'b1')],
+      new Set([eventPairKey('event-b', 'event-a')])
+    );
+    expect(warnings.some((w) => w.type === 'double-count')).toBe(false);
+  });
 });
 
 describe('normalizeCompany — known distinct pairs (must never merge)', () => {
   for (const { a, b, why } of knownDistinctPairs) {
     it(`keeps "${a}" and "${b}" as different keys (${why})`, () => {
-      expect(normalizeCompany(a).toLowerCase()).not.toBe(normalizeCompany(b).toLowerCase());
+      expect(companyKey(a)).not.toBe(companyKey(b));
     });
   }
 

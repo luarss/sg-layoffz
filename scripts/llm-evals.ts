@@ -1,7 +1,7 @@
 // Benchmark suite that measures LLM classification accuracy against historical data.
 // Samples entries from layoffs.csv (expected: accept) and rejected.csv (expected: reject),
 // runs each through the LLM evaluator, and reports precision / recall / F1.
-// Uses the same provider fallback chain as llm-triage.ts (DS → MiMo → OpenRouter).
+// Uses the same provider chain, prompt and parser as llm-triage.ts (see ./llm-provider, ./llm-prompt).
 //
 // Usage:
 //   DEEPSEEK_API_KEY=sk-... npm run eval:llm
@@ -9,10 +9,10 @@
 //   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --golden     (frozen curated set, gated)
 
 import fs from 'node:fs';
-import OpenAI from 'openai';
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
-import { LLMVerdict, parseVerdict } from '../src/lib/verdict';
+import { ProviderConfig, getProviderChain, callJsonWithChain, describeChain } from './llm-provider';
+import { SYSTEM_PROMPT, buildUserPrompt, parseModelVerdict, type ModelVerdict } from './llm-prompt';
 import { VAGUE_COMPANY, HEDGE_NOTES } from './validate';
 
 // An accept-set row whose own company name is a generic placeholder, or whose
@@ -93,195 +93,9 @@ function categoriseRejected(e: LayoffEntry): string {
   return 'other';
 }
 
-// ---- Provider chain (mirrors llm-triage.ts: DS → MiMo → OpenRouter) --------
-interface ProviderConfig {
-  name: string;
-  client: OpenAI;
-  model: string;
-}
+const EVAL_ATTEMPTS_PER_PROVIDER = 3;
 
-function getProviderChain(): ProviderConfig[] {
-  const force = process.env.LLM_PROVIDER;
-  const chain: ProviderConfig[] = [];
-  const want = (name: string) => !force || force === name;
-
-  if (want('deepseek') && process.env.DEEPSEEK_API_KEY) {
-    chain.push({
-      name: 'deepseek',
-      client: new OpenAI({ apiKey: process.env.DEEPSEEK_API_KEY, baseURL: 'https://api.deepseek.com/v1' }),
-      model: process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash',
-    });
-  }
-
-  if (want('mimo') && process.env.MIMO_API_KEY && process.env.MIMO_BASE_URL) {
-    chain.push({
-      name: 'mimo',
-      client: new OpenAI({ apiKey: process.env.MIMO_API_KEY, baseURL: process.env.MIMO_BASE_URL }),
-      model: process.env.MIMO_MODEL || 'mimo-v2.5',
-    });
-  }
-
-  if (want('openrouter') && process.env.OPENROUTER_API_KEY) {
-    chain.push({
-      name: 'openrouter',
-      client: new OpenAI({
-        apiKey: process.env.OPENROUTER_API_KEY,
-        baseURL: 'https://openrouter.ai/api/v1',
-        defaultHeaders: { 'HTTP-Referer': 'https://github.com/luarss/sg-layoffz', 'X-Title': 'sg-layoffz' },
-      }),
-      model: process.env.OPENROUTER_MODEL || 'openrouter/owl-alpha',
-    });
-  }
-
-  if (chain.length === 0) {
-    throw new Error('No LLM provider configured. Set DEEPSEEK_API_KEY, MIMO_API_KEY+MIMO_BASE_URL, or OPENROUTER_API_KEY');
-  }
-
-  return chain;
-}
-
-function describeChain(chain: ProviderConfig[]): string {
-  return chain.map((p) => `${p.name}(${p.model})`).join(' → ');
-}
-
-const SYSTEM_PROMPT = `You are an expert analyst for a Singapore layoff tracking database. Evaluate news articles about potential Singapore layoff events and classify each one.
-
-## Classification Rules
-
-**CONFIRMED** — all must be true:
-- Officially announced or credibly reported job cuts/retrenchment
-- Specific named company with Singapore operations
-- Already happened or actively underway (not a future plan)
-
-**RUMORED** — same as confirmed but:
-- Planned, anticipated, or reported as likely ("plans to cut", "expected to retrench", "may lay off")
-
-**Closures count as layoff events.** A Singapore business, store, outlet, or branch
-closure that implies job losses IS a layoff event — even when the headcount is unstated
-and even when it is a single outlet of a continuing chain. Classify it CONFIRMED if it has
-already closed or is actively closing, RUMORED if it is an announced or future closure. Do
-NOT reject a Singapore closure as "not a layoff" or as having "no Singapore nexus".
-
-**REJECTED** — reject if ANY applies:
-- Commentary, opinion, analysis, or market overview about layoffs in general
-- Labour market statistics (MOM data, employment surveys, percentage reports)
-- Government or parliamentary policy debate (MAS, MOM proposals, union discussions)
-- Job posting or hiring announcement
-- No clear Singapore nexus (foreign company, foreign office only)
-- Personal anecdote or first-person story ("I got laid off…")
-- Aggregator article covering many companies (not a single specific event)
-- Legal case, court ruling, or severance policy debate
-- Duplicate of an already well-known event
-- Unnamed, anonymized, or placeholder company — the subject is a generic descriptor
-  ("an art firm", "another legacy bank", "unnamed AI startup", "a pension manager")
-  rather than a specific named company
-
-**NEEDS_REVIEW** — use ONLY as a last resort, for a genuinely ambiguous article where
-none of the rules above apply. Do NOT retreat to needs_review just to avoid a hard call:
-- If any REJECTED rule matches, return \`rejected\`.
-- If it is a Singapore closure or a credibly reported cut, decide \`confirmed\`/\`rumored\`.
-- A worldwide or foreign headcount does NOT make the verdict ambiguous — still classify
-  the event (accept when there is a Singapore nexus, reject when there is none) and put
-  the figure in jobs_cut_global.
-
-## Evaluation Dimensions (assess internally)
-1. singapore_nexus — does this involve a Singapore entity or Singapore office of a multinational?
-2. layoff_authenticity — is this a real layoff announcement (not commentary or statistics)?
-3. company_identifiable — is a specific company clearly named?
-4. date_extractable — is there a discernible announcement date?
-5. source_credibility — is the source a credible news outlet or company press release?
-6. not_commentary — not an opinion piece, explainer, or market report?
-7. not_policy_debate — not a parliamentary or government policy discussion?
-8. not_personal_anecdote — not a personal story?
-
-## Allowed Industries
-Tech, Finance, Manufacturing, Retail, F&B, Real Estate, Healthcare, Education, Other
-
-## Headcount Scope
-This tracker counts Singapore jobs only. For headcount_scope, classify the jobs_cut figure:
-- "singapore" — the number is specifically Singapore roles
-- "partial" — a regional/divisional number that includes Singapore among other markets
-- "global" — a worldwide/foreign number (e.g. "18,000 jobs globally", "1,000 jobs in Britain"); Singapore is not the figure's scope
-- "unknown" — no headcount, or scope unclear
-A worldwide or foreign figure must NOT be reported as "singapore".
-
-## Headcount split (Singapore vs global)
-Split the headcount into two fields. A worldwide/foreign figure MUST go in
-jobs_cut_global (never jobs_cut_sg):
-- "jobs_cut_sg" — Singapore roles only, else null.
-- "jobs_cut_global" — the worldwide/foreign/regional figure the source gave, else null.
-
-## Output
-Return ONLY a valid JSON object (no markdown, no extra text):
-{
-  "verdict": "confirmed" | "rumored" | "rejected" | "needs_review",
-  "confidence": "high" | "medium" | "low",
-  "company": "Company Name",
-  "industry": "<one of the allowed industries>",
-  "date_announced": "YYYY-MM-DD",
-  "date_reported": "YYYY-MM-DD",
-  "jobs_cut_sg": <integer or null>,
-  "jobs_cut_global": <integer or null>,
-  "pct_workforce": <number or null>,
-  "event_id": "kebab-case-slug",
-  "headcount_scope": "singapore" | "partial" | "global" | "unknown",
-  "notes": "1–2 sentence reason for your decision",
-  "rejection_reason": "<commentary|statistics|policy|job-posting|not-sg|duplicate|personal|aggregator|legal|vague> (only when verdict=rejected)"
-}`;
-
-function buildUserPrompt(entry: LayoffEntry): string {
-  const lines: string[] = [
-    `Title/Company: ${entry.company}`,
-    `Date: ${entry.date_announced}`,
-    `Source URL: ${entry.source_link}`,
-  ];
-  if (entry.jobs_cut_sg != null) lines.push(`Jobs cut SG (scraped): ${entry.jobs_cut_sg}`);
-  if (entry.jobs_cut_global != null) lines.push(`Jobs cut global (scraped): ${entry.jobs_cut_global}`);
-  if (entry.pct_workforce != null) lines.push(`% workforce (scraped): ${entry.pct_workforce}`);
-  if (entry.notes) lines.push(`Notes/snippet: ${entry.notes}`);
-  return lines.join('\n');
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promise<LLMVerdict> {
-  for (const provider of chain) {
-    // Retry transient failures (rate limits, 5xx, truncated/empty completions) with
-    // backoff before giving up on this provider. Under concurrency these are common
-    // and previously fell straight through to needs_review — a spurious miss that
-    // made the score flap around the pass threshold.
-    const MAX_ATTEMPTS = 3;
-    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      try {
-        const response = await provider.client.chat.completions.create({
-          model: provider.model,
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: buildUserPrompt(entry) },
-          ],
-          temperature: 0,
-          // Reasoning models spend hidden reasoning tokens against this cap; at 512
-          // the JSON body was truncated and the eval scored on empty output. Budget
-          // for reasoning + the small JSON verdict.
-          max_tokens: 4096,
-          response_format: { type: 'json_object' },
-        });
-        // A truncated response (finish_reason=length) yields empty/partial JSON that
-        // parses to null — retry, then fall through to the next provider.
-        if (response.choices[0]?.finish_reason === 'length') continue;
-        const raw = response.choices[0]?.message?.content || '{}';
-        // Zod-validated against the shared VerdictSchema: a partial/empty response
-        // (e.g. '{}') or one missing a valid verdict returns null, so we retry and
-        // then fall through to the next provider instead of emitting an `undefined`
-        // verdict.
-        const parsed = parseVerdict(raw);
-        if (parsed) return parsed;
-      } catch {
-        // transient API error — fall through to backoff/retry
-      }
-      if (attempt < MAX_ATTEMPTS) await sleep(500 * attempt);
-    }
-  }
+function allProvidersFailedVerdict(entry: LayoffEntry): ModelVerdict {
   return {
     verdict: 'needs_review',
     confidence: 'low',
@@ -292,9 +106,20 @@ async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promi
     jobs_cut_sg: null,
     jobs_cut_global: null,
     pct_workforce: null,
-    event_id: '',
+    event_id: null,
     notes: 'All providers failed',
   };
+}
+
+async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promise<ModelVerdict> {
+  const { value } = await callJsonWithChain(chain, {
+    system: SYSTEM_PROMPT,
+    user: buildUserPrompt(entry),
+    parse: (raw) => parseModelVerdict(raw)?.verdict ?? null,
+    attempts: EVAL_ATTEMPTS_PER_PROVIDER,
+    log: () => {},
+  });
+  return value ?? allProvidersFailedVerdict(entry);
 }
 
 // ---- Sampling ---------------------------------------------------------------
@@ -427,7 +252,7 @@ async function runGolden(): Promise<void> {
   console.log(`\nLLM Golden Eval — chain: ${describeChain(chain)}`);
   console.log(`Frozen set: ${cases.length} curated cases (data/eval-golden.json)\n`);
 
-  type Row = { c: GoldenCase; v: LLMVerdict };
+  type Row = { c: GoldenCase; v: ModelVerdict };
   const results: Row[] = [];
   let done = 0;
 
@@ -592,7 +417,7 @@ async function main() {
     entry: LayoffEntry;
     groundTruth: 'accept' | 'reject';
     category: string;
-    verdict: LLMVerdict;
+    verdict: ModelVerdict;
     correct: boolean;
   };
 

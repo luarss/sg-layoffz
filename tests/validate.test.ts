@@ -1,11 +1,22 @@
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   VAGUE_COMPANY,
   HEDGE_NOTES,
   validateEntry,
   checkIntegrity,
   checkCrossFileContradictions,
+  eventPairKey,
+  eventStats,
+  formatRows,
+  newWarnings,
+  parseCliArgs,
+  parseDistinctEventPairs,
+  parseLayoffEntries,
+  warningFingerprint,
 } from '../scripts/validate';
+import { readCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
 
 function entry(over: Partial<LayoffEntry> = {}): LayoffEntry {
@@ -291,5 +302,154 @@ describe('checkCrossFileContradictions', () => {
     const rejected = [entry({ company: 'Shopee', source_link: 'https://www.hcamag.com/shopee', notes: '[rejected: duplicate] already confirmed' })];
     const w = checkCrossFileContradictions(active, rejected);
     expect(w).toHaveLength(0);
+  });
+});
+
+describe('checkIntegrity — one warning per event-id pair', () => {
+  function biontechRows(): LayoffEntry[] {
+    return [
+      entry({ company: 'BioNTech', date_announced: '2026-04-06', event_id: 'biontech-2026-04', source_link: 'https://www.straitstimes.com/a1' }),
+      entry({ company: 'BioNTech Singapore', date_announced: '2026-04-07', event_id: 'biontech-2026-04', source_link: 'https://www.straitstimes.com/a2' }),
+      entry({ company: 'BioNTech', date_announced: '2026-04-08', event_id: 'biontech-2026-04', source_link: 'https://www.straitstimes.com/a3' }),
+      entry({ company: 'BioNTech', date_announced: '2026-05-05', event_id: 'biontech-2026-05', source_link: 'https://www.straitstimes.com/b1' }),
+      entry({ company: 'BioNTech', date_announced: '2026-05-06', event_id: 'biontech-2026-05', source_link: 'https://www.straitstimes.com/b2' }),
+    ];
+  }
+
+  it('collapses every cross-event row pair into a single double-count warning', () => {
+    const doubles = checkIntegrity(biontechRows(), new Set()).filter((w) => w.type === 'double-count');
+    expect(doubles).toHaveLength(1);
+    const [w] = doubles;
+    expect(w.eventIds).toEqual(['biontech-2026-04', 'biontech-2026-05']);
+    expect(w.rows).toEqual([1, 2, 3, 4, 5]);
+    expect(w.message).toContain('biontech-2026-04 (from 2026-04-06)');
+    expect(w.message).toContain('biontech-2026-05 (from 2026-05-05)');
+    expect(w.message).toContain('27d apart');
+    expect(w.message).toContain('rows 1 + 4 others');
+  });
+
+  it('gives the same fingerprint regardless of row order', () => {
+    const forward = checkIntegrity(biontechRows(), new Set()).find((w) => w.type === 'double-count')!;
+    const reversed = checkIntegrity(biontechRows().reverse(), new Set()).find((w) => w.type === 'double-count')!;
+    expect(warningFingerprint(reversed)).toBe(warningFingerprint(forward));
+    expect(warningFingerprint(forward)).toBe('double-count :: biontech-2026-04 + biontech-2026-05');
+  });
+
+  it('suppresses a pair listed in distinct-events.csv in either order', () => {
+    const distinct = parseDistinctEventPairs(
+      'event_id_a,event_id_b,why\nbiontech-2026-05,biontech-2026-04,separate rounds\n'
+    );
+    const w = checkIntegrity(biontechRows(), distinct);
+    expect(w.some((x) => x.type === 'double-count')).toBe(false);
+  });
+
+  it('flags confirmed pairs up to 31 days apart but not 32', () => {
+    const pair = (second: string) =>
+      checkIntegrity(
+        [
+          entry({ company: 'Acme', date_announced: '2026-01-01', event_id: 'acme-a', source_link: 'https://www.straitstimes.com/a' }),
+          entry({ company: 'Acme', date_announced: second, event_id: 'acme-b', source_link: 'https://www.straitstimes.com/b' }),
+        ],
+        new Set()
+      ).some((w) => w.type === 'double-count');
+    expect(pair('2026-02-01')).toBe(true);
+    expect(pair('2026-02-02')).toBe(false);
+  });
+
+  it('reports a superseded rumor once per event pair', () => {
+    const w = checkIntegrity(
+      [
+        entry({ company: 'Acme', date_announced: '2026-03-01', status: 'rumored', event_id: 'acme-rumor', source_link: 'https://www.straitstimes.com/r1' }),
+        entry({ company: 'Acme', date_announced: '2026-03-02', status: 'rumored', event_id: 'acme-rumor', source_link: 'https://www.straitstimes.com/r2' }),
+        entry({ company: 'Acme', date_announced: '2026-03-10', event_id: 'acme-confirmed', source_link: 'https://www.straitstimes.com/c1' }),
+      ],
+      new Set()
+    ).filter((x) => x.type === 'superseded-rumor');
+    expect(w).toHaveLength(1);
+    expect(w[0].eventIds).toEqual(['acme-rumor', 'acme-confirmed']);
+    expect(w[0].message).toContain('8d');
+  });
+
+  it('reports a cross-name same-event pair once per event pair', () => {
+    const w = checkIntegrity(
+      [
+        entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-07-01', event_id: 'eunos-a', source_link: 'https://www.straitstimes.com/e1' }),
+        entry({ company: 'Eunos Canteen', industry: 'F&B', date_announced: '2026-07-02', event_id: 'eunos-a', source_link: 'https://www.straitstimes.com/e2' }),
+        entry({ company: 'Unnamed Eunos Coffee Shop', industry: 'F&B', date_announced: '2026-07-03', event_id: 'eunos-b', source_link: 'https://www.straitstimes.com/e3' }),
+      ],
+      new Set()
+    ).filter((x) => x.type === 'possible-same-event');
+    expect(w).toHaveLength(1);
+    expect(w[0].rows).toEqual([1, 2, 3]);
+    expect(w[0].message).toContain('1d apart');
+  });
+});
+
+describe('formatRows', () => {
+  it('lists up to three rows and compacts the rest', () => {
+    expect(formatRows([3, 1])).toBe('rows 1, 3');
+    expect(formatRows([724, 9, 10, 11, 12])).toBe('rows 9 + 4 others');
+  });
+});
+
+describe('baseline fingerprints', () => {
+  it('keys per-row warnings on the normalized source URL, so Wayback archival is not a new warning', () => {
+    const live = checkIntegrity([entry({ company: 'Acme', notes: 'plans to cut jobs', source_link: 'https://www.straitstimes.com/acme' })], new Set());
+    const archived = checkIntegrity(
+      [entry({ company: 'Acme', notes: 'plans to cut jobs', source_link: 'https://web.archive.org/web/20260101000000/https://www.straitstimes.com/acme' })],
+      new Set()
+    );
+    expect(live.map(warningFingerprint)).toEqual(archived.map(warningFingerprint));
+  });
+
+  it('reports only warnings that are absent from the baseline', () => {
+    const baseline = checkIntegrity([entry({ company: 'Acme', source_link: 'https://unknown.example/a' })], new Set());
+    const current = checkIntegrity(
+      [
+        entry({ company: 'Shopee', date_announced: '2026-02-01', source_link: 'https://unknown.example/b' }),
+        entry({ company: 'Acme', source_link: 'https://unknown.example/a' }),
+      ],
+      new Set()
+    );
+    const added = newWarnings(current, baseline);
+    expect(added).toHaveLength(1);
+    expect(added[0].type).toBe('unarchived-confirmed');
+    expect(added[0].message).toContain('Shopee');
+  });
+});
+
+describe('parseLayoffEntries', () => {
+  it('parses the committed layoffs.csv exactly like readCsv', () => {
+    const raw = fs.readFileSync(path.join(process.cwd(), 'data', 'layoffs.csv'), 'utf-8');
+    expect(parseLayoffEntries(raw)).toEqual(readCsv('layoffs.csv'));
+  });
+});
+
+describe('eventStats', () => {
+  it('counts rows, distinct event_ids, and events with at least one confirmed row', () => {
+    const stats = eventStats([
+      entry({ event_id: 'a' }),
+      entry({ event_id: 'a', status: 'rumored' }),
+      entry({ event_id: 'b', status: 'rumored' }),
+    ]);
+    expect(stats).toEqual({ rows: 3, events: 2, confirmedEvents: 1 });
+  });
+});
+
+describe('parseCliArgs', () => {
+  it('reads --baseline, --verbose and a positional file', () => {
+    expect(parseCliArgs(['--baseline', 'HEAD~1', '--verbose'])).toEqual({
+      file: 'layoffs.csv',
+      verbose: true,
+      baselineRef: 'HEAD~1',
+    });
+    expect(parseCliArgs(['rejected.csv', '--baseline=main']).file).toBe('rejected.csv');
+    expect(() => parseCliArgs(['--baseline'])).toThrow();
+  });
+});
+
+describe('eventPairKey', () => {
+  it('is order-independent', () => {
+    expect(eventPairKey('b', 'a')).toBe(eventPairKey('a', 'b'));
   });
 });

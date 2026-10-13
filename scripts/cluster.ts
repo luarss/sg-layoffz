@@ -8,11 +8,12 @@
 // rejected.csv are already covered at scrape-ingestion time by isDuplicate().
 
 import { LayoffEntry } from '../src/lib/types';
-import { normalizeCompany, companyTokens, type CompanyTokenMap } from './normalize';
+import { companyKey, companyTokens, type CompanyTokenMap } from './normalize';
 import { extractGnFingerprint } from './deduplicate';
+import { SAME_EVENT_WINDOW_DAYS, sameEventWindow } from './same-event';
+import { rowQualityScore } from '../src/lib/rowQuality';
 
-const DAY_MS = 86_400_000;
-export const CLUSTER_WINDOW_DAYS = 21;
+export const CLUSTER_WINDOW_DAYS = SAME_EVENT_WINDOW_DAYS;
 
 export type NodeKind = 'candidate' | 'anchor';
 
@@ -99,7 +100,7 @@ export function companyKeyForNode(node: ClusterNode, tokens: CompanyTokenMap): s
   const fromFull = pickEarliest(full);
   if (fromFull) return fromFull;
 
-  const norm = normalizeCompany(node.company || '').toLowerCase().trim();
+  const norm = companyKey(node.company || '');
   if (norm.length >= 3) return norm;
   return UNKNOWN_PREFIX + node.kind + ':' + node.idx;
 }
@@ -113,10 +114,7 @@ function dateMs(s: string): number | null {
 }
 
 export function withinWindow(a: string, b: string, days = CLUSTER_WINDOW_DAYS): boolean {
-  const da = dateMs(a);
-  const db = dateMs(b);
-  if (da == null || db == null) return false;
-  return Math.abs(da - db) <= days * DAY_MS;
+  return sameEventWindow(a, b, days);
 }
 
 // ---------- union-find ----------
@@ -199,13 +197,18 @@ export function buildClusters(nodes: ClusterNode[], tokens: CompanyTokenMap): Cl
 // ---------- within-cluster dedup ----------
 
 // Score a candidate node for canonical selection. Higher is better.
+const EVENT_RULE_WEIGHT = 1000;
+const SHARED_QUALITY_WEIGHT = 10;
+const WORKING_URL_WEIGHT = 1;
+
+function sharedQualityScore(node: ClusterNode): number {
+  return rowQualityScore({ jobs_cut_sg: node.jobs_cut, source_link: node.url });
+}
+
 function canonicalScore(node: ClusterNode): number {
-  let s = 0;
-  if (node.eventRuleMatched) s += 1000;
-  if (node.jobs_cut != null) s += 100;
-  const host = (node.url || '').match(/^https?:\/\/([^/]+)/)?.[1] || '';
-  if (host && !host.includes('news.google.com')) s += 50;
-  if (!node.brokenUrl) s += 10;
+  let s = sharedQualityScore(node) * SHARED_QUALITY_WEIGHT;
+  if (node.eventRuleMatched) s += EVENT_RULE_WEIGHT;
+  if (!node.brokenUrl) s += WORKING_URL_WEIGHT;
   return s;
 }
 

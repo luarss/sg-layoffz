@@ -1,11 +1,9 @@
 import Parser from 'rss-parser';
 import https from 'node:https';
 import http from 'node:http';
-import { readCsv, appendCsv } from '../src/lib/csv';
-import { ReviewEntry } from '../src/lib/types';
-import { normalizeCompany, parseDate, extractJobsFromText } from './normalize';
-import { isDuplicate } from './deduplicate';
-import { fetchTinyFish, fetchKeenable } from './search';
+import { fetchTinyFish, fetchKeenable, SearchHit } from './search';
+import { dedupeHits, hitToReviewEntry, ingestCandidates } from './scrape-common';
+import { sleep } from '../src/lib/async';
 
 // Real Chrome UA — the browser identity that passes the most publisher/CDN
 // blocks (Cloudflare, etc.) when fetching feeds. Matches resolve-gnews.ts.
@@ -84,29 +82,6 @@ const LAYOFF_TERMS = [
   'sheds jobs',
   'cuts jobs',
 ];
-
-interface RawCandidate {
-  title: string;
-  url: string;
-  snippet: string;
-  pubDate: string;
-  source: string;
-}
-
-// Fingerprint by title (stripped source suffix, first 6 words) so the same article
-// surfaced in multiple feeds within one run gets deduped, and `notes` carries the
-// fingerprint forward so subsequent runs can match it via isDuplicate.
-function titleFingerprint(title: string): string {
-  return title
-    .replace(/ [-–] [^-–\n]+$/, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .split(' ')
-    .slice(0, 6)
-    .join(' ');
-}
 
 function isRelevant(title: string, snippet: string): boolean {
   const combined = `${title} ${snippet}`.toLowerCase();
@@ -220,8 +195,8 @@ async function fetchAndParse(url: string) {
   }
 }
 
-async function scrapeFeed(config: FeedConfig): Promise<RawCandidate[]> {
-  const results: RawCandidate[] = [];
+async function scrapeFeed(config: FeedConfig): Promise<SearchHit[]> {
+  const results: SearchHit[] = [];
 
   try {
     const feed = await fetchAndParse(config.url);
@@ -234,7 +209,7 @@ async function scrapeFeed(config: FeedConfig): Promise<RawCandidate[]> {
         title: item.title,
         url: item.link,
         snippet: snippet.slice(0, 500),
-        pubDate: item.pubDate || '',
+        publishedDate: item.pubDate || '',
         source: config.name,
       });
     }
@@ -245,100 +220,26 @@ async function scrapeFeed(config: FeedConfig): Promise<RawCandidate[]> {
   return results;
 }
 
-function candidateToReviewEntry(c: RawCandidate, index: number): ReviewEntry {
-  const combined = `${c.title}. ${c.snippet}`;
-
-  return {
-    review_id: `src-${Date.now()}-${index}`,
-    company: normalizeCompany(c.title.split(/cuts?|lays? off|retrench|sheds?/i)[0] || c.title),
-    date_announced: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
-    date_reported: parseDate(c.pubDate) || new Date().toISOString().slice(0, 10),
-    // Scraped headcount is unscoped at ingestion; default to SG, re-scoped by triage.
-    jobs_cut_sg: extractJobsFromText(combined),
-    jobs_cut_global: null,
-    pct_workforce: null,
-    industry: 'Other',
-    source_link: c.url,
-    notes: `From ${c.source} [gn:${titleFingerprint(c.title)}]`,
-    status: 'rumored',
-    event_id: '',
-    candidate_urls: c.url,
-    snippet: c.snippet.slice(0, 300),
-  };
-}
-
 async function main() {
   console.log('🔍 Scraping Singapore RSS feeds for layoff coverage...\n');
 
-  const layoffs = readCsv('layoffs.csv');
-  const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
-  const rejected = readCsv('rejected.csv');
-
-  const allCandidates: RawCandidate[] = [];
+  const allCandidates: SearchHit[] = [];
 
   for (const feed of FEEDS) {
     console.log(`  Feed: ${feed.name}`);
     const results = await scrapeFeed(feed);
     console.log(`    Found ${results.length} relevant articles`);
     allCandidates.push(...results);
-    await new Promise((r) => setTimeout(r, 500));
+    await sleep(500);
   }
 
-  // Dedup by URL and by title fingerprint within this run (same story can appear
-  // in multiple feeds, e.g. a BT piece syndicated to AsiaOne).
-  const seenUrls = new Set<string>();
-  const seenFingerprints = new Set<string>();
-  const unique = allCandidates.filter((c) => {
-    if (seenUrls.has(c.url)) return false;
-    seenUrls.add(c.url);
-    const fp = titleFingerprint(c.title);
-    if (fp && seenFingerprints.has(fp)) return false;
-    if (fp) seenFingerprints.add(fp);
-    return true;
-  });
-
+  const unique = dedupeHits(allCandidates);
   console.log(`\n  Total unique articles: ${unique.length}`);
 
-  const newEntries: ReviewEntry[] = [];
-  let dupes = 0;
-  let potentialDupes = 0;
-
-  const seenCompanyDates = new Set<string>();
-
-  for (let i = 0; i < unique.length; i++) {
-    const candidate = unique[i];
-    const entry = candidateToReviewEntry(candidate, i);
-
-    const cdKey = `${normalizeCompany(entry.company).toLowerCase()}||${entry.date_announced}`;
-    if (seenCompanyDates.has(cdKey)) {
-      dupes++;
-      continue;
-    }
-
-    const result = isDuplicate(entry, layoffs, reviewQueue as ReviewEntry[], rejected);
-
-    if (result === 'new') {
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-    } else if (result === 'duplicate') {
-      dupes++;
-    } else {
-      potentialDupes++;
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-      entry.notes = (entry.notes ? entry.notes + ' | ' : '') + 'POTENTIAL DUPLICATE - verify';
-    }
-  }
-
-  if (newEntries.length > 0) {
-    appendCsv('review-queue.csv', newEntries as any);
-    console.log(`  ✅ Added ${newEntries.length} entries to review queue`);
-  } else {
-    console.log('  No new entries to add');
-  }
-
-  console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
-  console.log(`SCRAPE_RESULT:source=rss_feeds,new_entries=${newEntries.length},duplicates=${dupes},potential_dupes=${potentialDupes}`);
+  const entries = unique.map((hit, i) =>
+    hitToReviewEntry(hit, i, { idPrefix: 'src', notesPrefix: `From ${hit.source}` })
+  );
+  ingestCandidates('rss_feeds', entries);
   console.log('\nDone. Run `npm run review` to process the queue.');
 }
 

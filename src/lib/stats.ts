@@ -1,4 +1,5 @@
 import { LayoffEntry, AggregateStats } from './types';
+import { getEventKey, rollupEvent } from './groupEvents';
 
 // An "event" is a set of rows sharing an event_id. Multiple rows are follow-up
 // coverage of one layoff event, so all aggregation happens per event, never per row:
@@ -17,27 +18,18 @@ interface EventAgg {
   industry: string; // industry of the earliest row
 }
 
-function fallbackId(e: LayoffEntry): string {
-  // Defensive: a row with no event_id becomes its own event so it is never merged
-  // with an unrelated blank-id row.
-  return e.event_id && e.event_id.trim() !== ''
-    ? e.event_id
-    : `__row__:${e.company}|${e.date_announced}|${e.source_link}`;
-}
-
 function buildEvents(entries: LayoffEntry[]): EventAgg[] {
   const map = new Map<string, LayoffEntry[]>();
-  for (const e of entries) {
-    const id = fallbackId(e);
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    const id = getEventKey(e, i);
     if (!map.has(id)) map.set(id, []);
     map.get(id)!.push(e);
   }
 
   const events: EventAgg[] = [];
   for (const [eventId, rows] of map) {
-    const confirmed = rows.some((r) => r.status === 'confirmed' || r.status === 'reference');
-    const sgValues = rows.map((r) => r.jobs_cut_sg).filter((v): v is number => v != null);
-    const jobsSg = sgValues.length > 0 ? Math.max(...sgValues) : null;
+    const { confirmed, maxJobsSg: jobsSg } = rollupEvent(rows);
 
     const sortedByAnnounced = [...rows].sort((a, b) =>
       String(a.date_announced).localeCompare(String(b.date_announced))

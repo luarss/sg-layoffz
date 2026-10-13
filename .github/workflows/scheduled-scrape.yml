@@ -76,14 +76,13 @@ jobs:
         if: steps.llm_triage.outcome == 'success'
         run: npm run dedup
 
-      # Gate the auto-commit on validation. If the data has hard errors (bad status,
-      # malformed rows, missing required fields), fail the job rather than committing
-      # corruption to main. Integrity *warnings* (possible double-counts, unarchived
-      # sources) do not fail validate, so they won't block legitimate updates.
+      # Gate the auto-commit on validation. Hard errors (bad status, malformed rows,
+      # missing required fields) fail the job, and so does any integrity warning that
+      # is new relative to HEAD (e.g. a new double-count or a new unrecognised-source
+      # confirmed row). Warnings already present at HEAD do not block the commit.
       - name: Validate data integrity
         id: validate
-        if: steps.llm_triage.outcome == 'success'
-        run: npm run validate
+        run: npm run validate -- --baseline HEAD
 
       - name: Read triage results
         id: triage_result
@@ -107,6 +106,7 @@ jobs:
           echo "date=$(date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
       - name: Commit results to main
+        if: steps.validate.outcome == 'success'
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           file_pattern: >-

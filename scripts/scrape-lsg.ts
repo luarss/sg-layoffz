@@ -1,7 +1,7 @@
-import { readCsv, appendCsv } from '../src/lib/csv';
 import { ReviewEntry } from '../src/lib/types';
 import { normalizeCompany, normalizeIndustry, parseDate } from './normalize';
-import { isDuplicate } from './deduplicate';
+import { todayIso } from '../src/lib/dates';
+import { ingestCandidates, printScrapeResult } from './scrape-common';
 
 // layoffsg.com is a Base44 no-code app. Every layoff row lives in the public,
 // unauthenticated `LayoffEvent` entity — no key, no pagination cursor needed for
@@ -36,7 +36,7 @@ function mapIndustry(raw: string | undefined): string {
 function eventToReviewEntry(ev: LayoffEvent, index: number): ReviewEntry {
   const announced = parseDate(ev.announcement_date || '') || '';
   const reported =
-    announced || parseDate(ev.created_date || '') || new Date().toISOString().slice(0, 10);
+    announced || parseDate(ev.created_date || '') || todayIso();
 
   // Their source_url is frequently blank, so fall back to a stable per-event URL.
   // A stable link matters: isDuplicate keys on exact source_link, so on re-runs
@@ -78,10 +78,27 @@ function eventToReviewEntry(ev: LayoffEvent, index: number): ReviewEntry {
   };
 }
 
-function emitResult(newEntries: number, dupes: number, potential: number) {
-  console.log(
-    `SCRAPE_RESULT:source=layoffsg,new_entries=${newEntries},duplicates=${dupes},potential_dupes=${potential}`
-  );
+function uniqueEventEntries(events: LayoffEvent[]): { entries: ReviewEntry[]; skipped: number } {
+  const seenIds = new Set<string>();
+  const entries: ReviewEntry[] = [];
+  let skipped = 0;
+
+  events.forEach((ev, i) => {
+    if (!ev.id || seenIds.has(ev.id)) {
+      skipped++;
+      return;
+    }
+    seenIds.add(ev.id);
+
+    const entry = eventToReviewEntry(ev, i);
+    if (!entry.company) {
+      skipped++;
+      return;
+    }
+    entries.push(entry);
+  });
+
+  return { entries, skipped };
 }
 
 async function main() {
@@ -94,66 +111,14 @@ async function main() {
     events = (await res.json()) as LayoffEvent[];
   } catch (err) {
     console.error(`  Failed to fetch layoffsg.com: ${(err as Error).message}`);
-    emitResult(0, 0, 0);
+    printScrapeResult('layoffsg', { newEntries: 0, duplicates: 0, potentialDupes: 0 });
     return;
   }
 
   console.log(`  Fetched ${events.length} layoff events.`);
 
-  const layoffs = readCsv('layoffs.csv');
-  const reviewQueue = readCsv('review-queue.csv') as ReviewEntry[];
-  const rejected = readCsv('rejected.csv');
-
-  const newEntries: ReviewEntry[] = [];
-  let dupes = 0;
-  let potentialDupes = 0;
-  // Guards against the same event appearing twice within a single fetch.
-  const seenIds = new Set<string>();
-  const seenCompanyDates = new Set<string>();
-
-  for (let i = 0; i < events.length; i++) {
-    const ev = events[i];
-    if (!ev.id || seenIds.has(ev.id)) {
-      dupes++;
-      continue;
-    }
-    seenIds.add(ev.id);
-
-    const entry = eventToReviewEntry(ev, i);
-    if (!entry.company) {
-      dupes++;
-      continue;
-    }
-
-    const cdKey = `${entry.company.toLowerCase()}||${entry.date_announced}`;
-    if (seenCompanyDates.has(cdKey)) {
-      dupes++;
-      continue;
-    }
-
-    const result = isDuplicate(entry, layoffs, reviewQueue, rejected);
-    if (result === 'new') {
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-    } else if (result === 'duplicate') {
-      dupes++;
-    } else {
-      potentialDupes++;
-      newEntries.push(entry);
-      seenCompanyDates.add(cdKey);
-      entry.notes = `${entry.notes} | POTENTIAL DUPLICATE - verify manually`;
-    }
-  }
-
-  if (newEntries.length > 0) {
-    appendCsv('review-queue.csv', newEntries as any);
-    console.log(`  ✅ Added ${newEntries.length} entries to review queue`);
-  } else {
-    console.log('  No new entries to add');
-  }
-
-  console.log(`  📊 ${dupes} duplicates skipped, ${potentialDupes} potential duplicates flagged`);
-  emitResult(newEntries.length, dupes, potentialDupes);
+  const { entries, skipped } = uniqueEventEntries(events);
+  ingestCandidates('layoffsg', entries, skipped);
 }
 
 main()

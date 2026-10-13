@@ -1,0 +1,67 @@
+[
+  {
+    "a": "amazon",
+    "b": "amazon web services",
+    "why": "AWS cuts (2025-07) are a separate business unit and event from the Amazon retail/corporate rounds."
+  },
+  {
+    "a": "avant",
+    "b": "avant proteins",
+    "why": "Left as-is by review: 'Avant' (2026-02 shutdown) and 'Avant Proteins' (2026-07/08 wind-up) carry separate event_ids."
+  },
+  {
+    "a": "capitaland",
+    "b": "capitaland investment",
+    "why": "CapitaLand Investment is a separately listed entity; its 2026-09 cut is distinct from CapitaLand's China cuts."
+  },
+  {
+    "a": "carnivore",
+    "b": "carnivore brazilian churrascaria",
+    "why": "Same restaurant closure, already linked via shared event_id carnivore-2026-07."
+  },
+  {
+    "a": "curly's",
+    "b": "curly's at dempsey",
+    "why": "Same Dempsey closure, already linked via shared event_id curly-s-2026-06."
+  },
+  {
+    "a": "dudu",
+    "b": "dudu cantonese cuisine",
+    "why": "Descriptor variant of one restaurant; 'cuisine' is too generic to strip. Pending event_id review (separate ids today)."
+  },
+  {
+    "a": "hengli",
+    "b": "hengli petrochemical",
+    "why": "Same Singapore unit shutdown, already linked via shared event_id hengli-singapore-2026-05."
+  },
+  {
+    "a": "lao liang",
+    "b": "lao liang pork trotter jelly",
+    "why": "Descriptor variant of one hawker brand; descriptor is not generic. Pending event_id review (separate ids today)."
+  },
+  {
+    "a": "manus",
+    "b": "manus capital",
+    "why": "Manus (AI startup, 2026-06) and Manus Capital (2025-07) are different entities."
+  },
+  {
+    "a": "panasonic",
+    "b": "panasonic avc networks",
+    "why": "Panasonic 2021 cut and the Panasonic AVC Networks 2026 plant closure are separate events years apart."
+  },
+  {
+    "a": "redone",
+    "b": "redone mobile",
+    "why": "Same MVNO shutdown, already linked via shared event_id redone-singapore-2026-06."
+  },
+  {
+    "a": "uber",
+    "b": "uber technologies",
+    "why": "Deliberately unmerged: validate.ts same-day-same-event check uses this pair as its regression (see knownDistinctPairs in tests/known-duplicates.test.ts)."
+  },
+  {
+    "a": "wisetech",
+    "b": "wisetech global",
+    "why": "Left as-is by review: WiseTech 2026-02 and WiseTech Global 2026-05 carry separate event_ids."
+  }
+]

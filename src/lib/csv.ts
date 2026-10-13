@@ -16,6 +16,11 @@ const NUMERIC_COLUMNS = {
   pct_workforce: true,
 } as const;
 
+export function readCsvFile<T>(absPath: string): Papa.ParseResult<T> {
+  const raw = fs.readFileSync(absPath, 'utf-8').replace(/\r\n?/g, '\n');
+  return Papa.parse<T>(raw, { header: true, skipEmptyLines: true });
+}
+
 export function readCsv(filename: string): LayoffEntry[] {
   const filePath = csvPath(filename);
   if (!fs.existsSync(filePath)) return [];
@@ -61,37 +66,34 @@ export function ensureTrailingNewline(filePath: string): void {
   }
 }
 
-export function appendCsv(filename: string, entries: LayoffEntry[]): void {
-  const filePath = csvPath(filename);
-  const fileExists = fs.existsSync(filePath);
+export type CsvEntry = { [K in keyof LayoffEntry]?: unknown };
 
-  if (entries.length === 0) return;
-
-  const rows = cleanRow(
-    Papa.unparse(
-      entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? ''))
-    )
-  );
-
-  if (fileExists) {
-    ensureTrailingNewline(filePath);
-    fs.appendFileSync(filePath, rows + '\n');
-  } else {
-    fs.writeFileSync(filePath, (CSV_HEADERS as string[]).join(',') + '\n');
-    fs.appendFileSync(filePath, rows + '\n');
-  }
+function toCsvRows(entries: CsvEntry[]): unknown[][] {
+  return entries.map((e) => CSV_HEADERS.map((h) => e[h] ?? ''));
 }
 
-export function writeCsv(filename: string, entries: LayoffEntry[]): void {
+function isMissingOrBlank(filePath: string): boolean {
+  return !fs.existsSync(filePath) || fs.readFileSync(filePath, 'utf-8').trim().length === 0;
+}
+
+export function appendCsv(filename: string, entries: CsvEntry[]): void {
+  if (entries.length === 0) return;
+
+  const filePath = csvPath(filename);
+  const rows = cleanRow(Papa.unparse(toCsvRows(entries)));
+
+  if (isMissingOrBlank(filePath)) {
+    fs.writeFileSync(filePath, (CSV_HEADERS as string[]).join(',') + '\n' + rows + '\n');
+    return;
+  }
+  ensureTrailingNewline(filePath);
+  fs.appendFileSync(filePath, rows + '\n');
+}
+
+export function writeCsv(filename: string, entries: CsvEntry[]): void {
   const filePath = csvPath(filename);
   const csv = cleanRow(
-    Papa.unparse(
-      {
-        fields: CSV_HEADERS as string[],
-        data: entries.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? '')),
-      },
-      { newline: '\n' }
-    )
+    Papa.unparse({ fields: CSV_HEADERS as string[], data: toCsvRows(entries) }, { newline: '\n' })
   );
 
   fs.writeFileSync(filePath, csv + '\n');

@@ -19,6 +19,7 @@ import { lookup } from 'node:dns';
 import { Agent, setGlobalDispatcher } from 'undici';
 import { readCsv, writeCsv } from '../src/lib/csv';
 import { LayoffEntry } from '../src/lib/types';
+import { sleep } from '../src/lib/async';
 
 // Force IPv4 + generous connect timeout — IPv6 to archive.org sometimes hangs
 setGlobalDispatcher(
@@ -80,10 +81,6 @@ function loadDotEnv() {
     }
     if (!(m[1] in process.env)) process.env[m[1]] = v;
   }
-}
-
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
 }
 
 interface SpnSubmitResponse {

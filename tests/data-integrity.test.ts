@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import Papa from 'papaparse';
-import { validateCsv } from '../scripts/validate';
-import { ensureTrailingNewline } from '../src/lib/csv';
+import { readDistinctEventPairs, validateCsv } from '../scripts/validate';
+import { ensureTrailingNewline, readCsv } from '../src/lib/csv';
 import { CSV_HEADERS } from '../src/lib/types';
 
 // Golden-data gate: the committed datasets must have ZERO hard validation errors.
@@ -13,9 +13,18 @@ import { CSV_HEADERS } from '../src/lib/types';
 // tests on synthetic fixtures cannot see because they never read the real files.
 // Integrity *warnings* (possible double-counts, unarchived sources) are allowed.
 describe('committed data integrity', () => {
-  it('layoffs.csv has no validation errors', () => {
-    const { errors } = validateCsv('layoffs.csv');
+  it('layoffs.csv has no validation errors or hard integrity errors', () => {
+    const { errors, valid } = validateCsv('layoffs.csv');
     expect(errors).toEqual([]);
+    expect(valid).toBe(true);
+  });
+
+  it('every distinct-events.csv pair names event_ids that exist in layoffs.csv', () => {
+    const eventIds = new Set(readCsv('layoffs.csv').map((e) => String(e.event_id)));
+    const unknown = [...readDistinctEventPairs()]
+      .flatMap((pair) => pair.split(' + '))
+      .filter((id) => !eventIds.has(id));
+    expect(unknown, 'stale event_ids in data/distinct-events.csv').toEqual([]);
   });
 
   it('every row in layoffs.csv and rejected.csv has exactly 11 fields', () => {

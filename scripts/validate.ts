@@ -1,8 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+import Papa from 'papaparse';
 import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
-import { normalizeCompany } from './normalize';
+import { companyKey } from './normalize';
+import { daysBetween, todayIso } from '../src/lib/dates';
 import { extractGnFingerprint } from './deduplicate';
 import { normalizeUrl } from './url-normalize';
+import { DOUBLE_COUNT_REVIEW_WINDOW_DAYS, SAME_EVENT_WINDOW_DAYS } from './same-event';
+
+const SUPERSEDED_RUMOR_WINDOW_DAYS = 30;
+const PER_ROW_EXAMPLE_LIMIT = 5;
 
 interface ValidationError {
   row: number;
@@ -10,33 +19,51 @@ interface ValidationError {
   message: string;
 }
 
-interface IntegrityWarning {
+export type IntegrityWarningType =
+  | 'duplicate'
+  | 'double-count'
+  | 'superseded-rumor'
+  | 'unarchived-confirmed'
+  | 'future-date'
+  | 'vague-company'
+  | 'duplicate-source'
+  | 'global-figure'
+  | 'contradictory-verdict'
+  | 'cross-file-contradiction'
+  | 'possible-same-event'
+  | 'same-day-same-event';
+
+export interface IntegrityWarning {
+  type: IntegrityWarningType;
+  eventIds: string[];
   rows: number[];
-  type:
-    | 'duplicate'
-    | 'double-count'
-    | 'superseded-rumor'
-    | 'unarchived-confirmed'
-    | 'future-date'
-    | 'vague-company'
-    | 'duplicate-source'
-    | 'global-figure'
-    | 'contradictory-verdict'
-    | 'cross-file-contradiction'
-    | 'possible-same-event'
-    | 'same-day-same-event';
+  identity: string;
   message: string;
 }
 
 // Integrity finding types that are promoted to hard errors (block `npm run validate`
 // with exit 1) rather than staying advisory. Currently just the high-confidence
-// same-day subset of the cross-name same-event detection below — see
-// 'same-day-same-event' in checkIntegrity for what qualifies.
-const HARD_INTEGRITY_ERROR_TYPES = new Set<IntegrityWarning['type']>(['same-day-same-event']);
+// same-day subset of the cross-name same-event detection — see
+// 'same-day-same-event' in findCrossNamePairs for what qualifies.
+const HARD_INTEGRITY_ERROR_TYPES = new Set<IntegrityWarningType>(['same-day-same-event']);
+
+const PER_ROW_ADVISORY_TYPES = new Set<IntegrityWarningType>([
+  'unarchived-confirmed',
+  'contradictory-verdict',
+  'global-figure',
+  'vague-company',
+  'cross-file-contradiction',
+]);
+
+const NUMERIC_COLUMNS = {
+  jobs_cut_sg: true,
+  jobs_cut_global: true,
+  pct_workforce: true,
+} as const;
 
 // Today in YYYY-MM-DD. Overridable via VALIDATE_TODAY so tests are deterministic.
 function today(): string {
-  return process.env.VALIDATE_TODAY || new Date().toISOString().slice(0, 10);
+  return process.env.VALIDATE_TODAY || todayIso();
 }
 
 // Company strings that don't name a specific, identifiable company. A confirmed
@@ -103,7 +130,6 @@ const SAME_EVENT_STOPWORDS = new Set([
 // distinctive enough (a location, brand, or unusual word) that two near-date
 // entries sharing it likely describe the same event.
 const SAME_EVENT_RARE_DF_MAX = 5;
-const SAME_EVENT_WINDOW_DAYS = 21;
 
 // Extract distinctive lowercase word tokens (≥4 letters, minus stopwords) from an
 // entry's company name — the one surface where a shared token is a genuine brand or
@@ -212,224 +238,370 @@ export function validateEntry(entry: LayoffEntry, rowIndex: number): ValidationE
   return errors;
 }
 
-// Cross-entry integrity checks that catch duplicate events, superseded rumors,
-// and confirmed entries sourced from unrecognized domains.
-export function checkIntegrity(entries: LayoffEntry[]): IntegrityWarning[] {
-  const warnings: IntegrityWarning[] = [];
+interface IndexedEntry {
+  row: number;
+  entry: LayoffEntry;
+  eventId: string;
+}
 
-  // Group by normalized company name
-  const byCompany = new Map<string, { idx: number; entry: LayoffEntry }[]>();
-  for (let i = 0; i < entries.length; i++) {
-    const key = normalizeCompany(entries[i].company).toLowerCase();
-    if (!byCompany.has(key)) byCompany.set(key, []);
-    byCompany.get(key)!.push({ idx: i, entry: entries[i] });
+interface PairFinding {
+  type: IntegrityWarningType;
+  first: IndexedEntry;
+  second: IndexedEntry;
+  days: number;
+  sharedTokens: string[];
+}
+
+interface PairGroup {
+  type: IntegrityWarningType;
+  firstId: string;
+  secondId: string;
+  rows: Set<number>;
+  companies: Set<string>;
+  minDays: number;
+  sharedTokens: Set<string>;
+}
+
+export function eventIdOf(entry: LayoffEntry, row: number): string {
+  const id = String(entry.event_id ?? '').trim();
+  return id || `row-${row}`;
+}
+
+function indexEntries(entries: LayoffEntry[]): IndexedEntry[] {
+  return entries.map((entry, i) => ({ row: i + 1, entry, eventId: eventIdOf(entry, i + 1) }));
+}
+
+function earliestDateByEvent(indexed: IndexedEntry[]): Map<string, string> {
+  const earliest = new Map<string, string>();
+  for (const { eventId, entry } of indexed) {
+    const date = String(entry.date_announced ?? '');
+    const current = earliest.get(eventId);
+    if (current === undefined || date < current) earliest.set(eventId, date);
+  }
+  return earliest;
+}
+
+export function eventPairKey(a: string, b: string): string {
+  return [a, b].sort().join(' + ');
+}
+
+export function rowIdentity(entry: LayoffEntry): string {
+  const url = normalizeUrl(String(entry.source_link ?? ''));
+  return url || `${companyKey(String(entry.company ?? ''))}@${entry.date_announced}`;
+}
+
+export function warningFingerprint(warning: IntegrityWarning): string {
+  return `${warning.type} :: ${warning.identity}`;
+}
+
+export function parseDistinctEventPairs(raw: string): Set<string> {
+  const rows = Papa.parse<Record<string, string>>(raw.replace(/\r\n?/g, '\n'), {
+    header: true,
+    skipEmptyLines: true,
+  }).data;
+  const pairs = new Set<string>();
+  for (const row of rows) {
+    const a = String(row.event_id_a ?? '').trim();
+    const b = String(row.event_id_b ?? '').trim();
+    if (a && b) pairs.add(eventPairKey(a, b));
+  }
+  return pairs;
+}
+
+export function readDistinctEventPairs(
+  filePath = path.join(process.cwd(), 'data', 'distinct-events.csv')
+): Set<string> {
+  if (!fs.existsSync(filePath)) return new Set();
+  return parseDistinctEventPairs(fs.readFileSync(filePath, 'utf-8'));
+}
+
+export function parseLayoffEntries(raw: string): LayoffEntry[] {
+  return Papa.parse<LayoffEntry>(raw.replace(/\r\n?/g, '\n'), {
+    header: true,
+    dynamicTyping: NUMERIC_COLUMNS,
+    skipEmptyLines: true,
+  }).data;
+}
+
+function groupBy<T>(items: T[], keyOf: (item: T) => string): Map<string, T[]> {
+  const groups = new Map<string, T[]>();
+  for (const item of items) {
+    const key = keyOf(item);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(item);
+  }
+  return groups;
+}
+
+function dayGap(a: IndexedEntry, b: IndexedEntry): number {
+  return Math.round(daysBetween(a.entry.date_announced, b.entry.date_announced));
+}
+
+function classifySameCompanyPair(a: IndexedEntry, b: IndexedEntry): PairFinding[] {
+  const days = dayGap(a, b);
+  const finding = (type: IntegrityWarningType): PairFinding => ({ type, first: a, second: b, days, sharedTokens: [] });
+  const findings: PairFinding[] = [];
+  const bothConfirmed = a.entry.status === 'confirmed' && b.entry.status === 'confirmed';
+
+  if (days === 0) {
+    findings.push(finding('duplicate'));
+  } else if (days <= DOUBLE_COUNT_REVIEW_WINDOW_DAYS && bothConfirmed) {
+    // Two confirmed entries for the same company within a month often reflect the
+    // same event covered in two articles dated days/weeks apart.
+    findings.push(finding('double-count'));
   }
 
-  for (const group of byCompany.values()) {
-    group.sort((a, b) => a.entry.date_announced.localeCompare(b.entry.date_announced));
+  if (a.entry.status === 'rumored' && b.entry.status === 'confirmed' && days >= 0 && days <= SUPERSEDED_RUMOR_WINDOW_DAYS) {
+    findings.push(finding('superseded-rumor'));
+  }
+  return findings;
+}
 
+// Rows that share an event_id are follow-up coverage of ONE event (that is what
+// event_id records), so only pairs spanning two event_ids are compared.
+function findSameCompanyPairs(indexed: IndexedEntry[]): PairFinding[] {
+  const findings: PairFinding[] = [];
+  for (const group of groupBy(indexed, (x) => companyKey(x.entry.company)).values()) {
+    group.sort((a, b) => a.entry.date_announced.localeCompare(b.entry.date_announced));
     for (let i = 0; i < group.length; i++) {
       for (let j = i + 1; j < group.length; j++) {
-        const a = group[i];
-        const b = group[j];
-        // Rows that deliberately share an event_id are follow-up coverage of ONE
-        // event (that is what event_id records), so they are not a double-count.
-        if (
-          a.entry.event_id &&
-          b.entry.event_id &&
-          a.entry.event_id === b.entry.event_id
-        ) {
-          continue;
-        }
-        const msPerDay = 1000 * 60 * 60 * 24;
-        const days = Math.round(
-          (new Date(b.entry.date_announced).getTime() - new Date(a.entry.date_announced).getTime()) / msPerDay
-        );
-
-        if (days === 0) {
-          warnings.push({
-            rows: [a.idx + 1, b.idx + 1],
-            type: 'duplicate',
-            message: `Duplicate: "${a.entry.company}" and "${b.entry.company}" both on ${a.entry.date_announced}`,
-          });
-        } else if (days <= 31 && a.entry.status === 'confirmed' && b.entry.status === 'confirmed') {
-          // Two confirmed entries for the same company within a month often reflect the
-          // same event covered in two articles dated days/weeks apart (e.g. BioNTech's SG
-          // plant closure carried 2026-04-06, 2026-05-05). This is a review warning, not a
-          // hard failure — genuinely separate rounds a few weeks apart are flagged for a
-          // human to confirm rather than auto-merged (dedup-layoffs.ts keeps its tighter
-          // 7-day auto-delete window to avoid collapsing real distinct rounds).
-          warnings.push({
-            rows: [a.idx + 1, b.idx + 1],
-            type: 'double-count',
-            message: `Possible double-count: "${a.entry.company}" confirmed on ${a.entry.date_announced} and again on ${b.entry.date_announced} (${days}d apart)`,
-          });
-        }
-
-        // A rumored entry within 30 days before a confirmed one is likely noise.
-        if (a.entry.status === 'rumored' && b.entry.status === 'confirmed' && days >= 0 && days <= 30) {
-          warnings.push({
-            rows: [a.idx + 1, b.idx + 1],
-            type: 'superseded-rumor',
-            message: `Superseded rumor: "${a.entry.company}" row ${a.idx + 1} (${a.entry.date_announced}, rumored) appears to precede confirmed entry on ${b.entry.date_announced}`,
-          });
-        }
+        if (group[i].eventId === group[j].eventId) continue;
+        findings.push(...classifySameCompanyPair(group[i], group[j]));
       }
     }
   }
+  return findings;
+}
 
-  // Cross-name same-event double-count: the company-keyed loop above only catches
-  // repeats under the *same* normalized name. This pass catches one event scraped
-  // under different names (e.g. the Eunos coffee-shop closure logged five times as
-  // "Eunos Canteen" / "Unnamed Eunos Coffee Shop" / "友诺士咖啡店业者"). Signal: two
-  // near-date, same-industry entries with different companies that share a token
-  // rare across the whole dataset (a location/brand, not generic layoff vocab).
-  const tokenSets = entries.map(significantTokens);
+function sharedRareTokens(a: Set<string>, b: Set<string>, tokenDf: Map<string, number>): string[] {
+  return [...a].filter((t) => b.has(t) && (tokenDf.get(t) ?? 0) <= SAME_EVENT_RARE_DF_MAX);
+}
+
+function documentFrequency(tokenSets: Set<string>[]): Map<string, number> {
   const tokenDf = new Map<string, number>();
   for (const set of tokenSets) {
     for (const t of set) tokenDf.set(t, (tokenDf.get(t) ?? 0) + 1);
   }
-  const seenPair = new Set<string>();
-  for (let i = 0; i < entries.length; i++) {
-    const a = entries[i];
-    if (a.status === 'reference') continue;
-    for (let j = i + 1; j < entries.length; j++) {
-      const b = entries[j];
-      if (b.status === 'reference') continue;
-      if (a.industry !== b.industry) continue;
-      if (
-        normalizeCompany(a.company).toLowerCase() ===
-        normalizeCompany(b.company).toLowerCase()
-      ) {
-        continue; // same-company repeats are handled by the loop above
-      }
-      // Cross-name rows sharing an event_id are an intentionally-linked single event.
-      if (a.event_id && b.event_id && a.event_id === b.event_id) continue;
-      const msPerDay = 1000 * 60 * 60 * 24;
-      const da = new Date(a.date_announced).getTime();
-      const db = new Date(b.date_announced).getTime();
-      if (!Number.isFinite(da) || !Number.isFinite(db)) continue;
-      const daysApart = Math.round(Math.abs(db - da) / msPerDay);
-      if (daysApart > SAME_EVENT_WINDOW_DAYS) continue;
+  return tokenDf;
+}
 
-      const shared: string[] = [];
-      for (const t of tokenSets[i]) {
-        if (tokenSets[j].has(t) && (tokenDf.get(t) ?? 0) <= SAME_EVENT_RARE_DF_MAX) {
-          shared.push(t);
-        }
-      }
+function isCrossNameCandidate(a: IndexedEntry, b: IndexedEntry): boolean {
+  if (a.entry.status === 'reference' || b.entry.status === 'reference') return false;
+  if (a.entry.industry !== b.entry.industry) return false;
+  if (companyKey(a.entry.company) === companyKey(b.entry.company)) return false;
+  return a.eventId !== b.eventId;
+}
+
+function sameDayHardError(a: IndexedEntry, b: IndexedEntry, shared: string[]): IntegrityWarning {
+  return {
+    type: 'same-day-same-event',
+    eventIds: [a.eventId, b.eventId],
+    rows: [a.row, b.row],
+    identity: eventPairKey(a.eventId, b.eventId),
+    message: `Same-day, same-industry entries share distinctive company token(s) [${shared.join(', ')}]: "${a.entry.company}" and "${b.entry.company}" both on ${a.entry.date_announced} — if this is one event, give both rows the same event_id; if they are genuinely different companies, add an alias/exclusion so this token stops matching`,
+  };
+}
+
+// Cross-name same-event double-count: the company-keyed pass only catches repeats
+// under the *same* normalized name. This pass catches one event scraped under
+// different names (e.g. the Eunos coffee-shop closure logged five times as
+// "Eunos Canteen" / "Unnamed Eunos Coffee Shop" / "友诺士咖啡店业者"). Signal: two
+// near-date, same-industry entries with different companies that share a token
+// rare across the whole dataset (a location/brand, not generic layoff vocab).
+// Identical date + industry + shared rare token + no shared event_id is treated as
+// certain enough to be a hard error rather than an advisory warning.
+function findCrossNamePairs(indexed: IndexedEntry[]): { hardErrors: IntegrityWarning[]; findings: PairFinding[] } {
+  const tokenSets = indexed.map((x) => significantTokens(x.entry));
+  const tokenDf = documentFrequency(tokenSets);
+  const hardErrors: IntegrityWarning[] = [];
+  const findings: PairFinding[] = [];
+
+  for (let i = 0; i < indexed.length; i++) {
+    for (let j = i + 1; j < indexed.length; j++) {
+      const a = indexed[i];
+      const b = indexed[j];
+      if (!isCrossNameCandidate(a, b)) continue;
+      const days = dayGap(a, b);
+      if (!Number.isFinite(days) || days > SAME_EVENT_WINDOW_DAYS) continue;
+      const shared = sharedRareTokens(tokenSets[i], tokenSets[j], tokenDf);
       if (shared.length === 0) continue;
 
-      const pairKey = `${i}|${j}`;
-      if (seenPair.has(pairKey)) continue;
-      seenPair.add(pairKey);
-
-      if (daysApart === 0) {
-        // High-confidence subset: identical date_announced + identical industry +
-        // a shared distinctive company-name token + no shared event_id (already
-        // excluded above) is treated as certain enough to be a hard error rather
-        // than an advisory warning — two rows this aligned that are genuinely
-        // different companies are rare, and the fix is cheap either way (share an
-        // event_id, or add an alias/exclusion for the false positive).
-        warnings.push({
-          rows: [i + 1, j + 1],
-          type: 'same-day-same-event',
-          message: `Same-day, same-industry entries share distinctive company token(s) [${shared.join(', ')}]: "${a.company}" and "${b.company}" both on ${a.date_announced} — if this is one event, give both rows the same event_id; if they are genuinely different companies, add an alias/exclusion so this token stops matching`,
-        });
-      } else {
-        warnings.push({
-          rows: [i + 1, j + 1],
-          type: 'possible-same-event',
-          message: `Possible same event under different names: "${a.company}" (${a.date_announced}) and "${b.company}" (${b.date_announced}) share distinctive token(s) [${shared.join(', ')}]`,
-        });
-      }
+      if (days === 0) hardErrors.push(sameDayHardError(a, b, shared));
+      else findings.push({ type: 'possible-same-event', first: a, second: b, days, sharedTokens: shared });
     }
   }
+  return { hardErrors, findings };
+}
 
-  // Confirmed entries must use a Wayback-archived or recognised direct source.
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    if (e.status === 'confirmed' && !isReputableSource(String(e.source_link ?? ''))) {
-      warnings.push({
-        rows: [i + 1],
-        type: 'unarchived-confirmed',
-        message: `Unrecognised source for confirmed entry: "${e.company}" (${e.date_announced}) — ${e.source_link}`,
-      });
+function groupPairFindings(findings: PairFinding[]): PairGroup[] {
+  const groups = new Map<string, PairGroup>();
+  for (const f of findings) {
+    const key = `${f.type} :: ${eventPairKey(f.first.eventId, f.second.eventId)}`;
+    let group = groups.get(key);
+    if (!group) {
+      group = {
+        type: f.type,
+        firstId: f.first.eventId,
+        secondId: f.second.eventId,
+        rows: new Set(),
+        companies: new Set(),
+        minDays: f.days,
+        sharedTokens: new Set(),
+      };
+      groups.set(key, group);
     }
+    group.rows.add(f.first.row).add(f.second.row);
+    group.companies.add(String(f.first.entry.company)).add(String(f.second.entry.company));
+    group.minDays = Math.min(group.minDays, f.days);
+    for (const t of f.sharedTokens) group.sharedTokens.add(t);
+  }
+  return [...groups.values()];
+}
+
+export function formatRows(rows: number[]): string {
+  const sorted = [...rows].sort((a, b) => a - b);
+  if (sorted.length <= 3) return `rows ${sorted.join(', ')}`;
+  return `rows ${sorted[0]} + ${sorted.length - 1} others`;
+}
+
+function formatCompanies(companies: Set<string>): string {
+  const names = [...companies].map((c) => `"${c}"`);
+  if (names.length <= 3) return names.join(' / ');
+  return `${names.slice(0, 3).join(' / ')} + ${names.length - 3} more names`;
+}
+
+function pairMessage(group: PairGroup, earliest: Map<string, string>): string {
+  const describe = (id: string) => `${id} (from ${earliest.get(id)})`;
+  const companies = formatCompanies(group.companies);
+  const sides = `${describe(group.firstId)} vs ${describe(group.secondId)}`;
+  const where = formatRows([...group.rows]);
+  switch (group.type) {
+    case 'duplicate':
+      return `Duplicate: ${companies} on the same date under two event_ids — ${sides}; ${where}`;
+    case 'double-count':
+      return `Possible double-count: ${companies} confirmed under two event_ids — ${sides}, closest rows ${group.minDays}d apart; ${where}`;
+    case 'superseded-rumor':
+      return `Superseded rumor: ${companies} rumored ${describe(group.firstId)} precedes confirmed ${describe(group.secondId)} by ${group.minDays}d; ${where}`;
+    default:
+      return `Possible same event under different names: ${companies} share distinctive token(s) [${[...group.sharedTokens].join(', ')}] — ${sides}, ${group.minDays}d apart; ${where}`;
+  }
+}
+
+function orientByEarliest(group: PairGroup, earliest: Map<string, string>): PairGroup {
+  if (group.type === 'superseded-rumor') return group;
+  const firstDate = earliest.get(group.firstId) ?? '';
+  const secondDate = earliest.get(group.secondId) ?? '';
+  if (firstDate <= secondDate) return group;
+  return { ...group, firstId: group.secondId, secondId: group.firstId };
+}
+
+function toPairWarning(unoriented: PairGroup, earliest: Map<string, string>): IntegrityWarning {
+  const group = orientByEarliest(unoriented, earliest);
+  return {
+    type: group.type,
+    eventIds: [group.firstId, group.secondId],
+    rows: [...group.rows].sort((a, b) => a - b),
+    identity: eventPairKey(group.firstId, group.secondId),
+    message: pairMessage(group, earliest),
+  };
+}
+
+function rowWarning(type: IntegrityWarningType, item: IndexedEntry, message: string): IntegrityWarning {
+  return { type, eventIds: [item.eventId], rows: [item.row], identity: rowIdentity(item.entry), message };
+}
+
+function findUnarchivedConfirmed(indexed: IndexedEntry[]): IntegrityWarning[] {
+  return indexed
+    .filter(({ entry }) => entry.status === 'confirmed' && !isReputableSource(String(entry.source_link ?? '')))
+    .map((item) =>
+      rowWarning(
+        'unarchived-confirmed',
+        item,
+        `Unrecognised source for confirmed entry: "${item.entry.company}" (${item.entry.date_announced}) — ${item.entry.source_link}`
+      )
+    );
+}
+
+// Same underlying article cited by more than one row — a duplicate the company
+// window misses when the rows are far apart in time (e.g. the same Vulcan Post
+// story used for a 2024 and a 2026 Partior entry).
+function findDuplicateSources(indexed: IndexedEntry[]): IntegrityWarning[] {
+  const bySource = groupBy(
+    indexed.filter((x) => normalizeUrl(String(x.entry.source_link ?? ''))),
+    (x) => normalizeUrl(String(x.entry.source_link ?? ''))
+  );
+  const warnings: IntegrityWarning[] = [];
+  for (const [url, items] of bySource) {
+    if (items.length < 2) continue;
+    const rows = items.map((x) => x.row);
+    warnings.push({
+      type: 'duplicate-source',
+      eventIds: [...new Set(items.map((x) => x.eventId))].sort(),
+      rows,
+      identity: url,
+      message: `Same article cited by ${rows.length} rows (${formatRows(rows)}): ${url}`,
+    });
+  }
+  return warnings;
+}
+
+function perRowAdvisories(item: IndexedEntry, now: string): IntegrityWarning[] {
+  const e = item.entry;
+  const notes = String(e.notes ?? '');
+  const confirmed = e.status === 'confirmed';
+  const warnings: IntegrityWarning[] = [];
+
+  // A date in the future can't be an event that "already happened". Usually the
+  // scraper grabbed an article's publication date or a planned closure date.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(e.date_announced)) && e.date_announced > now) {
+    warnings.push(rowWarning('future-date', item, `Future date: "${e.company}" dated ${e.date_announced} (after ${now})`));
   }
 
+  if (confirmed && VAGUE_COMPANY.test(e.company)) {
+    warnings.push(
+      rowWarning('vague-company', item, `Vague company for confirmed entry: "${e.company}" — name a specific company or downgrade`)
+    );
+  }
+
+  if (confirmed && HEDGE_NOTES.test(notes)) {
+    warnings.push(
+      rowWarning('contradictory-verdict', item, `Confirmed but notes hedge: "${e.company}" (${e.date_announced}) — "${notes.slice(0, 90)}"`)
+    );
+  }
+
+  // jobs_cut_sg feeds totalJobsCut, so a worldwide number parked in that column
+  // inflates the SG headline. (A global figure belongs in jobs_cut_global.)
+  if (confirmed && e.jobs_cut_sg != null && e.jobs_cut_sg >= 1000 && GLOBAL_FIGURE.test(notes)) {
+    warnings.push(
+      rowWarning(
+        'global-figure',
+        item,
+        `Global figure in jobs_cut_sg: "${e.company}" jobs_cut_sg=${e.jobs_cut_sg} reads as worldwide — move to jobs_cut_global`
+      )
+    );
+  }
+  return warnings;
+}
+
+export function checkIntegrity(
+  entries: LayoffEntry[],
+  distinctPairs: Set<string> = readDistinctEventPairs()
+): IntegrityWarning[] {
+  const indexed = indexEntries(entries);
+  const earliest = earliestDateByEvent(indexed);
+  const crossName = findCrossNamePairs(indexed);
+  const pairWarnings = groupPairFindings([...findSameCompanyPairs(indexed), ...crossName.findings])
+    .filter((group) => !distinctPairs.has(eventPairKey(group.firstId, group.secondId)))
+    .map((group) => toPairWarning(group, earliest));
   const now = today();
 
-  // Same underlying article cited by more than one row — a duplicate the
-  // company+7-day window misses when the rows are far apart in time (e.g. the same
-  // Vulcan Post story used for a 2024 and a 2026 Partior entry).
-  const bySource = new Map<string, number[]>();
-  for (let i = 0; i < entries.length; i++) {
-    const u = normalizeUrl(String(entries[i].source_link ?? ''));
-    if (!u) continue;
-    if (!bySource.has(u)) bySource.set(u, []);
-    bySource.get(u)!.push(i + 1);
-  }
-  for (const [url, rows] of bySource) {
-    if (rows.length > 1) {
-      warnings.push({
-        rows,
-        type: 'duplicate-source',
-        message: `Same article cited by ${rows.length} rows: ${url}`,
-      });
-    }
-  }
-
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    const notes = String(e.notes ?? '');
-
-    // A date in the future can't be an event that "already happened". Usually the
-    // scraper grabbed an article's publication date or a planned closure date.
-    if (/^\d{4}-\d{2}-\d{2}$/.test(String(e.date_announced)) && e.date_announced > now) {
-      warnings.push({
-        rows: [i + 1],
-        type: 'future-date',
-        message: `Future date: "${e.company}" dated ${e.date_announced} (after ${now})`,
-      });
-    }
-
-    // Confirmed entry that doesn't name a specific company.
-    if (e.status === 'confirmed' && VAGUE_COMPANY.test(e.company)) {
-      warnings.push({
-        rows: [i + 1],
-        type: 'vague-company',
-        message: `Vague company for confirmed entry: "${e.company}" — name a specific company or downgrade`,
-      });
-    }
-
-    // Confirmed entry whose own notes hedge (plan/unconfirmed/duplicate).
-    if (e.status === 'confirmed' && HEDGE_NOTES.test(notes)) {
-      warnings.push({
-        rows: [i + 1],
-        type: 'contradictory-verdict',
-        message: `Confirmed but notes hedge: "${e.company}" (${e.date_announced}) — "${notes.slice(0, 90)}"`,
-      });
-    }
-
-    // Confirmed entry whose SG headcount looks like a global/worldwide figure —
-    // jobs_cut_sg feeds totalJobsCut, so a worldwide number parked in that column
-    // inflates the SG headline. (A global figure belongs in jobs_cut_global.)
-    if (
-      e.status === 'confirmed' &&
-      e.jobs_cut_sg != null &&
-      e.jobs_cut_sg >= 1000 &&
-      GLOBAL_FIGURE.test(notes)
-    ) {
-      warnings.push({
-        rows: [i + 1],
-        type: 'global-figure',
-        message: `Global figure in jobs_cut_sg: "${e.company}" jobs_cut_sg=${e.jobs_cut_sg} reads as worldwide — move to jobs_cut_global`,
-      });
-    }
-  }
-
-  return warnings;
+  return [
+    ...pairWarnings,
+    ...crossName.hardErrors,
+    ...findUnarchivedConfirmed(indexed),
+    ...findDuplicateSources(indexed),
+    ...indexed.flatMap((item) => perRowAdvisories(item, now)),
+  ];
 }
 
 // Cross-file consistency: an event kept in layoffs.csv (confirmed/rumored) must not
@@ -469,8 +641,10 @@ export function checkCrossFileContradictions(
       (fp && rejectedFps.has(fp) && { by: 'gn-fingerprint', row: rejectedFps.get(fp)! });
     if (hit) {
       warnings.push({
-        rows: [i + 1],
         type: 'cross-file-contradiction',
+        eventIds: [eventIdOf(e, i + 1)],
+        rows: [i + 1],
+        identity: rowIdentity(e),
         message: `"${e.company}" (${e.date_announced}, ${e.status}) shares its ${hit.by} with rejected.csv row ${hit.row} — same event kept and rejected`,
       });
     }
@@ -479,68 +653,198 @@ export function checkCrossFileContradictions(
   return warnings;
 }
 
-export function validateCsv(filename: string): { valid: boolean; errors: ValidationError[]; warnings: IntegrityWarning[] } {
+export interface DatasetAnalysis {
+  errors: ValidationError[];
+  hardIntegrityErrors: IntegrityWarning[];
+  warnings: IntegrityWarning[];
+}
+
+export function analyzeDataset(
+  entries: LayoffEntry[],
+  rejected: LayoffEntry[] | null,
+  distinctPairs: Set<string>
+): DatasetAnalysis {
+  const errors = entries.flatMap((entry, i) => validateEntry(entry, i));
+  const findings = checkIntegrity(entries, distinctPairs);
+  if (rejected) findings.push(...checkCrossFileContradictions(entries, rejected));
+  return {
+    errors,
+    hardIntegrityErrors: findings.filter((w) => HARD_INTEGRITY_ERROR_TYPES.has(w.type)),
+    warnings: findings.filter((w) => !HARD_INTEGRITY_ERROR_TYPES.has(w.type)),
+  };
+}
+
+export interface EventStats {
+  rows: number;
+  events: number;
+  confirmedEvents: number;
+}
+
+export function eventStats(entries: LayoffEntry[]): EventStats {
+  const indexed = indexEntries(entries);
+  const confirmed = indexed.filter((x) => x.entry.status === 'confirmed');
+  return {
+    rows: entries.length,
+    events: new Set(indexed.map((x) => x.eventId)).size,
+    confirmedEvents: new Set(confirmed.map((x) => x.eventId)).size,
+  };
+}
+
+function rowLabel(warning: IntegrityWarning): string {
+  if (warning.rows.length === 1) return `Row ${warning.rows[0]}: `;
+  return '';
+}
+
+function printErrors(filename: string, analysis: DatasetAnalysis): void {
+  const { errors, hardIntegrityErrors } = analysis;
+  if (errors.length === 0 && hardIntegrityErrors.length === 0) return;
+  console.error(`❌ ${filename}: ${errors.length + hardIntegrityErrors.length} validation error(s):`);
+  for (const err of errors) {
+    console.error(`  Row ${err.row}, ${err.field}: ${err.message}`);
+  }
+  for (const err of hardIntegrityErrors) {
+    console.error(`  [${err.type}] Rows ${err.rows.join(' & ')}: ${err.message}`);
+  }
+}
+
+function printWarnings(filename: string, warnings: IntegrityWarning[], verbose: boolean): void {
+  if (warnings.length === 0) return;
+  console.warn(`\n⚠️  ${filename}: ${warnings.length} integrity warning(s):`);
+  for (const [type, list] of groupBy(warnings, (w) => w.type)) {
+    const truncate = !verbose && PER_ROW_ADVISORY_TYPES.has(type as IntegrityWarningType);
+    const shown = truncate ? list.slice(0, PER_ROW_EXAMPLE_LIMIT) : list;
+    console.warn(`\n  [${type}] ${list.length}`);
+    for (const w of shown) console.warn(`    ${rowLabel(w)}${w.message}`);
+    if (shown.length < list.length) {
+      console.warn(`    … ${list.length - shown.length} more (pass --verbose to list all)`);
+    }
+  }
+}
+
+function printSummary(filename: string, entries: LayoffEntry[], analysis: DatasetAnalysis): void {
+  const counts = new Map<string, number>();
+  for (const w of [...analysis.hardIntegrityErrors, ...analysis.warnings]) {
+    counts.set(w.type, (counts.get(w.type) ?? 0) + 1);
+  }
+  const lines: [string, number][] = [
+    ['validation errors', analysis.errors.length],
+    ...[...counts].sort((a, b) => b[1] - a[1]),
+    ['total warnings', analysis.warnings.length],
+  ];
+  const width = Math.max(...lines.map(([label]) => label.length));
+  const stats = eventStats(entries);
+  console.log(`\nSummary — ${filename}`);
+  for (const [label, count] of lines) console.log(`  ${label.padEnd(width)}  ${String(count).padStart(5)}`);
+  console.log(`  rows ${stats.rows} | distinct event_ids ${stats.events} | confirmed distinct events ${stats.confirmedEvents}`);
+}
+
+export function validateCsv(
+  filename: string,
+  options: { verbose?: boolean } = {}
+): { valid: boolean; errors: ValidationError[]; warnings: IntegrityWarning[] } {
   const entries = readCsv(filename);
-  const allErrors: ValidationError[] = [];
+  const rejected = filename === 'layoffs.csv' ? readCsv('rejected.csv') : null;
+  const analysis = analyzeDataset(entries, rejected, readDistinctEventPairs());
+  const valid = analysis.errors.length === 0 && analysis.hardIntegrityErrors.length === 0;
 
-  for (let i = 0; i < entries.length; i++) {
-    const errors = validateEntry(entries[i], i);
-    allErrors.push(...errors);
-  }
-
-  const allWarnings = checkIntegrity(entries);
-
-  // When validating the active dataset, also cross-check against rejected.csv.
-  if (filename === 'layoffs.csv') {
-    try {
-      const rejected = readCsv('rejected.csv');
-      allWarnings.push(...checkCrossFileContradictions(entries, rejected));
-    } catch {
-      // rejected.csv is optional — skip the cross-check if it isn't present.
-    }
-  }
-
-  // Split the high-confidence subset (HARD_INTEGRITY_ERROR_TYPES) out into hard
-  // errors that block the commit; everything else stays an advisory warning.
-  const hardIntegrityErrors = allWarnings.filter((w) => HARD_INTEGRITY_ERROR_TYPES.has(w.type));
-  const warnings = allWarnings.filter((w) => !HARD_INTEGRITY_ERROR_TYPES.has(w.type));
-
-  if (allErrors.length === 0 && hardIntegrityErrors.length === 0 && warnings.length === 0) {
+  if (valid && analysis.warnings.length === 0) {
     console.log(`✅ ${filename}: All ${entries.length} entries valid.`);
-    return { valid: true, errors: [], warnings: [] };
+  } else {
+    printErrors(filename, analysis);
+    printWarnings(filename, analysis.warnings, options.verbose ?? false);
   }
+  printSummary(filename, entries, analysis);
 
-  if (allErrors.length > 0 || hardIntegrityErrors.length > 0) {
-    console.error(`❌ ${filename}: ${allErrors.length + hardIntegrityErrors.length} validation error(s):`);
-    for (const err of allErrors) {
-      console.error(`  Row ${err.row}, ${err.field}: ${err.message}`);
-    }
-    for (const err of hardIntegrityErrors) {
-      const rowLabel = err.rows.length === 1 ? `Row ${err.rows[0]}` : `Rows ${err.rows.join(' & ')}`;
-      console.error(`  [${err.type}] ${rowLabel}: ${err.message}`);
-    }
+  return { valid, errors: analysis.errors, warnings: analysis.warnings };
+}
+
+function gitShow(ref: string, relativePath: string): string | null {
+  try {
+    return execFileSync('git', ['show', `${ref}:./${relativePath}`], {
+      encoding: 'utf-8',
+      maxBuffer: 256 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+  } catch {
+    return null;
   }
+}
 
-  if (warnings.length > 0) {
-    console.warn(`\n⚠️  ${filename}: ${warnings.length} integrity warning(s):`);
-    for (const w of warnings) {
-      const rowLabel = w.rows.length === 1 ? `Row ${w.rows[0]}` : `Rows ${w.rows.join(' & ')}`;
-      console.warn(`  [${w.type}] ${rowLabel}: ${w.message}`);
-    }
+function assertGitRef(ref: string): void {
+  try {
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], { stdio: 'ignore' });
+  } catch {
+    throw new Error(`--baseline: "${ref}" is not a valid git ref`);
   }
+}
 
-  return { valid: allErrors.length === 0 && hardIntegrityErrors.length === 0, errors: allErrors, warnings };
+export function warningsAtRef(ref: string, filename: string): IntegrityWarning[] {
+  assertGitRef(ref);
+  const raw = gitShow(ref, `data/${filename}`);
+  if (raw === null) return [];
+  const rejectedRaw = filename === 'layoffs.csv' ? gitShow(ref, 'data/rejected.csv') : null;
+  const distinctRaw = gitShow(ref, 'data/distinct-events.csv');
+  return analyzeDataset(
+    parseLayoffEntries(raw),
+    rejectedRaw === null ? null : parseLayoffEntries(rejectedRaw),
+    distinctRaw === null ? new Set() : parseDistinctEventPairs(distinctRaw)
+  ).warnings;
+}
+
+export function newWarnings(current: IntegrityWarning[], baseline: IntegrityWarning[]): IntegrityWarning[] {
+  const known = new Set(baseline.map(warningFingerprint));
+  return current.filter((w) => !known.has(warningFingerprint(w)));
+}
+
+function reportBaselineRegressions(filename: string, ref: string, current: IntegrityWarning[]): IntegrityWarning[] {
+  const baseline = warningsAtRef(ref, filename);
+  const added = newWarnings(current, baseline);
+  const resolved = newWarnings(baseline, current).length;
+  console.log(
+    `\nBaseline ${ref}: ${baseline.length} warning(s) then, ${current.length} now — ${added.length} new, ${resolved} resolved`
+  );
+  if (added.length === 0) return added;
+  console.error(`❌ ${added.length} integrity warning(s) are new relative to ${ref}:`);
+  for (const w of added) console.error(`  [${w.type}] ${rowLabel(w)}${w.message}`);
+  return added;
+}
+
+interface CliOptions {
+  file: string;
+  verbose: boolean;
+  baselineRef: string | null;
+}
+
+export function parseCliArgs(args: string[]): CliOptions {
+  const options: CliOptions = { file: 'layoffs.csv', verbose: false, baselineRef: null };
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--verbose') options.verbose = true;
+    else if (arg === '--baseline') options.baselineRef = args[++i] ?? null;
+    else if (arg.startsWith('--baseline=')) options.baselineRef = arg.slice('--baseline='.length);
+    else if (!arg.startsWith('--')) options.file = arg;
+  }
+  if (args.includes('--baseline') && !options.baselineRef) {
+    throw new Error('--baseline requires a git ref, e.g. --baseline HEAD');
+  }
+  return options;
 }
 
 // CLI entry point — only when run directly (tsx scripts/validate.ts), not when
 // imported by another script (e.g. scripts/llm-evals.ts reuses the predicates).
+function main(): number {
+  const options = parseCliArgs(process.argv.slice(2));
+  if (options.baselineRef) assertGitRef(options.baselineRef);
+  const { valid, warnings } = validateCsv(options.file, { verbose: options.verbose });
+  const regressions = options.baselineRef ? reportBaselineRegressions(options.file, options.baselineRef, warnings) : [];
+  return valid && regressions.length === 0 ? 0 : 1;
+}
+
 if (process.argv[1]?.endsWith('validate.ts')) {
-  const file = process.argv[3] || 'layoffs.csv';
-  const { valid } = validateCsv(file);
-  // Exit non-zero on hard errors so CI actually gates on this. The scheduled-scrape
-  // workflow uses `npm run validate` as its only pre-commit data check (it does not
-  // run the test suite), so without this a corrupted row would log an error but the
-  // job would still succeed and auto-commit it to main. Integrity *warnings* leave
-  // `valid` true and do not block — they stay advisory by design.
-  if (!valid) process.exit(1);
+  try {
+    process.exitCode = main();
+  } catch (error) {
+    console.error(`❌ ${(error as Error).message}`);
+    process.exitCode = 2;
+  }
 }

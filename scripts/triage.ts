@@ -6,10 +6,9 @@
 //   - data/review-queue.csv : cleared (header only)
 
 import fs from 'node:fs';
-import Papa from 'papaparse';
-import { readCsv, ensureTrailingNewline } from '../src/lib/csv';
-import { LayoffEntry, CSV_HEADERS, INDUSTRIES } from '../src/lib/types';
-import { normalizeCompany } from './normalize';
+import { readCsv, appendCsv, writeCsv } from '../src/lib/csv';
+import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
+import { companyMonthKey, eventIdFor } from './normalize';
 import {
   buildClusters,
   resolveCluster,
@@ -57,10 +56,6 @@ type Override = Partial<{
 // rule canonicalizes a row to a different company than its raw row.company.
 function loadExistingLayoffs(): LayoffEntry[] {
   return readCsv('layoffs.csv') as LayoffEntry[];
-}
-
-function monthKey(name: string, date: string): string {
-  return `${normalizeCompany(name).toLowerCase()}|${date.slice(0, 7)}`;
 }
 
 // Patterns indicating commentary / statistics / policy debate -> reject
@@ -363,18 +358,6 @@ function preClassify(row: ResolvedRow, idx: number): PreClassification {
   };
 }
 
-// Derive a kebab-case event_id from the (canonical) company + event month. Used only
-// when neither the resolved row nor a manual override supplies one — new events get a
-// fresh slug; reuse of an existing event_id happens upstream (LLM triage / overrides).
-function eventIdFor(company: string, date: string): string {
-  const slug = normalizeCompany(company || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  const month = (date || '').slice(0, 7);
-  return `${slug || 'event'}-${month || 'unknown'}`;
-}
-
 function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): LayoffEntry {
   const industry = (override.industry as string) || row.industry || 'Other';
   const finalIndustry = (INDUSTRIES as readonly string[]).includes(industry) ? industry : 'Other';
@@ -398,36 +381,6 @@ function toLayoffEntry(row: ResolvedRow, verdict: Verdict, override: Override): 
         : (verdict as LayoffEntry['status']),
     event_id,
   };
-}
-
-function appendRows(filename: string, rows: LayoffEntry[]): void {
-  if (rows.length === 0) return;
-  const path = `${process.cwd()}/data/${filename}`;
-  const fileExists = fs.existsSync(path) && fs.readFileSync(path, 'utf-8').trim().length > 0;
-  const csv = Papa.unparse(
-    rows.map((e) => CSV_HEADERS.map((h) => (e as any)[h] ?? '')),
-    { newline: '\n' }
-  );
-  if (fileExists) {
-    ensureTrailingNewline(path);
-    fs.appendFileSync(path, csv + '\n');
-  } else {
-    fs.writeFileSync(path, (CSV_HEADERS as string[]).join(',') + '\n' + csv + '\n');
-  }
-}
-
-function writeQueue(rows: ResolvedRow[]): void {
-  const path = `${process.cwd()}/data/review-queue.csv`;
-  // Write only the standard CSV columns (drop canonical_url helper field).
-  if (rows.length === 0) {
-    fs.writeFileSync(path, (CSV_HEADERS as string[]).join(',') + '\n');
-    return;
-  }
-  const csv = Papa.unparse(
-    rows.map((r) => CSV_HEADERS.map((h) => (r as any)[h] ?? '')),
-    { newline: '\n' }
-  );
-  fs.writeFileSync(path, (CSV_HEADERS as string[]).join(',') + '\n' + csv + '\n');
 }
 
 function main() {
@@ -503,7 +456,7 @@ function main() {
     const company = finalOverride[i].company || rows[i].company;
     const date = finalOverride[i].date_announced || rows[i].date_announced || '';
     if (!company || !date) continue;
-    const key = monthKey(company, date);
+    const key = companyMonthKey(company, date);
     if (seenMonthKey.has(key)) {
       finalVerdict[i] = 'rejected';
       finalReason[i] = `Duplicate (same canonical ${company}, ${date.slice(0, 7)}) already added this run`;
@@ -546,9 +499,9 @@ function main() {
     );
     console.log('[dry-run] Wrote data/triage-dryrun.json — no CSV mutations.');
   } else {
-    appendRows('layoffs.csv', [...confirmed, ...rumored]);
-    appendRows('rejected.csv', rejected);
-    writeQueue(queued);
+    appendCsv('layoffs.csv', [...confirmed, ...rumored]);
+    appendCsv('rejected.csv', rejected);
+    writeCsv('review-queue.csv', queued);
     fs.writeFileSync(
       `${process.cwd()}/data/triage-summary.json`,
       JSON.stringify(summary, null, 2)

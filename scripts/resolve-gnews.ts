@@ -14,6 +14,7 @@
 
 import fs from 'node:fs';
 import { readCsv } from '../src/lib/csv';
+import { sleep } from '../src/lib/async';
 
 const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
@@ -22,10 +23,6 @@ const REQUEST_DELAY_MS = 750;
 const MAX_RETRIES = 3;
 
 let cookieHeader = '';
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
 
 async function warmUpSession(): Promise<void> {
   const res = await fetch('https://news.google.com/', {

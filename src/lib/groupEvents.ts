@@ -1,4 +1,5 @@
 import { LayoffEntry } from './types';
+import { rowQualityScore } from './rowQuality';
 
 export interface GroupedEventEntry extends LayoffEntry {
   eventId: string;
@@ -11,6 +12,31 @@ export function getEventKey(entry: LayoffEntry, index: number): string {
   }
   // Defensive: a row without an event_id becomes its own unique event
   return `__row__:${entry.company}|${entry.date_announced}|${entry.source_link || index}`;
+}
+
+export interface EventRollup {
+  confirmed: boolean;
+  maxJobsSg: number | null;
+  maxJobsGlobal: number | null;
+}
+
+function maxOrNull(values: (number | null)[]): number | null {
+  const present = values.filter((v): v is number => v != null);
+  return present.length > 0 ? Math.max(...present) : null;
+}
+
+export function rollupEvent(rows: LayoffEntry[]): EventRollup {
+  return {
+    confirmed: rows.some((r) => r.status === 'confirmed' || r.status === 'reference'),
+    maxJobsSg: maxOrNull(rows.map((r) => r.jobs_cut_sg)),
+    maxJobsGlobal: maxOrNull(rows.map((r) => r.jobs_cut_global)),
+  };
+}
+
+function compareCanonical(a: LayoffEntry, b: LayoffEntry): number {
+  const byDate = String(a.date_announced).localeCompare(String(b.date_announced));
+  if (byDate !== 0) return byDate;
+  return rowQualityScore(b) - rowQualityScore(a);
 }
 
 export function groupEntriesByEvent(entries: LayoffEntry[]): GroupedEventEntry[] {
@@ -39,27 +65,10 @@ export function groupEntriesByEvent(entries: LayoffEntry[]): GroupedEventEntry[]
       continue;
     }
 
-    // Sort rows: earliest date_announced first for the primary row
-    const sorted = [...rows].sort((a, b) => {
-      const cmp = String(a.date_announced).localeCompare(String(b.date_announced));
-      if (cmp !== 0) return cmp;
-      const aConf = a.status === 'confirmed' ? 1 : 0;
-      const bConf = b.status === 'confirmed' ? 1 : 0;
-      if (bConf !== aConf) return bConf - aConf;
-      const aJobs = a.jobs_cut_sg != null ? 1 : 0;
-      const bJobs = b.jobs_cut_sg != null ? 1 : 0;
-      return bJobs - aJobs;
-    });
-
+    const sorted = [...rows].sort(compareCanonical);
     const primary = sorted[0];
     const followUps = sorted.slice(1);
-
-    // Event-level rollup metrics
-    const confirmed = rows.some((r) => r.status === 'confirmed' || r.status === 'reference');
-    const sgValues = rows.map((r) => r.jobs_cut_sg).filter((v): v is number => v != null);
-    const maxJobsSg = sgValues.length > 0 ? Math.max(...sgValues) : null;
-    const globalValues = rows.map((r) => r.jobs_cut_global).filter((v): v is number => v != null);
-    const maxJobsGlobal = globalValues.length > 0 ? Math.max(...globalValues) : null;
+    const { confirmed, maxJobsSg, maxJobsGlobal } = rollupEvent(rows);
 
     result.push({
       ...primary,
