@@ -36,6 +36,7 @@ import {
   type Cluster,
   type ClusterNode,
 } from './cluster';
+import { screenTriageBatch, datasetAnalyzer, type TriageCandidate } from './triage-guard';
 
 interface SummaryRow {
   original_company: string;
@@ -231,6 +232,7 @@ async function main() {
   const rejected: LayoffEntry[] = [];
   const remaining: LayoffEntry[] = [];
   const summaryRows: SummaryRow[] = [];
+  const originByRow = new Map<LayoffEntry, { entry: LayoffEntry; summary: SummaryRow }>();
 
   // Track the constructed layoffEntry per queue idx (only for confirmed/rumored rows)
   // so the post-loop cluster alignment below can look them up and mutate event_id in
@@ -283,7 +285,7 @@ async function main() {
         `  [${processed}/${queue.length}] ${entry.company.slice(0, 50).padEnd(50)} → ${verdict.verdict} (${verdict.confidence}) [${provider}]`
       );
 
-      summaryRows.push({
+      const summaryRow: SummaryRow = {
         original_company: entry.company,
         llm_company: verdict.company,
         source_link: entry.source_link,
@@ -292,7 +294,8 @@ async function main() {
         provider,
         notes: verdict.notes,
         rejection_reason: verdict.rejection_reason ?? undefined,
-      });
+      };
+      summaryRows.push(summaryRow);
 
       const date_announced = verdict.date_announced || entry.date_announced;
       const layoffEntry: LayoffEntry = {
@@ -314,11 +317,14 @@ async function main() {
       if (verdict.verdict === 'confirmed' || verdict.verdict === 'rumored') {
         accepted.push(layoffEntry);
         acceptedByIdx.set(queueIdx, layoffEntry);
+        originByRow.set(layoffEntry, { entry, summary: summaryRow });
       } else if (verdict.verdict === 'rejected') {
-        rejected.push({
+        const rejectedEntry: LayoffEntry = {
           ...layoffEntry,
           notes: `[LLM rejected: ${verdict.rejection_reason || 'see notes'}] ${verdict.notes}`,
-        });
+        };
+        rejected.push(rejectedEntry);
+        originByRow.set(rejectedEntry, { entry, summary: summaryRow });
       } else {
         remaining.push(entry);
       }
@@ -353,8 +359,22 @@ async function main() {
     }
   }
 
-  if (accepted.length > 0) appendCsv('layoffs.csv', accepted);
-  if (rejected.length > 0) appendCsv('rejected.csv', rejected);
+  const candidates: TriageCandidate[] = [
+    ...accepted.map((row) => ({ target: 'layoffs' as const, row })),
+    ...rejected.map((row) => ({ target: 'rejected' as const, row })),
+  ];
+  const screened = screenTriageBatch(existingLayoffs, readCsv('rejected.csv') as LayoffEntry[], candidates, datasetAnalyzer());
+  for (const held of screened.heldBack) {
+    const origin = originByRow.get(held.candidate.row);
+    if (!origin) continue;
+    remaining.push(origin.entry);
+    origin.summary.verdict = 'needs_review';
+    console.log(`  ! held back ${held.candidate.row.company} (${held.candidate.row.date_announced}) for manual review:`);
+    for (const warning of held.warnings) console.log(`      [${warning.type}] ${warning.message}`);
+  }
+
+  if (screened.accepted.length > 0) appendCsv('layoffs.csv', screened.accepted);
+  if (screened.rejected.length > 0) appendCsv('rejected.csv', screened.rejected);
   writeCsv('review-queue.csv', remaining);
 
   const summary = {
