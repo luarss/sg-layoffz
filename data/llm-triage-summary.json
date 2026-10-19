@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-10-18",
+  "run_date": "2026-10-19",
   "providers": [
     {
       "name": "deepseek",
@@ -11,199 +11,116 @@
     }
   ],
   "timed_out": false,
-  "total": 20,
-  "confirmed": 3,
+  "total": 11,
+  "confirmed": 1,
   "rumored": 0,
-  "rejected": 7,
-  "needs_review": 10,
-  "remaining_queue": 10,
+  "rejected": 5,
+  "needs_review": 5,
+  "remaining_queue": 5,
   "rows": [
     {
-      "original_company": "Cimb Lets Go Of Three Singapore Department Heads",
-      "llm_company": "CIMB",
-      "source_link": "https://theedgemalaysia.com/article/cimb-lets-go-three-singapore-department-heads",
+      "original_company": "'you're Gonna Lose Your Job': Singapore Tech Worker Says Every Mistake Triggers Fears Of Being Laid Off - The Independent",
+      "llm_company": "'you're Gonna Lose Your Job': Singapore Tech Worker Says Every Mistake Triggers Fears Of Being Laid Off - The Independent",
+      "source_link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQdzJTb3cwSUg4OU9WS05VREVIUWoyWjBFeTlieEEtS3hIYVJmTzFVTGU4cUsxZ0JsOFRoWE1BZGlxVDloanBkOWc4RnBBbUp3ZjBTenY5SmZoT2RiTVF4NXNXMVJIUW82c295ckMyeWFVaDAtMjZYaFdJdnVsbzZ2bjNEMTczaDBEMjBDWHVjdndQX2tsVTBpRmhEYXhGTk1aYThoaFB6RWxWRVJNZTBaSnk1NGdpTmM5blB1Z3hMakhZM2tS?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "First-person account of an unnamed Singapore tech worker's fear of being laid off; no specific company or actual layoff event. This is a personal anecdote with an unspecified employer.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Amazon Retreats From Singapore Groceries, Leans On Cross-border Instead - The Next Web",
+      "llm_company": "Amazon",
+      "source_link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNd09mSXFjU2daVERGaGxOamFXYU1jaUJQLS03NGU1VE9fUGZtSDF3aUl1dlA1dFk2ZVBBSXdTRXY3M3R6RVBHTnJRUU5Icjg0bUxZR1EwbWQxOVc4MHBXeGVIVndOQlF5ZThEbWR6NHhuY2J6eGdSLWhsenFWSFJNZzlR?oc=5",
+      "verdict": "confirmed",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "Amazon is retreating from its Singapore grocery operations, implying closure of local outlets and associated job losses; this is follow-up coverage of the already-tracked Amazon Singapore groceries event rather than a new, later round of cuts."
+    },
+    {
+      "original_company": "Eaton Closing North Charlotte Manufacturing Site In 2025 - Yahoo Finance",
+      "llm_company": "Eaton",
+      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQUG9GcTRKNDJYbnRROWpic1NZLUV4VnMyY1BkYk5ONDA0MGRnQnpDZ3FpNlowU3B5dzIzOWJ4TkNQZ3BLdlQtcHk5ejNuY0Vzc0stSXFnZ3BXNEtzRmh1VWdZQVhBZmpBVVMtNFFLNWVpXzR2MERxVW5HcXd1YkI5VmVWeERMRUo0UV9HUF9QbTdDMnM?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Eaton's North Charlotte manufacturing site closure is in Charlotte, North Carolina, USA, with no Singapore entity, office, or workforce involved.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Why This Founder Killed His Ai Startup Despite Early Success - Tech In Asia",
+      "llm_company": "Why This Founder Killed His Ai Startup Despite Early Success - Tech In Asia",
+      "source_link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBUdW42eXA5bS1DSS1yeUFBcmFYa2pRRFJIMUZDeFItbU9BSUhtc0dESGF2enhSU3ZQLTJIcFZOdTlTZXpBVE44bnlKVXlJRzNNbW9nQk55Ql9udERwQ2pJOEdfX29pWWxEVjN1aEF1b24?oc=5",
+      "verdict": "rejected",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "This is a founder-profile/personal narrative about an entrepreneur shutting down his own AI startup, not a reported retrenchment at a specific named company; no company name, headcount, or Singapore nexus is disclosed in the article.",
+      "rejection_reason": "personal"
+    },
+    {
+      "original_company": "Ubisoft To Close Finland Studio",
+      "llm_company": "Ubisoft",
+      "source_link": "https://hr.economictimes.indiatimes.com/news/industry/ubisoft-to-close-finland-studio-cut-70-jobs-in-singapore/134955446",
       "verdict": "needs_review",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Follow-up coverage reports CIMB let go of three Singapore department heads, matching the tracked CIMB Singapore event rather than a separate later round."
-    },
-    {
-      "original_company": "Kpmg Tech Chief Promoted As 200 Staff Face Redundancy ..",
-      "llm_company": "KPMG",
-      "source_link": "https://news.lavx.hu/article/kpmg-tech-chief-promoted-as-200-staff-face-redundancy-before-christmas",
-      "verdict": "needs_review",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of the tracked KPMG redundancy round in which around 200 staff face redundancy, with the tech chief promoted amid the cuts. No separate later round is described, so the existing event_id is reused; the 200 figure is not Singapore-specific."
-    },
-    {
-      "original_company": "New Horse Noodles To Close After Just Five Months As Brothers Say Hawker Life Was Not For Them - Wwc One Media",
-      "llm_company": "New Horse Noodles",
-      "source_link": "https://wwconemedia.com/new-horse-noodles-to-close-after-just-five-months-as-brothers-say-hawker-life-was-not-for-them/",
-      "verdict": "needs_review",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Singapore hawker noodle stall closing after five months of operation, a closure that implies job losses for its staff; this is follow-up coverage of the already tracked New Horse Noodles closure event."
-    },
-    {
-      "original_company": "Hsbc",
-      "llm_company": "HSBC",
-      "source_link": "https://www.computerweekly.com/news/366651817/HSBC-cuts-wealth-management-roles-as-AI-increasingly-services-customers",
-      "verdict": "needs_review",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of HSBC's wealth management role cuts reported around 6 Oct 2026, an event already tracked as hsbc-2026-10; HSBC has significant Singapore operations, so the Singapore nexus holds even though no headcount figure is disclosed."
+      "notes": "Ubisoft is reported to cut 70 jobs in Singapore alongside closing its Finland studio, a credibly reported and specific Singapore layoff. This is follow-up coverage of the already-tracked Ubisoft Singapore event."
     },
     {
       "original_company": "Ubisoft Plans To Close Redlynx And",
       "llm_company": "Ubisoft",
-      "source_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPZ1FCNUJUNWw4QmNyc1dscU1IenE3WGJvcUI0QVZ0aDlyVTFtbXZJWlpxTlVnTk1Nem9zMDA5dWpTdVZCdV9EQ2k0V0NmLVh1Zk5aV3ZnREtmWlZDMGloc2xIRnBObkc1YklzRWNRcVBjNG9uTm5TbVBTcE5QU3lVeGZTc1dTRGhLM3BoYlFqRG1BZw?oc=5",
-      "verdict": "confirmed",
+      "source_link": "https://www.pocketgamer.biz/ubisoft-plans-to-close-redlynx-and-cut-70-jobs-in-singapore/",
+      "verdict": "needs_review",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of Ubisoft's studio restructuring, reporting the planned closure of RedLynx (Finland) as part of the same round of cuts tied to the tracked Ubisoft Singapore event. The ~70 affected roles are at the Finnish studio, so the figure is recorded as global rather than Singapore headcount."
+      "notes": "Credibly reported Ubisoft announcement that it will shutter RedLynx and cut 70 roles in Singapore; this is follow-up coverage of the already-tracked Ubisoft event, with the 70 figure being Singapore-specific. Although the headline frames it as a plan, it is an officially announced, company-specific cut tied to a closure."
     },
     {
-      "original_company": "Ubisoft To Close Trials Studio Redlynx, Downsize Ubisoft Singapore - Gamedev.net",
-      "llm_company": "Ubisoft",
-      "source_link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQZWhqUEU0VFhmWkQ1LV9UTzZJLTdzRk9pb2x0R216clFuY0o5X3pjSlRGNlhzNmkyREVzOW1BX3BINk5IUmVKMnZ0WEp4cnVyS2NaS2VFaGszY3J6a0p6QjN3dGpDWXB3Ulg4UUktUjNMYV9VS1ptSTNRd0xHUG96VmNhbWJvMDBwUWNxcnItN1B6bm91QVlZcmsxSUIyUQ?oc=5",
-      "verdict": "confirmed",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Ubisoft is reported to be closing its RedLynx studio and downsizing Ubisoft Singapore, a specific named company with Singapore operations where cuts are actively underway. This is follow-up coverage of the already tracked Ubisoft Singapore event, with no Singapore headcount disclosed."
-    },
-    {
-      "original_company": "New Employment Support Office To Offer Greater Job Support For Persons With Disabilities, Singapore News - Asiaone.com",
-      "llm_company": "New Employment Support Office To Offer Greater Job Support For Persons With Disabilities, Singapore News - Asiaone.com",
-      "source_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQRjUxaVZfVVRhZjhJYmVGakxGVWNzdGJub0hzSlFhM3VYR1JuakZFejVzMXJxaVBSQV9VdWRWd3pzUkhRTzI0X3RGRnNYYjQxRDlaOFhuMmRXSDl2T3RyODRwTGxpaDVqYVpGR29iMkd5YVhJYS05NHMwX3p2VUc0Qmx2YmFhZ3hVNXVJMjhfajVoZw?oc=5",
+      "original_company": "Horizon3 Expands In Singapore With Strategic Investments | Horizon3",
+      "llm_company": "Horizon3",
+      "source_link": "https://horizon3.ai/news/press-release/horizon3-singapore-expansion-asean-headquarters/",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "Government initiative opening an employment support office for persons with disabilities; no company, no job cuts, purely a policy/programme announcement.",
+      "notes": "Article covers Horizon3's Singapore expansion and new ASEAN headquarters, i.e. an investment/hiring announcement rather than any job cuts.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Ubisoft",
+      "llm_company": "Ubisoft",
+      "source_link": "https://www.hardwarezone.com.sg/entertainment/gaming/ubisoft-singapore-job-cuts-2026",
+      "verdict": "needs_review",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Credibly reported layoff of 70 staff at Ubisoft Singapore, a specific named company with Singapore operations; cuts are already underway. This is follow-up coverage of the Ubisoft Singapore event announced 2026-10-14, so the existing event_id is reused."
+    },
+    {
+      "original_company": "Grocery Delivery Startup Honestbee Is Running Out Of Money And Trying To Sell - Startup A Business - Find An Educated Workforce",
+      "llm_company": "Grocery Delivery Startup Honestbee Is Running Out Of Money And Trying To Sell - Startup A Business - Find An Educated Workforce",
+      "source_link": "http://startupsnows.blogspot.com/2019/04/grocery-delivery-startup-honestbee-is.html",
+      "verdict": "needs_review",
+      "confidence": "low",
+      "provider": "none",
+      "notes": "All providers failed: deepseek: response truncated (finish_reason=length) | openrouter: 404 No endpoints found for openrouter/owl-alpha."
+    },
+    {
+      "original_company": "Clarification By Acting Minister For Manpower (6 October 2026) · Sg Parliament",
+      "llm_company": "Clarification By Acting Minister For Manpower (6 October 2026) · Sg Parliament",
+      "source_link": "https://www.sgparliament.com/debate/34344",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a parliamentary clarification by the Acting Minister for Manpower — a government policy statement, not a company layoff announcement. No specific company or Singapore layoff event is involved.",
       "rejection_reason": "policy"
     },
     {
-      "original_company": "新加坡科技公司重组 15分钟内炒21人 | Klse Screener",
-      "llm_company": "新加坡科技公司重组 15分钟内炒21人 | Klse Screener",
-      "source_link": "https://www.klsescreener.com/v2/news/view/1803597/%E6%96%B0%E5%8A%A0%E5%9D%A1%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8%E9%87%8D%E7%BB%84-15%E5%88%86%E9%92%9F%E5%86%85%E7%82%9221%E4%BA%BA",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article describes a retrenchment of 21 staff at a 'Singapore tech company' during a restructuring, but never names the company — the subject is a generic descriptor rather than an identifiable employer.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "Ubisoft To",
-      "llm_company": "Ubisoft",
-      "source_link": "https://www.asiabusinessoutlook.com/news/ubisoft-to-cut-70-singapore-jobs-after-17-billion-annual-loss-nwid-12624.html",
-      "verdict": "needs_review",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Ubisoft is cutting 70 Singapore-based roles following a US$1.7 billion annual loss, a specific reported cut at a named company with Singapore operations. This matches the already-tracked event ubisoft-2026-10 rather than a new round."
-    },
-    {
-      "original_company": "How To Close Down A Company In Singapore (without ..",
-      "llm_company": "How To Close Down A Company In Singapore (without ..",
-      "source_link": "https://globallinkconsulting.sg/en/article/incorporation-service/incorporation-in-singapore/how-to-close-singapore-company",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is an advisory/explainer article on the procedural steps for closing a Singapore company, not a report of a specific company's layoffs or closure. No named company or actual job-cut event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Singapore: Speed Of Change",
-      "llm_company": "Singapore: Speed Of Change",
-      "source_link": "https://forbesasiacustom.com/singapore-speed-of-change/",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "The title 'Singapore: Speed Of Change' on a Forbes Asia custom (advertorial/sponsored) page suggests a general market commentary piece on Singapore's business environment, with no named company and no reported layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "“k” Line Holds Opening Ceremony For New Consolidated ..",
-      "llm_company": "\"K\" Line (Kawasaki Kisen Kaisha)",
-      "source_link": "https://www.kline.co.jp/en/news/other/other-20261007.html",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a corporate press release about an opening ceremony for a newly consolidated facility/office — an expansion/inauguration item with no job cuts, retrenchment, or Singapore closure mentioned.",
-      "rejection_reason": "vague"
-    },
-    {
-      "original_company": "Deloitte",
-      "llm_company": "Deloitte",
-      "source_link": "https://www.afr.com/companies/professional-services/deloitte-cuts-170-jobs-as-big-four-race-to-target-outsourcing-20261018-p616cg",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "AFR report on Deloitte cutting about 170 staff concerns Deloitte Australia, with no Singapore entity or office implicated; unrelated to the tracked Deloitte Shenton Way event.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Retrenchment Trends For Q2 2026, Attributions To Ai, Employment Facilitation Gaps, Re-employment And Wage Outcomes, And Targeted Support Measures For Displaced Workers (6 October 2026) · Sg Parliament",
-      "llm_company": "Retrenchment Trends For Q2 2026, Attributions To Ai, Employment Facilitation Gaps, Re-employment And Wage Outcomes, And Targeted Support Measures For Displaced Workers (6 October 2026) · Sg Parliament",
-      "source_link": "https://www.sgparliament.com/debate/34335",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Parliamentary debate on retrenchment trends, AI attributions, re-employment and support measures — a government policy discussion and labour-market statistics item, not a specific company layoff event.",
-      "rejection_reason": "policy"
-    },
-    {
-      "original_company": "Hsbc Is",
-      "llm_company": "HSBC",
-      "source_link": "https://www.resultsense.com/insights/2026-10-08-hsbc-uk-wealth-cuts-bank-ai-workforce-pattern/",
+      "original_company": "Nasi Lemak Ayam Taliwang Tutup Cawangan Canberra Plaza Susuli Kenaikan Sewa; Big Mouth Bakehouse Gulung Tikar - Berita Mediacorp",
+      "llm_company": "Nasi Lemak Ayam Taliwang",
+      "source_link": "https://berita.mediacorp.sg/kewangan/nasi-lemak-ayam-taliwang-tutup-cawangan-canberra-plaza-susuli-kenaikan-sewa-big-mouth-bakehouse-gulung-tikar-1077311",
       "verdict": "needs_review",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Follow-up coverage of the same HSBC cost-cutting round, here specifically adviser role cuts in the UK; HSBC has substantial Singapore operations so the Singapore nexus holds, but no Singapore-specific headcount is disclosed and the figure is UK/global in scope."
-    },
-    {
-      "original_company": "Hsbc Job",
-      "llm_company": "HSBC",
-      "source_link": "https://www.forbes.com/sites/sheilacallaham/2026/10/07/hsbc-to-cut-advisors-even-while-investors-want-human-judgment/",
-      "verdict": "needs_review",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of HSBC's announced advisor/wealth staff cuts first reported 2026-10-06; HSBC has significant Singapore operations, but no headcount figure is disclosed so both job fields are null."
-    },
-    {
-      "original_company": "Sg Ubisoft: 70 Job Layoffs In Singapore, Finland Studio To Close; Eligible Jobseekers May Get Up To S$6k Support | The Independent",
-      "llm_company": "Ubisoft",
-      "source_link": "https://theindependent.sg/sg-ubisoft-70-job-layoffs-in-singapore-finland-studio-to-close-eligible-jobseekers-may-get-up-to-s-6k-support",
-      "verdict": "needs_review",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of Ubisoft's announced retrenchment of 70 staff in Singapore, alongside the closure of its Finland studio; the Singapore-specific headcount is disclosed and the story matches the already tracked event."
-    },
-    {
-      "original_company": "Crystal Jade Shutters 4 More Outlets",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://thesingapore.org/news/crystal-jade-shutters-4-more-outlets-lays-off-120-staff-ahead-of-proposed-sale",
-      "verdict": "needs_review",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Crystal Jade is closing four more Singapore outlets and laying off 120 staff ahead of a proposed sale, an actively underway Singapore closure with job losses. This is continued coverage of the same outlet-closure wave already tracked, so the existing event_id is retained."
-    },
-    {
-      "original_company": "为拟议出售铺路 翡翠餐饮集团再关四家分店 裁员120人 - The Business Times",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.businesstimes.com.sg/zh-hans/singapore/crystal-jade-closes-four-more-outlets-cuts-120-jobs-ahead-proposed-sale",
-      "verdict": "confirmed",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Crystal Jade is closing four more Singapore outlets and retrenching 120 staff ahead of a proposed sale — an already-underway Singapore closure/job-cut event. It is treated as follow-up coverage of the tracked October outlet-closure event for the same company."
-    },
-    {
-      "original_company": "Crystal Jade 9月再关四家门店与120名员工解雇：l Capital Asia退出与kroll接管下的中餐品牌收缩 – 新财讯网｜新加坡专业财经资讯中文网站",
-      "llm_company": "Crystal Jade",
-      "source_link": "https://www.singaporeoffer.com/2026/10/10/crystal-jade-9%e6%9c%88%e5%86%8d%e5%85%b3%e5%9b%9b%e5%ae%b6%e9%97%a8%e5%ba%97%e4%b8%8e120%e5%90%8d%e5%91%98%e5%b7%a5%e8%a7%a3%e9%9b%87%ef%bc%9al-capital-asia%e9%80%80%e5%87%ba%e4%b8%8ekroll%e6%8e%a5/",
-      "verdict": "needs_review",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Credibly reported Singapore restaurant chain closing four more outlets in September with 120 staff made redundant; this is follow-up coverage of the already-tracked Crystal Jade outlet closure event."
+      "notes": "Reported closure of the Nasi Lemak Ayam Taliwang Canberra Plaza outlet in Singapore following a rent increase, a Singapore outlet closure that implies job losses; no headcount disclosed. The article also mentions Big Mouth Bakehouse folding, but the lead subject is a specific named Singapore F&B closure."
     }
   ]
 }
