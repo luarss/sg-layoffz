@@ -65,11 +65,19 @@ function appendEvidence(notes: unknown, url: string): string {
 
 // Pure application logic: given the current layoffs rows and the recheck results,
 // return a new row set with statuses patched and evidence appended. Rows are matched by
-// (company, date_announced), comparing companies by companyKey. Extra/unknown columns on each
+// (company, date_announced), comparing companies by companyKey; each row is patched by at
+// most one result, so a row's previous status is always its pre-apply state. Extra/unknown columns on each
 // row are preserved untouched. Exposed for unit testing.
 export function applyResults(rows: CsvRow[], results: RecheckResult[]): ApplyOutcome {
-  const index = new Map<string, number>();
-  rows.forEach((row, rowIndex) => index.set(lookupKey(row.company, row.date_announced), rowIndex));
+  // Several rows can share a (company, date) key — e.g. multiple rumor rows for one
+  // closure reported by different outlets. Keep every candidate so each result claims
+  // its own row instead of all collapsing onto the last one.
+  const index = new Map<string, number[]>();
+  rows.forEach((row, rowIndex) => {
+    const key = lookupKey(row.company, row.date_announced);
+    index.set(key, [...(index.get(key) ?? []), rowIndex]);
+  });
+  const claimed = new Set<number>();
 
   let patched = 0;
   let skipped = 0;
@@ -81,11 +89,12 @@ export function applyResults(rows: CsvRow[], results: RecheckResult[]): ApplyOut
       skipped++;
       continue;
     }
-    const rowIndex = index.get(lookupKey(result.company, result.date_announced));
+    const rowIndex = index.get(lookupKey(result.company, result.date_announced))?.find((i) => !claimed.has(i));
     if (rowIndex === undefined) {
       unmatched.push(result);
       continue;
     }
+    claimed.add(rowIndex);
     const row = rows[rowIndex];
     changes.push({ rowIndex, result, previousStatus: row.status, previousNotes: row.notes });
     // Change ONLY the status field; append evidence to notes.
@@ -123,6 +132,19 @@ export function applyResultsSafely(
       heldBack.push({ result: change.result, warnings: added.filter((w) => w.rows.includes(rowNumber)) });
     }
     active = active.filter((change) => !implicated.includes(change));
+  }
+
+  // Backstop: warnings the loop could not pin on a specific patched row (e.g. one that
+  // surfaces on a neighbouring row) would fail the post-apply validate gate. Revert
+  // everything left rather than commit a regression.
+  const leftover = newWarnings(analyze(rows), baseline);
+  if (active.length > 0 && leftover.length > 0) {
+    for (const change of [...active].reverse()) {
+      rows[change.rowIndex].status = change.previousStatus;
+      rows[change.rowIndex].notes = change.previousNotes;
+      heldBack.push({ result: change.result, warnings: leftover });
+    }
+    active = [];
   }
 
   return { ...outcome, patched: active.length, changes: active, heldBack };

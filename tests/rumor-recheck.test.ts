@@ -254,3 +254,33 @@ describe('applyResultsSafely — holds back changes that add integrity warnings'
     expect(outcome.patched).toBe(2);
   });
 });
+
+describe('applyResults — rows sharing a (company, date) key', () => {
+  const dupRows = (): CsvRow[] => [
+    { company: 'Cinnabon', date_announced: '2026-09-09', status: 'rumored', notes: 'a' },
+    { company: 'Cinnabon', date_announced: '2026-09-09', status: 'rumored', notes: 'b' },
+  ];
+  const results: RecheckResult[] = [
+    { company: 'Cinnabon', date_announced: '2026-09-09', new_status: 'confirmed', evidence_url: 'https://x' },
+    { company: 'Cinnabon', date_announced: '2026-09-09', new_status: 'confirmed', evidence_url: 'https://y' },
+  ];
+
+  it('applies each result to a distinct row', () => {
+    const { rows, patched } = applyResults(dupRows(), results);
+    expect(patched).toBe(2);
+    expect(rows.map((r) => r.status)).toEqual(['confirmed', 'confirmed']);
+  });
+
+  it('fully reverts held-back changes instead of restoring a mid-apply status', () => {
+    const flagAll: WarningAnalyzer = (rows) =>
+      rows.flatMap((row, i) =>
+        row.status === 'confirmed'
+          ? [{ type: 'unarchived-confirmed' as const, eventIds: [], rows: [i + 1], identity: `c${i}`, message: 'bad source' }]
+          : []
+      );
+    const outcome = applyResultsSafely(dupRows(), results, flagAll);
+    expect(outcome.rows.map((r) => r.status)).toEqual(['rumored', 'rumored']);
+    expect(outcome.rows.map((r) => r.notes)).toEqual(['a', 'b']);
+    expect(outcome.heldBack).toHaveLength(2);
+  });
+});
