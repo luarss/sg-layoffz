@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-10-29",
+  "run_date": "2026-10-30",
   "providers": [
     {
       "name": "deepseek",
@@ -11,183 +11,378 @@
     }
   ],
   "timed_out": false,
-  "total": 18,
-  "confirmed": 1,
-  "rumored": 6,
-  "rejected": 9,
-  "needs_review": 2,
-  "remaining_queue": 2,
+  "total": 37,
+  "confirmed": 0,
+  "rumored": 1,
+  "rejected": 33,
+  "needs_review": 3,
+  "remaining_queue": 3,
   "rows": [
     {
-      "original_company": "Innodata",
-      "llm_company": "Innodata",
-      "source_link": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxNWUk5bG9ZbUFoXzRTSU5BT3M4c01UU3kyNUV1a01tYkxHY09VYmdMSlQ4c3VRWjZrd3pnT2ZoSU5UbmRleUdFaVhUU0htWGVDTXFyZWIxZnFXbVJmNTVsd1RCVHZpRkhVc3ViV25DMU1WMWFaNHhpbUxGNV9mV1ZycFhQX3NCc0FvckFac3lSM0Zjbl9hTUpnUmJZRk9BLUZHU0lhRjh2NGN1b3QxS0lDaVBZUFY0elBxRU5wWUZ5M2dxOGZaai1Ec0R5SFZxaUx0R2lEcmM3bmtETnQ2?oc=5",
+      "original_company": "Retrenchments In Singapore Inch Up In Q3 2026 - The Straits Times",
+      "llm_company": "Retrenchments In Singapore Inch Up In Q3 2026 - The Straits Times",
+      "source_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQWnlQNkFYc2xPeVFnblpRdXBwTWJOYmtta2YtUXgtZEhvUEUwT0Z1MFI3VjZkVnUxaEZVS0pYMjJiSUJjalU4RXVNUnhKc3lUaUpHS2JrUFJaZzJtRmoyWWRqWEJKZlNib2VwMUthTmI3SmYxejRYNWUtQW91OTI0RGhLc0tva1NWZ1FF?oc=5",
       "verdict": "rejected",
       "confidence": "high",
       "provider": "deepseek",
-      "notes": "The report covers Innodata laying off nearly 550 employees globally, with no indication that the cuts involve Singapore operations or staff. Therefore there is no clear Singapore nexus for this tracker.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Retrenchment: Soon, Almost Everyone Will Go Through It At Least Once - Linkedin",
-      "llm_company": "Retrenchment: Soon, Almost Everyone Will Go Through It At Least Once - Linkedin",
-      "source_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPTEZUZzJnMjR3Zm4zVjFhcTRLbWlYLVlhQ0JobVlLN1NYZXU1YS1fMFhkdWNUdWdXT3NXRUk4WVBhTVlrY2VKaWsteG9mYnNBY204MzdYdG9ITkZJWUIzdkhGaUljR1FObWluVzFLVlNhczd0bUJXZjJ6djhxSjUyNG1pWTdiRnZFX25Ib0NEWEw4TUdqSUFV?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "LinkedIn commentary/opinion piece about retrenchment being a universal experience; no specific company, no Singapore layoff event.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Dwf To Close Brussels And Singapore Offices And",
-      "llm_company": "DWF",
-      "source_link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQM1pDcVFwT0RrUDNCeFpXUnRLTFJnU1ZrUGRVcjA0TnFnTGtHcnprNGctVENpT0lma1pCUjJMTkZPX3VQT3I3UFlDWVFjLUpRelpfVER6Z3M2SzVlT1M2a193dGtxV2tuZGplTk44ckFNcXM5YmZubWZSME5sY3ZRWDBuSkRORU5heDl2LXo0VXRtMFdTVlBhMVBKejRYQ25XUE1obnhoVnI?oc=5",
-      "verdict": "rumored",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "DWF announced the closure of its Brussels and Singapore offices, which implies job losses in Singapore; because the closure is announced/planned rather than completed, it is classified as rumored. The reported 60 roles are not Singapore-specific, so they are recorded as a regional/global figure."
-    },
-    {
-      "original_company": "Haidilao Founder's Strategic Move: 300 Restaurants To Suspend Operations - The Independent",
-      "llm_company": "Haidilao",
-      "source_link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9XaWVGN3poODlpenRjOExSbHA3TjZTRW9CeGxRYlJlbC1jR1BpQkRxY2JRdWo5VFRtT1Nmakd3UEpjZ3E4UGpaV1ZOX0U1Z1ZfZkU1NTNDX3dLVEVzU2ZKLVAxU0MyYktObUtpNXdn?oc=5",
-      "verdict": "needs_review",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of Haidilao's announced plan to suspend operations at roughly 300 restaurants by end-2021, the same store-closure event already tracked. No headcount figure was disclosed, so both jobs_cut fields are null."
-    },
-    {
-      "original_company": "Hsbc Plans Deep Job",
-      "llm_company": "HSBC",
-      "source_link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNdzdGUDF5TTJxUHh2WWxMaXpqd1Frb3dsZkJtN19pSml0SkhuRTVYX2dqZFBxUXAwbWNSZkN3X0FDRF9POVlCcXhQS2NrbUVhM3BBeEJMT1pQb3dESXlma3o0MURwRlpFbzJndThCVVdEbUFJeVJuY1BjUjdvY2FrSDM1MVotSkpMdEFKTU5vWFUwbC1jeG93Y2FKTlpaYjhvbUJ2X2lB?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of HSBC's reported plan for deep job cuts, matching the existing HSBC event; as it is described as a plan, classify as rumored. No Singapore-specific or global headcount is disclosed in the snippet."
-    },
-    {
-      "original_company": "National Australia Bank To",
-      "llm_company": "National Australia Bank",
-      "source_link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxPMjNkMm51VllUVm5zRjhkX1lXTkZmaDZXYnZsQ1BrVjVPZEFUVE5iV1VZLWZjWFlCbHF4b1hYTWZPTUtuQXFxcDYyaHdvUUMtT1ZnblZOTEx3WEtCcjlVaVptTXhtTmc1ZkdXaFpnSlQxbE00bmVHNUctUFEyZVNYYkVJRHpSaHlMS05DcWxDYms4NGVzVlJuaFFtSWJjbWV4X1RQeWs0ZEh1SnpHdVpHMkl0U01pa1BDZnVBdnVURFUyM1dfN0xEalllMjNuTGJzVzFUTTJMbUs?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "NAB is reported to be planning 2,500 job cuts; the figure appears to be a global/group-wide number rather than Singapore-specific. NAB has Singapore operations, so the global cut is treated as having a Singapore nexus, but no Singapore headcount was disclosed."
-    },
-    {
-      "original_company": "Hsbc Plans Job",
-      "llm_company": "HSBC",
-      "source_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOaG5SQlRHczdNbWxRZ1U3MXJRdGxEUXlFeVhseGNOc1VGcjhFYVJfbWNhVFRIMEN5X1paWnZwWnNqYXFyb3BHbzdVTFNTWHBHcUdBVXY0eXl5VjRsOHl2WF9Ndi13NWdMRkw5dVFMTTNkal9UQjVGcUhILUV3TlNmOU52VUNBMGdpN1p5aGVYLUllZkxKU3pOelMxdnJiQ2lyRWlDV3lhbUctLXFKa08wS2NUOTBvWGxxelcwUzFjU1p5TGFFajFn?oc=5",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Follow-up coverage of HSBC's planned UK job cuts, matching the already-tracked event hsbc-2026-10. No headcount or Singapore-specific figure disclosed; HSBC has Singapore operations so the Singapore nexus stands via the group-level cut plan."
-    },
-    {
-      "original_company": "Oops! Domino's-partnered Robotics Startup That Was Supposed To Put Human Pizza Chefs Out Of A Job Just Shut Down - Yahoo Finance",
-      "llm_company": "Unnamed Domino's-partnered robotics startup",
-      "source_link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOaXRoWDd5OEZvNFM2dXhKZ3RLTnFxQWxoWUZfMklNbkc4RFIyRk5oYW5tSzZPOWVTd19LYno5eVlWZER5cXlNYWZYeWh4TE9vQTl5WVRqZF9ESzNkWW94WUthVXF6M24wUDNrekNkN1NxVVUzcDdWSzdhclJLbGJxaUM1N3locTlPcVhHU2pieV8?oc=5",
-      "verdict": "rejected",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Article reports the shutdown of an unnamed robotics startup that partnered with Domino's overseas; no Singapore entity, office or job losses are identified, and the company is described only by a generic descriptor.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Why Are Indian Ai Startups Shutting Down? - Analytics India Magazine",
-      "llm_company": "Why Are Indian Ai Startups Shutting Down? - Analytics India Magazine",
-      "source_link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNZGRZM05haVFXTTJWUzlpVDF0cmdoMHZrSy1helBpaHZfQkVuMjk1dFhLVWJJU3RmRG14UkZmQk5oWWgyMXBCRjBSSFE0cDhfUnFlX3ZRZzVfVi1FLVRyN0Y2VTFPQmIyT3A0b2VBdmViUUVlbUc1SkRNd2RuNjYtRC1jamlweFBpRWx2emdiWDRxNjhvaVBtam1mY2U4YVcxVU5Yand6ZGo?oc=5",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Analysis/explainer piece about why Indian AI startups are shutting down generally — no specific named company and no Singapore nexus.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Ubisoft To Close Finland Studio",
-      "llm_company": "Ubisoft",
-      "source_link": "https://www.thestar.com.my/tech/tech-news/2026/10/15/ubisoft-to-close-finland-studio-cut-70-jobs-in-singapore",
-      "verdict": "needs_review",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Credibly reported Ubisoft cuts of 70 Singapore roles tied to the closure of its Finland studio; this is follow-up coverage of the already-tracked Ubisoft Singapore event rather than a new round."
-    },
-    {
-      "original_company": "Singapore Ai Security Firm Kabam Robotics To Shut Down On November 20",
-      "llm_company": "Kabam Robotics",
-      "source_link": "https://www.asiabusinessoutlook.com/news/singapore-ai-security-firm-kabam-robotics-to-shut-down-on-november-20-nwid-12654.html",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Singapore-based AI security firm Kabam Robotics has announced it will shut down on 20 November, a future Singapore closure implying job losses, so classified as rumored. This is follow-up coverage of the already-tracked event kabam-2026-10, with no separate later round of cuts described."
-    },
-    {
-      "original_company": "Max's Group To Fold Singapore-based Consultancy Unit | Vg Cabuag",
-      "llm_company": "Max's Group",
-      "source_link": "https://businessmirror.com.ph/2015/01/22/maxs-group-to-fold-singapore-based-consultancy-unit/",
-      "verdict": "rumored",
-      "confidence": "medium",
-      "provider": "deepseek",
-      "notes": "Reported plan to fold Max's Group's Singapore-based consultancy unit, implying a future Singapore closure/job losses; no headcount disclosed. Classified rumored because the closure is announced as planned/future rather than already completed."
-    },
-    {
-      "original_company": "Northern Trust Celebrates 30 Years In Singapore - Markets Data",
-      "llm_company": "Northern Trust",
-      "source_link": "https://markets.ft.com/data/announce/detail?dockey=600-202610282200BIZWIRE_USPRX____20261028_BW449572-1",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a corporate anniversary/milestone announcement marking 30 years of Northern Trust's Singapore operations; it contains no layoff, retrenchment, or closure news of any kind.",
-      "rejection_reason": "commentary"
-    },
-    {
-      "original_company": "Perampingan, 1.300 Karyawan Goto Gojek Tokopedia Kehilangan Pekerjaan",
-      "llm_company": "GoTo Gojek Tokopedia",
-      "source_link": "https://www.katakini.com/artikel/77109/perampingan-1300-karyawan-goto-gojek-tokopedia-kehilangan-pekerjaan/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "The article reports 1,300 layoffs at Indonesian tech group GoTo Gojek Tokopedia, but gives no indication of Singapore operations or Singapore-specific impact. There is no clear Singapore nexus for this tracker.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Retrenchment In Singapore: Rights, Benefits And Legal Process | Rbn Chambers",
-      "llm_company": "Retrenchment In Singapore: Rights, Benefits And Legal Process | Rbn Chambers",
-      "source_link": "https://www.rbn-chambers.com.sg/employment/retrenchment-in-singapore/",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Law-firm explainer on retrenchment rights, benefits and legal process in Singapore; no specific company, no layoff event — a legal/commentary piece.",
-      "rejection_reason": "legal"
-    },
-    {
-      "original_company": "Grant Thornton Australia Confirms Ea Job",
-      "llm_company": "Grant Thornton Australia",
-      "source_link": "https://anz.peoplemattersglobal.com/news/workforce-planning/grant-thornton-australia-confirms-ea-job-cuts-and-offshoring-to-the-philippines-52782",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "Article concerns executive-assistant job cuts and offshoring to the Philippines by Grant Thornton's Australian member firm, with no Singapore entity, office, or Singapore-linked roles involved.",
-      "rejection_reason": "not-sg"
-    },
-    {
-      "original_company": "Singapore Workers Grow Concerned About Jobs As ..",
-      "llm_company": "Singapore Workers Grow Concerned About Jobs As ..",
-      "source_link": "https://sea.peoplemattersglobal.com/news/employee-engagement/singapore-workers-grow-concerned-about-jobs-as-workplace-sentiment-falls-research-finds-52893",
-      "verdict": "rejected",
-      "confidence": "high",
-      "provider": "deepseek",
-      "notes": "This is a workplace-sentiment research/survey article about Singapore workers' job concerns, not a report of a specific named company's layoff event.",
+      "notes": "This is aggregate labour-market statistics coverage of Singapore retrenchment numbers rising in Q3 2026, not a report of a specific named company's layoff event.",
       "rejection_reason": "statistics"
     },
     {
-      "original_company": "Singapore Court Greenlights Korea Artiz Studio Winding Up | The Straits Times",
-      "llm_company": "Korea Artiz Studio",
-      "source_link": "https://www.straitstimes.com/business/singapore-court-gives-green-light-for-bridal-services-firm-korea-artiz-studio-to-wind-up",
-      "verdict": "confirmed",
+      "original_company": "Singapore Employment Growth Picks Up In Q3, But",
+      "llm_company": "Singapore Employment Growth Picks Up In Q3, But",
+      "source_link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPTmEzSVJhME1BM0lLaW4tODVUYmR2ZVVyb0puakJqcm9aOGQ5c3BwbWhETl9vNFBmX1BDeEljbzF4dVNlWFBRc01Fc194LXhhenVuWjJTMTNzMGhRNk04a0NvR2tfNnZMeUFodDJqbG9QOXBZVE40Slg3RDE5Nk5DVDBNYVh4SGdtX1pZNUlNSHlnbVNwVGl5eHZGLVRiQk9EQ0tWYTAtbHRZNUVBUV9zbg?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article covers Singapore labour market/employment growth statistics for Q3 rather than a specific company's layoff event; no named company or Singapore job cuts.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Q3",
+      "llm_company": "Singapore Q3",
+      "source_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQYi0yZ2dKam1VUkozRWF4aGFKcFFQanBQckJqcU1IbnQxNE5hQXQyRktJTkRDVXpqdWNmVEZIbVBmdUV2aFllYVRoeGxIaldwb3IwVTRtZDg1cVhGREYtcjNQd2NVNkI0SE8xTkJiQTFmMjhJTWQ3a0tSZ0dVSDlBN09DeVNQSGU0XzBKQWdISVg2MGFKanM0MGxFQ012Y0RWc1BRMXJvTThhUDhiSWRtcnFia2hQZVdpNlN2eEZZdzFTNkphYlpyRy1rUFhhWF9P?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is labour market statistics coverage — Q3 retrenchment figures rising in Singapore — not a specific named company's layoff announcement.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Third-quarter Layoffs At Highest Level Since 2020 - Reuters",
+      "llm_company": "Singapore Third-quarter Layoffs At Highest Level Since 2020 - Reuters",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQa0VfbWNBQ0RjUG1nNnVUU2pORTdFM3NvWXdQWWdfaFNlTnRHWXctY284STNwWWxKX0dUbmUzYm41Nk5RbkZTSmFkeGNFRjN2UEtwamlnY2Rrd0Y1Z2k5bjYzUnI5NnlTMkhiVXYtUFhLalhfZEFpNG15RkRRVWdDTWFzN05PVDVLeTZHTEVNX0RKdnVZa21EWU5ZYlBUNTV1Y2x6VjAyVUZzcjAtQlpiN2tDNWhPZw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is aggregate labour market statistics reporting on Singapore's Q3 layoff levels rather than a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore",
+      "llm_company": "Singapore",
+      "source_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNTVRQX3hHRlBqaENGLTlCeDRhc3R5c0hKVnhpdF9ya01pMndTN2dreWJPUVRKRm55UkRNbXBRSDg1a0VaVEFmU1NJZUloQnhSdlVOUzR1Y1RIVXZlQ3lRQnYzLV95VnM2YTBDWjFiLUUwbVZVM2NjOHFYOVdIQm5kd3V3WjdtM3p6UHJ3b3JWT05HSG8?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The snippet indicates aggregate labour market data on retrenchments rising to 4,800, i.e. MOM-style statistics rather than a single named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Layoffs Hit Highest Level Since 2020 In Third Quarter - The Economic Times",
+      "llm_company": "Singapore Layoffs Hit Highest Level Since 2020 In Third Quarter - The Economic Times",
+      "source_link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxOQnVQNFRNVHYzX1ltZ1JkTldqdk1LOVNObFowYkFZRjBTNHJfb0tKOTM4X3h2OVpqTHZDNjdLMmRXMVlIbE9nYkdNWTRpMmVqVXZXMWlkbUJvbGNwRG9ENUNtcGVfeUY4dnFxWDdPMGZkS19BR1VfTHllck9uZGtTdHhkb1hGZmwwNkc1QzQzdUNsb1lwRlJJb3hoTWJTQUtHT245RHZvOXV4cmVLR19RaVhvcVJwNTVYZ2lfU3RLRDRIdGtCTkdjZzYwSXlYcmk2c3NTZHk4WFRuRHhqQ0HSAeMBQVVfeXFMTm13VmxYR3R0bll3STdlbWZkNDlnMUI0UnJYRVlhY3A0UWlPNElEWUVhQldVR1pZeFlHT0xKYUthcGlZaWF3U0d1WExEX2w4LW9Tc3R1WDdmbmQxQmh0REsxYzQtTHIzZVF2QThVSWxoVzJoenRQeVlzNTlyRFhsdm5PUHFYZUNiaTM5WWNlU2FHejU2UGpLRnpYWVVEeW91T0w5aW83ZkJMWEgxUTVwVll3SWdHQThrV1NqYlJMd2xZRVNFYXN3OUJiYS1VbGQxeTFDNWxFbW9BMU9LVmRHX1NCUGM?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is aggregate labour-market reporting on Singapore's overall retrenchment figures reaching a multi-year high, not a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Layoffs Reach 4,800, Highest Level Since 2020 - Idnfinancials",
+      "llm_company": "Singapore Layoffs Reach 4,800, Highest Level Since 2020 - Idnfinancials",
+      "source_link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQTG43MXZvcHJKMEt5VldrYTBZYkd6YWNQMC1wdENOaDFkbnJPVWRJZnFiZlJiZ282NWY2QTdjVU5xZ0JYSDdHRlNoSmVNTnExbFZCT21MOVVpR2pfRTJBdzRQa1ItclRKWUlKcVViY2VjMUdyQkpLc18xbVdQcW9RV0dSMmVESkcwMEFWZ19mNkhmaHAtY3RvTy0xVQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports aggregate Singapore layoff statistics (4,800 layoffs, highest since 2020) rather than a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Retrenchments Rise To 4,800 In Q3 - Singapore Business Review",
+      "llm_company": "Retrenchments Rise To 4,800 In Q3 - Singapore Business Review",
+      "source_link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE8ycFNldGlhX0wtektSR0VMNGRSVHk2OHdRd0JuRzJRUG9JbGpBT1hNMmVCS24tdTBuekpxMEtZZ3Rja2hXZFBQUkUwM3pxYzhvNEFtUEFaaUVVQUFta2FrZERGZUFYWm90N2NwSEpwNUZVa2po?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is aggregate labour-market statistics reporting that retrenchments rose to 4,800 in Q3, not a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Employment In Singapore Grew By 27,700 In Q3 2026, While",
+      "llm_company": "Employment In Singapore Grew By 27,700 In Q3 2026, While",
+      "source_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNM3JEYkpWcDNDZDRfUmtiSER3VWNkclFrUjM1M0pjOW1hRUhDdkYtN3dDY0hyS21acTlNaTJRNnhhcXNlMGVCNmU4ZnZJbzNJNVltbHluZGlIRDJKU3pOWlN3VjJaSURWcmprUG5zdEhhemwxMzlFOXJ1OGJZb0FMSnJmQm9GSmI2M0R2MjVJRGZZTXN0SUpjcEpkeGxKZUlXSVZwUzc2aV9tYmpnYU1jdzYyQUFSa0FlNVVIRw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article reports aggregate labour market statistics (Singapore employment growth of 27,700 in Q3 2026), not a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Layoffs In Q3 Highest Since Pandemic - The Manila Times",
+      "llm_company": "Singapore Layoffs In Q3 Highest Since Pandemic - The Manila Times",
+      "source_link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQMW5mTXhtY0ZQSlB2N3VZY1RBNzBXWTNiYWpxMlc1Z0NYSk5JU1ZQaGxsVWI4cWhmWl9NV2V2d1hrbG5CMUZqMFIzN2pWRWtHaGxIUGtlaDR1QXFBQmYyVmRQNjlGckZRb1BsR1RTU01wbGlGQVo4QXNpNlh4d0dBS0t4eXc4UUlfMUpmUnV0eldQdlduMDB2dkI2SThCX2tXVW04U1pTLS1uS2tLU0w5eG55Y3M2YkRyWHJF0gHAAUFVX3lxTE9lQXlUVENJQy1SclZzREpobXotV1ZMMjEzYVZ5bmRndlUtWjVNU1A3YlBzc0Z1b09udW9DVEJqZDJFOVBkVVhyR09MelpBY0hCVVRWaU84anQ0N0RYaG1pS1JHVWpKb1c4d3JIb1FLSWFyaDE5UVAzUFhOSWZKV09sS2puNlIwd3lUXzlqeXNLaGVqcEpGMmtuSWZVZXY1azJBTjNyOE5URjFyR2NJSGFEOTB0bFhNa09fMTFlbDM2TQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Aggregate labour-market statistics piece on Singapore Q3 layoff totals rather than a specific company's announced job cuts.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Daily Debrief: What Happened Today (oct 30) - The Business Times",
+      "llm_company": "The Business Times (Daily Debrief)",
+      "source_link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNb1dQSzJWdGtNVWhReUppQ3hrZUJaNkNOdjlycVlGX01DaktfRUNwWWZfeEhfaUtoeTJHQlZfNV9EaU9vYUo0ZTN4R1pwMkV3VFUzN3lrLUpYMzI1WXphTDlTekswQWYyeFJ2dkZJUGtlSExsRVZMSWhaeXRuaURBU1ZVZWpxUmlzVUV3ag?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a 'Daily Debrief' roundup of the day's business news covering multiple unrelated stories, not a report of a single specific layoff event.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Singapore Layoffs Hit 6-year High In Q3 2026; 4,800 Employees Lose Jobs: Check Details And Affected Sectors - Jagran Josh",
+      "llm_company": "Singapore Layoffs Hit 6-year High In Q3 2026; 4,800 Employees Lose Jobs: Check Details And Affected Sectors - Jagran Josh",
+      "source_link": "https://news.google.com/rss/articles/CBMingFBVV95cUxOb0g4TDl2NkJMaFdhQldsT1lFVmwxZXRmNTNEU3hYSEw2cVZSRjIyUGIwRVNlV1hvNHZWQTZSN0JXZEJiQlV4YTRsaTR5Mm51UkpZa01USTNWeUNNd0NRYnVQM2JGSlFhemkxT0JGdFhIc3JpUWRRd2EydUdUYmtpa01USVVuZ09nVDJQWWtQUlp2bWxMVU8zOHBCcDEzZ9IBpAFBVV95cUxQbmx6RkZEYktQMWh6RzByQ19qbFQtbkxXcFBxcWZaeDBuYWs5SVJQSjNMOUd1M3BZMmZwUlh6SHdkOHowVFJkVG9EM3Q1eU01ZDRaOS1aSldEcDBndjFacTlEc01VZlJjMjV2Sm9uYmplaDFaYmVWQkxSNkNuU1FoMmtxVHQ1Um5rVDJhbG1xb3drVkFUNE4yazhaYm1LSTRSeFZNZw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a labour market statistics report on aggregate Singapore retrenchment figures for Q3 2026 (4,800 workers), not a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Layoffs In Q3 Reach Highest Level Since 2020 Amid Restructuring Wave - Latestly",
+      "llm_company": "Singapore Layoffs In Q3 Reach Highest Level Since 2020 Amid Restructuring Wave - Latestly",
+      "source_link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNcG0tcWRVc0JfNk1scmk4aDJNc3F5TXZ2aHJhbVYyVnJXdlF1dGdlUmJqaldsRVRPOGg0LTJjWmJKR21PeWxKNkwzemVjN0VjUTlfcnVsNkxDbFliay1XbExQdlV0djRHQlBZUHJqNGVhYnh4WWU2S3l1bmJkVThETk5Sd1JwSVhNNG9yejMyQlJKeE9pY0NqaE9ZWTUzaTVhNjd0eW5NZGpHaDRBRmpiLU90OEVLdGQyMWwyMHdmbm8ySkdfcXfSAcsBQVVfeXFMTldrZVg4OHc2SXhMcm5BdUlOZjQybEVWNy1FbEx3bVBnMllkdjNVUU84Z1JTVUNyRy1aRDJ6OXBXaHNZdnBDTUVfOVJoYWFMM3NtWjhSRjBSQ3czb1NNdVl0UGtieGpNcGp3VmxZQk1HUGVRSzVDUVVMZFhjcHVJNm1hSVNDR3ZnX2g4YjhjMk9JajBZRDdTMzhIWFpqUF9QdXN1aUpvWTFQWVUzRTRrbVViZnRlRXppVUQzbG5maEdJcXJpTXh4b0R1R28?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is aggregate labour-market reporting on Q3 layoff levels in Singapore, not a specific company's layoff announcement.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "3q 2026 Labour Market Advance Release: Singapore Employment Growth Accelerates As",
+      "llm_company": "3q 2026 Labour Market Advance Release: Singapore Employment Growth Accelerates As",
+      "source_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQTFRySTdWQzh3NTdIZlpicndjd21vYmVkTGNLQjBWM1VIVlFIenlRSWE1b0ZjdEoxVEtwVW5BNzlPSkRyYUpwWUFxMm4wWl9TMHpvbkNmbWxqeVUwVER3dWZVblRYNUQ4dTJSV2hHX1dSWi1Lc0Y4OXNSejFlckdDMGNvV3JYQzhTbEdkb2VvdExFLVJpaHVxX2VCZlpZRXBUSjBfR01JSm9tX3BFcjU4Z2pNRVhhUQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is the MOM 3Q 2026 Labour Market Advance Release — official labour market statistics on employment growth, not a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Adds 27,700 Jobs In Q3 As",
+      "llm_company": "Singapore Adds 27,700 Jobs In Q3 As",
+      "source_link": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOUmtJSDlQVVlpcXlHb0Ewb3Q5N3poZUtmQ1JZR1oyRW1jODVJVVpiSVZySnVMR3FtSE56cDdQT2tGV2VrLTMtREZia2lHSV9JRjBsRDdKUHJtYU54azhqQTJQN0pUdmNOMi1GMGtUWGNFbURkQjRiR0dWajRWTExFcnhIU1FIWWFNQjVpaUoxUWFLUEVtMUxxV19kRlAxMV93OVZoYkdsREN2b1M5SFFoZmwxX3kzMnRlQlA0Z3pTek1YaVhPeTRBUDI3LW96QnR6cG9UeFhR?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a labour market statistics report on Singapore's Q3 job additions, not a specific company layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore Layoffs Climb To 4,800 In Q3, Highest Since 2020 As Restructuring Bites - Finance.biggo.com",
+      "llm_company": "Singapore Layoffs Climb To 4,800 In Q3, Highest Since 2020 As Restructuring Bites - Finance.biggo.com",
+      "source_link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9iMFl3ZnNSMmZzME5aT3dSdFNwM3NYZ3hxQm9MeWRIOGxxc0tWM3VfdGdOV3VFdzlCUTR1S3hhSnE4X3RrdTVrTzVfSzFLSENhcHdXTFJ2RGhKQTZFQmJGa3M0dm1rcF9NeTA1OHgxV3VORkhwZ1E?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a labour-market statistics report on aggregate Singapore retrenchment figures (4,800 in Q3), not a specific company layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "9 In 10 Singapore Execs Fear Job Loss On Data Sovereignty Failures - Frontier Enterprise",
+      "llm_company": "9 In 10 Singapore Execs Fear Job Loss On Data Sovereignty Failures - Frontier Enterprise",
+      "source_link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQRDRsZTlGRm1xM2dSVWc3SzlGVHF1QVdhSjl6RFZlYXR3Z1ExendDSFBzVHVLT1p2UDN0Q2lkYi14YzRCaHhJNm1mWG1lekQxVG81dVVNcXNLQWxnbVpEOWl0bXhCTGtvUTcwZU1zOEJvWjFvMGpjQWVOT2YyODhPVVdoMlRka0FqalJ1alJhOEpwcUFJaDZ6U2RKRWViS2xZQ1lUUHFn?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a survey-based report on Singapore executives' fears about data sovereignty, not an actual layoff announcement by any specific company.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Boeing Imposes Hiring Freeze, Takes Steps To Conserve Cash After Strike Starts - Yahoo Finance",
+      "llm_company": "Boeing",
+      "source_link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOeV93bXhnODVyclUtVUl1VjlfTzZKS2k2M1BSd0RDajhUNkZXbWpRVlFnalNfakRNbTJSVG1TczJ0MzlNd0NLTFhNZ2FnRUtKNmwxaFg0WEZnZkZYVDJqR2VobTN6anFVdTdHQjhqSEFNV2QtSnNYb2Y4QlhQcU9wR0RReVM2QzQ?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Boeing's announcement concerns a hiring freeze and cash-conservation measures during the machinists' strike, not job cuts or retrenchment, so it is not a layoff event.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Honeywell Closing London Plant, Laying Off Nearly 100 Workers - Yahoo Finance",
+      "llm_company": "Honeywell",
+      "source_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPeTRMRkptUkhhWXFfOERwXzNybkVsVHBLY1IyQWwwSFN1VndaX1dUZk5vdVVNdzJ4Q2pBQURlUE1TUmJvVGZOTFlUSmJ0SDlueUlQWU0zbDNKV1E0YmRCQldudTdkeGNORWZJeDZ6QTViR3NyX1NqS1hham5GdFY5Q1RJd2VpbDlGTDA4?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Honeywell's London plant closure affects UK workers only; there is no Singapore entity or Singapore office involved in this event.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Malaysia Shuts Down Balaji Srinivasan's Network School In Forest City - The Block",
+      "llm_company": "Network School",
+      "source_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOYV9SR2k4SEYxZ014OVc0UHFodnItM1VoSHN5YllPNERlanVDVURhckwtVFE0cERxY3NIS3NNbk83LU45eWZ3SU1memNhUDk2QjhFS01oMjBraURFX01IamU0U04zRjM3b1BpQ3pqVDdBUVJsM0x0TUtBcS02S1prdWFsU213ZW80UGdwbjRuN0pYeFJjX0hjY2l6SXI3Y2xyNF9HLUJuY2tTQTRwRVlOUTFCbENSMi1BQ0dOaHE1RWw?oc=5",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This concerns the shutdown of Balaji Srinivasan's Network School in Forest City, Malaysia — a Malaysian operation with no Singapore entity, office, or job losses described.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "1030 Labour Market Advance Release 3q 2026",
+      "llm_company": "1030 Labour Market Advance Release 3q 2026",
+      "source_link": "https://www.mom.gov.sg/newsroom/press-releases/2026/1030-labour-market-advance-release-3q-2026",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is MOM's quarterly Labour Market Advance Release — official labour market statistics, not a report of a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Biontech Singapore Plant Closure 2027: What The Mrna Manufacturing Correction Means For Asia Pacific Biopharma",
+      "llm_company": "BioNTech",
+      "source_link": "https://www.imapac.com/cn/news-updates/biontech-singapore-plant-closure-2027-what-the-mrna-manufacturing-correction-means-for-asia-pacific-biopharma",
+      "verdict": "rumored",
       "confidence": "medium",
       "provider": "deepseek",
-      "notes": "Singapore court cleared the bridal services firm Korea Artiz Studio to wind up, meaning the closure of its Singapore business and the resulting loss of local jobs; a named Singapore operator shutting down counts as a layoff event. No headcount figure was disclosed."
+      "notes": "Reports a planned closure of BioNTech's Singapore mRNA manufacturing plant slated for 2027, a future Singapore site closure implying job losses. Because the closure is announced/planned rather than already underway, it is classified as rumored; no headcount was disclosed."
+    },
+    {
+      "original_company": "Swiss-as And Lufthansa Systems Strengthen Presence In Apac To Support Regional Growth | Swiss As",
+      "llm_company": "Swiss-AS",
+      "source_link": "https://amosng.swiss-as.com/news/swiss-and-lufthansa-systems-strengthen-presence-apac-support-regional-growth",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article covers Swiss-AS and Lufthansa Systems expanding their APAC presence and regional growth support, i.e. a business/hiring expansion announcement, not a layoff or closure.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Newsletter",
+      "llm_company": "Newsletter",
+      "source_link": "https://www.businesstimes.com.sg/preview/450007?thrive-page=1",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "The item is a newsletter index page with no named company and no reported layoff event; there is nothing identifiable to track.",
+      "rejection_reason": "vague"
+    },
+    {
+      "original_company": "Ai Bubble Fears Mount As Dayone Weighs Ipo",
+      "llm_company": "Ai Bubble Fears Mount As Dayone Weighs Ipo",
+      "source_link": "https://apac.entrepreneur.com/business-news/ai-bubble-fears-mount-as-dayone-weighs-ipo-cut-firmus-turns-to-nvidia",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is market commentary/analysis about AI bubble fears, DayOne's potential IPO, and firmus turning to Nvidia — no layoff, retrenchment, or Singapore closure event is reported.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Gopuff Layoffs Spark Urgent Questions: Job",
+      "llm_company": "Gopuff",
+      "source_link": "https://ap4.gn.fosun.com/gopuff-layoffs-spark-urgent-questions-job-cuts-signal-shift-in-gig-economy-giants-future",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a commentary/analysis piece framing Gopuff's cuts as a signal about the gig economy rather than reporting a concrete layoff event, and there is no indicated Singapore nexus or Singapore-specific headcount.",
+      "rejection_reason": "commentary"
+    },
+    {
+      "original_company": "Redmart Now Scales Quick Commerce Services As Singapore Orders Increase Sixfold | Retail Asia",
+      "llm_company": "RedMart",
+      "source_link": "https://retailasia.com/exclusive/redmart-now-scales-quick-commerce-services-singapore-orders-increase-sixfold",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Article covers RedMart scaling up quick-commerce operations in Singapore amid sixfold order growth — an expansion/hiring story with no job cuts or closures mentioned.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Singapore Q3",
+      "llm_company": "Singapore Q3",
+      "source_link": "https://www.businesstimes.com.sg/singapore/economy-policy/singapore-q3-retrenchments-rise-4800-resident-unemployment-edges-3-flash-data",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is MOM flash labour market data reporting aggregate Q3 retrenchment figures (4,800) and resident unemployment, not a specific company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Vsmc Singapore 300mm Fab Opens, Targets 44,000 Wafers",
+      "llm_company": "VSMC",
+      "source_link": "https://asianomist.com/article/vsmc-opens-singapore-300mm-fab-44000-wafers-monthly",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a fab opening/expansion story about VSMC's new Singapore 300mm wafer plant targeting 44,000 wafers monthly; it reports investment and capacity, not job cuts.",
+      "rejection_reason": "job-posting"
+    },
+    {
+      "original_company": "Report: Labour Market Advance Release Third Quarter 2026",
+      "llm_company": "Report: Labour Market Advance Release Third Quarter 2026",
+      "source_link": "https://stats.mom.gov.sg/Pages/Labour-Market-Advance-Release-3Q-2026.aspx?PageVersion=1024",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is MOM's Labour Market Advance Release for 3Q 2026, an official labour market statistics publication with no specific company or layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore",
+      "llm_company": "Singapore",
+      "source_link": "https://www.briefasia.com/en/article/singapore-retrenchments-climb-4800-jobless-rate-ticks-higher",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a labour market statistics report on aggregate Singapore retrenchment numbers (4,800) and the jobless rate, not a specific company layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Singapore's Labor Market Expands, But Rising",
+      "llm_company": "Singapore's Labor Market Expands, But Rising",
+      "source_link": "https://www.marketwatch.com/story/singapore-s-labor-market-expands-but-rising-retrenchments-signal-weakness-2785c41d",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is labour market statistics/commentary on Singapore's overall employment and retrenchment trends, not a specific named company's layoff event.",
+      "rejection_reason": "statistics"
+    },
+    {
+      "original_company": "Security",
+      "llm_company": "Security Bank",
+      "source_link": "https://insiderph.com/security-bank-cuts-jobs-as-new-ceo-victor-lee-shakes-up-operations",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is a Philippine bank (Security Bank Corp.) cutting jobs under a new CEO, reported by a Philippine outlet; there is no Singapore entity, office, or workforce impact mentioned.",
+      "rejection_reason": "not-sg"
+    },
+    {
+      "original_company": "Singapore Banks Dbs, Ocbc, Uob",
+      "llm_company": "DBS/OCBC/UOB",
+      "source_link": "https://generalas.com/article/singapore-banks-dbs-ocbc-uob-cut-3-000-jobs-in-2025-restructuring-productivity-push-explained",
+      "verdict": "rejected",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "This is an explainer/market-overview piece aggregating a combined ~3,000-job figure across three separate banks rather than reporting a single specific layoff event; it reads as commentary/analysis rather than a discrete company announcement.",
+      "rejection_reason": "aggregator"
+    },
+    {
+      "original_company": "Gxs Bank | Caproasia",
+      "llm_company": "GXS Bank",
+      "source_link": "https://www.caproasia.com/tag/gxs-bank/",
+      "verdict": "needs_review",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "This appears to be follow-up coverage of the already tracked GXS Bank layoff event gxs-2026-09, with no indication of a separate later round of cuts."
+    },
+    {
+      "original_company": "巴克莱裁减5000职位 新加坡分行影响不大 | 联合早报",
+      "llm_company": "Barclays",
+      "source_link": "https://www.zaobao.com.sg/finance/singapore/story20261022-9879849",
+      "verdict": "needs_review",
+      "confidence": "high",
+      "provider": "deepseek",
+      "notes": "Credibly reported job cuts of 5,000 positions at Barclays, a named bank with Singapore operations; the article states the Singapore branch is minimally affected, so the figure is a global headcount, not Singapore-specific."
+    },
+    {
+      "original_company": "Govtech",
+      "llm_company": "GovTech Singapore",
+      "source_link": "https://flags.news/signals/govtech-singapore-govtech-singapore-38-layoffs-phase-two-2026-10-22/",
+      "verdict": "needs_review",
+      "confidence": "medium",
+      "provider": "deepseek",
+      "notes": "GovTech Singapore is reported to have cut 38 Singapore roles in a 'phase two' exercise dated 2026-10-22, matching the already-tracked event govtech-2026-10, so this is follow-up coverage rather than a new round. A specific named Singapore entity with a Singapore-specific headcount qualifies as a confirmed layoff event."
     }
   ]
 }
