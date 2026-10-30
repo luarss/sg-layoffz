@@ -1,5 +1,5 @@
 import { LayoffEntry } from '../src/lib/types';
-import { analyzeDataset, newWarnings, readDistinctEventPairs, IntegrityWarning } from './validate';
+import { analyzeDataset, newWarnings, readAllowedNeighbours, readDistinctEventPairs, IntegrityWarning } from './validate';
 
 export type TriageTarget = 'layoffs' | 'rejected';
 
@@ -66,8 +66,9 @@ export function screenTriageBatch(
 
 export function datasetAnalyzer(): DatasetAnalyzer {
   const distinctPairs = readDistinctEventPairs();
+  const allowedNeighbours = readAllowedNeighbours();
   return (layoffs, rejected) => {
-    const analysis = analyzeDataset(layoffs, rejected, distinctPairs);
+    const analysis = analyzeDataset(layoffs, rejected, distinctPairs, allowedNeighbours);
     return [...analysis.hardIntegrityErrors, ...analysis.warnings];
   };
 }

@@ -11,6 +11,7 @@ import { normalizeUrl } from './url-normalize';
 import { DOUBLE_COUNT_REVIEW_WINDOW_DAYS, SAME_EVENT_WINDOW_DAYS } from './same-event';
 
 const SUPERSEDED_RUMOR_WINDOW_DAYS = 30;
+const MIN_NAME_SPLIT_KEY_LENGTH = 4;
 const PER_ROW_EXAMPLE_LIMIT = 5;
 
 interface ValidationError {
@@ -31,7 +32,8 @@ export type IntegrityWarningType =
   | 'contradictory-verdict'
   | 'cross-file-contradiction'
   | 'possible-same-event'
-  | 'same-day-same-event';
+  | 'same-day-same-event'
+  | 'name-split';
 
 export interface IntegrityWarning {
   type: IntegrityWarningType;
@@ -315,6 +317,24 @@ export function readDistinctEventPairs(
   return parseDistinctEventPairs(fs.readFileSync(filePath, 'utf-8'));
 }
 
+export interface NeighbourPair {
+  a: string;
+  b: string;
+  why: string;
+}
+
+export function neighbourPairKey(shorter: string, longer: string): string {
+  return `${shorter} | ${longer}`;
+}
+
+export function readAllowedNeighbours(
+  filePath = path.join(process.cwd(), 'data', 'allowed-company-key-neighbours.json')
+): Set<string> {
+  if (!fs.existsSync(filePath)) return new Set();
+  const pairs = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as NeighbourPair[];
+  return new Set(pairs.map(({ a, b }) => neighbourPairKey(a, b)));
+}
+
 export function parseLayoffEntries(raw: string): LayoffEntry[] {
   return Papa.parse<LayoffEntry>(raw.replace(/\r\n?/g, '\n'), {
     header: true,
@@ -458,6 +478,32 @@ function groupPairFindings(findings: PairFinding[]): PairGroup[] {
   return [...groups.values()];
 }
 
+function isPrefixNeighbour(shorter: string, longer: string): boolean {
+  if (shorter.length < MIN_NAME_SPLIT_KEY_LENGTH) return false;
+  return longer.startsWith(shorter + ' ');
+}
+
+function findNameSplits(indexed: IndexedEntry[], allowedNeighbours: Set<string>): IntegrityWarning[] {
+  const byKey = groupBy(indexed, (x) => companyKey(String(x.entry.company ?? '')));
+  const keys = [...byKey.keys()].sort();
+  const warnings: IntegrityWarning[] = [];
+  for (let i = 0; i + 1 < keys.length; i++) {
+    const shorter = keys[i];
+    const longer = keys[i + 1];
+    const identity = neighbourPairKey(shorter, longer);
+    if (!isPrefixNeighbour(shorter, longer) || allowedNeighbours.has(identity)) continue;
+    const members = [...byKey.get(shorter)!, ...byKey.get(longer)!];
+    warnings.push({
+      type: 'name-split',
+      eventIds: [...new Set(members.map((x) => x.eventId))],
+      rows: members.map((x) => x.row),
+      identity,
+      message: `Company keys "${shorter}" and "${longer}" look like one company under two names — add an alias to data/company-aliases.csv, or an entry with a reason to data/allowed-company-key-neighbours.json if they are distinct`,
+    });
+  }
+  return warnings;
+}
+
 export function formatRows(rows: number[]): string {
   const sorted = [...rows].sort((a, b) => a - b);
   if (sorted.length <= 3) return `rows ${sorted.join(', ')}`;
@@ -585,7 +631,8 @@ function perRowAdvisories(item: IndexedEntry, now: string): IntegrityWarning[] {
 
 export function checkIntegrity(
   entries: LayoffEntry[],
-  distinctPairs: Set<string> = readDistinctEventPairs()
+  distinctPairs: Set<string> = readDistinctEventPairs(),
+  allowedNeighbours: Set<string> = readAllowedNeighbours()
 ): IntegrityWarning[] {
   const indexed = indexEntries(entries);
   const earliest = earliestDateByEvent(indexed);
@@ -598,6 +645,7 @@ export function checkIntegrity(
   return [
     ...pairWarnings,
     ...crossName.hardErrors,
+    ...findNameSplits(indexed, allowedNeighbours),
     ...findUnarchivedConfirmed(indexed),
     ...findDuplicateSources(indexed),
     ...indexed.flatMap((item) => perRowAdvisories(item, now)),
@@ -662,10 +710,11 @@ export interface DatasetAnalysis {
 export function analyzeDataset(
   entries: LayoffEntry[],
   rejected: LayoffEntry[] | null,
-  distinctPairs: Set<string>
+  distinctPairs: Set<string>,
+  allowedNeighbours: Set<string> = readAllowedNeighbours()
 ): DatasetAnalysis {
   const errors = entries.flatMap((entry, i) => validateEntry(entry, i));
-  const findings = checkIntegrity(entries, distinctPairs);
+  const findings = checkIntegrity(entries, distinctPairs, allowedNeighbours);
   if (rejected) findings.push(...checkCrossFileContradictions(entries, rejected));
   return {
     errors,

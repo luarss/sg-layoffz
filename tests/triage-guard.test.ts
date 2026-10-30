@@ -21,7 +21,7 @@ function entry(overrides: Partial<LayoffEntry> = {}): LayoffEntry {
 }
 
 const realAnalyzer: DatasetAnalyzer = (layoffs, rejected) => {
-  const analysis = analyzeDataset(layoffs, rejected, new Set());
+  const analysis = analyzeDataset(layoffs, rejected, new Set(), new Set());
   return [...analysis.hardIntegrityErrors, ...analysis.warnings];
 };
 
@@ -37,6 +37,20 @@ describe('screenTriageBatch', () => {
 
     expect(screened.accepted).toEqual([followUp]);
     expect(screened.heldBack).toEqual([]);
+  });
+
+  it('holds back a row whose company name splits an existing company key', () => {
+    const variant = entry({
+      company: 'Bitsmedia Robotics',
+      status: 'rumored',
+      source_link: 'https://www.asiaone.com/singapore/bitsmedia-robotics-cuts',
+    });
+    const candidates: TriageCandidate[] = [{ target: 'layoffs', row: variant }];
+
+    const screened = screenTriageBatch([entry()], [], candidates, realAnalyzer);
+
+    expect(screened.accepted).toEqual([]);
+    expect(screened.heldBack[0].warnings.map((w) => w.type)).toEqual(['name-split']);
   });
 
   it('holds back a confirmed row from an unrecognised source and keeps the rest', () => {
