@@ -112,13 +112,16 @@ function allProvidersFailedVerdict(entry: LayoffEntry): ModelVerdict {
 }
 
 async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promise<ModelVerdict> {
-  const { value } = await callJsonWithChain(chain, {
+  const { value, errors } = await callJsonWithChain(chain, {
     system: SYSTEM_PROMPT,
     user: buildUserPrompt(entry),
     parse: (raw) => parseModelVerdict(raw)?.verdict ?? null,
     attempts: EVAL_ATTEMPTS_PER_PROVIDER,
     log: () => {},
   });
+  if (value === null) {
+    console.error(`\n  [all providers failed] ${entry.company}: ${errors.join(' | ').slice(0, 400)}`);
+  }
   return value ?? allProvidersFailedVerdict(entry);
 }
 
