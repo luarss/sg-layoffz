@@ -4,9 +4,9 @@
 // Uses the same provider chain, prompt and parser as llm-triage.ts (see ./llm-provider, ./llm-prompt).
 //
 // Usage:
-//   NVIDIA_API_KEY=nvapi-... npm run eval:llm
-//   NVIDIA_API_KEY=nvapi-... npm run eval:llm -- --samples 10  (10 from each category)
-//   NVIDIA_API_KEY=nvapi-... npm run eval:llm -- --golden     (frozen curated set, gated)
+//   DEEPSEEK_API_KEY=sk-... npm run eval:llm
+//   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --samples 10  (10 from each category)
+//   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --golden     (frozen curated set, gated)
 
 import fs from 'node:fs';
 import { readCsv } from '../src/lib/csv';
@@ -112,16 +112,13 @@ function allProvidersFailedVerdict(entry: LayoffEntry): ModelVerdict {
 }
 
 async function evaluateEntry(chain: ProviderConfig[], entry: LayoffEntry): Promise<ModelVerdict> {
-  const { value, errors } = await callJsonWithChain(chain, {
+  const { value } = await callJsonWithChain(chain, {
     system: SYSTEM_PROMPT,
     user: buildUserPrompt(entry),
     parse: (raw) => parseModelVerdict(raw)?.verdict ?? null,
     attempts: EVAL_ATTEMPTS_PER_PROVIDER,
     log: () => {},
   });
-  if (value === null) {
-    console.error(`\n  [all providers failed] ${entry.company}: ${errors.join(' | ').slice(0, 400)}`);
-  }
   return value ?? allProvidersFailedVerdict(entry);
 }
 

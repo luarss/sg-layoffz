@@ -152,7 +152,7 @@ describe('SYSTEM_PROMPT', () => {
 });
 
 describe('callJsonWithChain (mocked clients)', () => {
-  type FakeResponse = { content?: string; reasoning_content?: string; finish_reason?: string } | Error;
+  type FakeResponse = { content?: string; finish_reason?: string } | Error;
 
   function fakeProvider(name: string, responses: FakeResponse[]): ChatProvider & { calls: number } {
     const provider = {
@@ -166,14 +166,7 @@ describe('callJsonWithChain (mocked clients)', () => {
               const next = responses[Math.min(provider.calls, responses.length - 1)];
               provider.calls++;
               if (next instanceof Error) throw next;
-              return {
-                choices: [
-                  {
-                    message: { content: next.content, reasoning_content: next.reasoning_content },
-                    finish_reason: next.finish_reason,
-                  },
-                ],
-              };
+              return { choices: [{ message: { content: next.content }, finish_reason: next.finish_reason }] };
             },
           },
         },
@@ -217,23 +210,5 @@ describe('callJsonWithChain (mocked clients)', () => {
     const result = await callJsonWithChain([flaky], { system: 's', user: 'u', parse, attempts: 2, log: () => {} });
     expect(result.value).toEqual({ ok: true });
     expect(flaky.calls).toBe(2);
-  });
-
-  it('falls back to reasoning_content when content is empty', async () => {
-    const thinker = fakeProvider('thinker', [{ content: '', reasoning_content: '{"ok":true}' }]);
-    const result = await callJsonWithChain([thinker], { system: 's', user: 'u', parse, log: () => {} });
-    expect(result.value).toEqual({ ok: true });
-  });
-
-  it('spaces consecutive calls to a provider by its minimum interval', async () => {
-    const spaced = Object.assign(fakeProvider('spaced', [{ content: '{"ok":true}' }]), { minIntervalMs: 50 });
-    const started = Date.now();
-    await Promise.all([
-      callJsonWithChain([spaced], { system: 's', user: 'u', parse, log: () => {} }),
-      callJsonWithChain([spaced], { system: 's', user: 'u', parse, log: () => {} }),
-      callJsonWithChain([spaced], { system: 's', user: 'u', parse, log: () => {} }),
-    ]);
-    expect(spaced.calls).toBe(3);
-    expect(Date.now() - started).toBeGreaterThanOrEqual(95);
   });
 });

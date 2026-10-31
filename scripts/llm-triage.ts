@@ -1,12 +1,12 @@
 // LLM-powered triage for review-queue.csv entries.
 // Reads data/review-queue.csv, classifies each entry using an LLM with automatic
-// provider fallback (NVIDIA → Z.AI → DeepSeek → MiMo → OpenRouter), and routes results to:
+// provider fallback (DeepSeek → MiMo → OpenRouter), and routes results to:
 //   - data/layoffs.csv      (confirmed + rumored)
 //   - data/rejected.csv     (rejected)
 //   - data/review-queue.csv (needs_review — kept for manual triage)
 // Writes data/llm-triage-summary.json with full run stats.
 //
-// Provider fallback order: NVIDIA NIM → Z.AI → DeepSeek → MiMo (Xiaomi) → OpenRouter
+// Provider fallback order: DeepSeek → MiMo (Xiaomi) → OpenRouter
 // Providers are included automatically when their keys are present.
 // A provider is skipped (and the next tried) when it returns an API error.
 // The provider chain wiring lives in ./llm-provider (shared with rumor-recheck).

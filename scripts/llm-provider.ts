@@ -1,13 +1,8 @@
 // Shared LLM provider chain, used by scripts/llm-triage.ts (review-queue triage),
-// scripts/llm-evals.ts (benchmark) and scripts/rumor-recheck.ts (rumor lifecycle). All need the same
-// NVIDIA → Z.AI → DeepSeek → MiMo → OpenRouter fallback wiring, so the client construction lives here once.
-// NVIDIA NIM and Z.AI are free tiers; DeepSeek, MiMo and OpenRouter are paid backstops.
+// scripts/llm-evals.ts (benchmark) and scripts/rumor-recheck.ts (rumor lifecycle). All need the same DeepSeek → MiMo →
+// OpenRouter fallback wiring, so the client construction lives here once.
 //
 // Environment variables:
-//   NVIDIA_API_KEY      NVIDIA NIM key (base URL: https://integrate.api.nvidia.com/v1)
-//   NVIDIA_MODEL        model override (default: deepseek-ai/deepseek-v4.1-flash)
-//   ZAI_API_KEY         Z.AI key (base URL: https://api.z.ai/api/paas/v4)
-//   ZAI_MODEL           model override (default: glm-4.7-flash)
 //   DEEPSEEK_API_KEY    DeepSeek key  (base URL: https://api.deepseek.com/v1)
 //   DEEPSEEK_MODEL      model override (default: deepseek-v4-flash)
 //   MIMO_API_KEY        MiMo key
@@ -15,7 +10,7 @@
 //   MIMO_MODEL          model override (default: mimo-v2.5)
 //   OPENROUTER_API_KEY  OpenRouter key (base URL: https://openrouter.ai/api/v1)
 //   OPENROUTER_MODEL    model override (default: openrouter/owl-alpha)
-//   LLM_PROVIDER        force a single provider: nvidia | zai | deepseek | mimo | openrouter
+//   LLM_PROVIDER        force a single provider: deepseek | mimo | openrouter
 
 import OpenAI from 'openai';
 import { sleep } from '../src/lib/async';
@@ -24,8 +19,6 @@ export interface ProviderConfig {
   name: string;
   client: OpenAI;
   model: string;
-  extraBody?: Record<string, unknown>;
-  minIntervalMs?: number;
 }
 
 export type ChatClient = Pick<OpenAI, 'chat'>;
@@ -34,8 +27,6 @@ export interface ChatProvider {
   name: string;
   client: ChatClient;
   model: string;
-  extraBody?: Record<string, unknown>;
-  minIntervalMs?: number;
 }
 
 export interface JsonCallOptions<T> {
@@ -69,36 +60,6 @@ export function getProviderChain(): ProviderConfig[] {
   const chain: ProviderConfig[] = [];
 
   const want = (name: string) => !force || force === name;
-
-  if (want('nvidia') && process.env.NVIDIA_API_KEY) {
-    chain.push({
-      name: 'nvidia',
-      client: new OpenAI({
-        apiKey: process.env.NVIDIA_API_KEY,
-        baseURL: 'https://integrate.api.nvidia.com/v1',
-        timeout: REQUEST_TIMEOUT_MS,
-        maxRetries: REQUEST_MAX_RETRIES,
-      }),
-      model: process.env.NVIDIA_MODEL || 'deepseek-ai/deepseek-v4.1-flash',
-      extraBody: { chat_template_kwargs: { thinking: false } },
-      minIntervalMs: 1_500,
-    });
-  }
-
-  if (want('zai') && process.env.ZAI_API_KEY) {
-    chain.push({
-      name: 'zai',
-      client: new OpenAI({
-        apiKey: process.env.ZAI_API_KEY,
-        baseURL: 'https://api.z.ai/api/paas/v4',
-        timeout: REQUEST_TIMEOUT_MS,
-        maxRetries: REQUEST_MAX_RETRIES,
-      }),
-      model: process.env.ZAI_MODEL || 'glm-4.7-flash',
-      extraBody: { thinking: { type: 'disabled' } },
-      minIntervalMs: 3_000,
-    });
-  }
 
   if (want('deepseek') && process.env.DEEPSEEK_API_KEY) {
     chain.push({
@@ -146,8 +107,6 @@ export function getProviderChain(): ProviderConfig[] {
   if (chain.length === 0) {
     throw new Error(
       'No LLM provider configured. Set at least one of:\n' +
-      '  NVIDIA_API_KEY\n' +
-      '  ZAI_API_KEY\n' +
       '  DEEPSEEK_API_KEY\n' +
       '  MIMO_API_KEY + MIMO_BASE_URL\n' +
       '  OPENROUTER_API_KEY'
@@ -162,38 +121,15 @@ export function describeChain(chain: ChatProvider[]): string {
 }
 
 const RETRY_BACKOFF_MS = 500;
-const RATE_LIMIT_BACKOFF_MS = 5_000;
-const RATE_LIMIT_BACKOFF_MULTIPLIER = 3;
 
 type AttemptOutcome<T> =
   | { ok: true; value: T }
-  | { ok: false; error: string; notice: string | null; rateLimited: boolean };
-
-const nextSlotByProvider = new Map<string, number>();
-
-async function waitForSlot(provider: ChatProvider): Promise<void> {
-  const interval = provider.minIntervalMs ?? 0;
-  if (interval <= 0) return;
-  const now = Date.now();
-  const slot = Math.max(now, nextSlotByProvider.get(provider.name) ?? 0);
-  nextSlotByProvider.set(provider.name, slot + interval);
-  if (slot > now) await sleep(slot - now);
-}
-
-function isRateLimited(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && (err as { status?: unknown }).status === 429;
-}
-
-function retryDelayMs(attempt: number, rateLimited: boolean): number {
-  if (!rateLimited) return RETRY_BACKOFF_MS * attempt;
-  return RATE_LIMIT_BACKOFF_MS * RATE_LIMIT_BACKOFF_MULTIPLIER ** (attempt - 1);
-}
+  | { ok: false; error: string; notice: string | null };
 
 async function attemptProvider<T>(
   provider: ChatProvider,
   options: JsonCallOptions<T>
 ): Promise<AttemptOutcome<T>> {
-  await waitForSlot(provider);
   try {
     const response = await provider.client.chat.completions.create({
       model: provider.model,
@@ -204,7 +140,6 @@ async function attemptProvider<T>(
       temperature: 0,
       max_tokens: 4096,
       response_format: { type: 'json_object' },
-      ...provider.extraBody,
     });
     const choice = response.choices[0];
     if (choice?.finish_reason === 'length') {
@@ -212,22 +147,15 @@ async function attemptProvider<T>(
         ok: false,
         error: `${provider.name}: response truncated (finish_reason=length)`,
         notice: ` [${provider.name} truncated, trying next]`,
-        rateLimited: false,
       };
     }
-    const message = choice?.message as { content?: string | null; reasoning_content?: string | null } | undefined;
-    const raw = message?.content || message?.reasoning_content || '{}';
+    const raw = choice?.message?.content || '{}';
     const value = options.parse(raw);
     if (value !== null) return { ok: true, value };
-    return { ok: false, error: `${provider.name}: unparseable response (raw: ${raw.slice(0, 80)})`, notice: null, rateLimited: false };
+    return { ok: false, error: `${provider.name}: unparseable response (raw: ${raw.slice(0, 80)})`, notice: null };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return {
-      ok: false,
-      error: `${provider.name}: ${message}`,
-      notice: ` [${provider.name} failed, trying next]`,
-      rateLimited: isRateLimited(err),
-    };
+    return { ok: false, error: `${provider.name}: ${message}`, notice: ` [${provider.name} failed, trying next]` };
   }
 }
 
@@ -246,7 +174,7 @@ export async function callJsonWithChain<T>(
       if (outcome.ok) return { value: outcome.value, provider: provider.name, errors };
       errors.push(outcome.error);
       notice = outcome.notice;
-      if (attempt < attempts) await sleep(retryDelayMs(attempt, outcome.rateLimited));
+      if (attempt < attempts) await sleep(RETRY_BACKOFF_MS * attempt);
     }
     if (notice) log(notice);
   }
