@@ -4,7 +4,7 @@
 //
 // We validate client-side with Zod rather than relying on server-side strict
 // structured outputs (response_format: json_schema): the provider chain spans
-// DeepSeek / MiMo / OpenRouter, and strict-schema support is uneven across them.
+// NVIDIA / Z.AI / DeepSeek / MiMo / OpenRouter, and strict-schema support is uneven across them.
 // JSON mode + Zod validation is the lowest common denominator that guarantees the
 // label contract regardless of which provider answered.
 import { z } from 'zod';

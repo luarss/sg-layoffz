@@ -1,8 +1,13 @@
 // Shared LLM provider chain, used by scripts/llm-triage.ts (review-queue triage),
-// scripts/llm-evals.ts (benchmark) and scripts/rumor-recheck.ts (rumor lifecycle). All need the same DeepSeek → MiMo →
-// OpenRouter fallback wiring, so the client construction lives here once.
+// scripts/llm-evals.ts (benchmark) and scripts/rumor-recheck.ts (rumor lifecycle). All need the same
+// NVIDIA → Z.AI → DeepSeek → MiMo → OpenRouter fallback wiring, so the client construction lives here once.
+// NVIDIA NIM and Z.AI are free tiers; DeepSeek, MiMo and OpenRouter are paid backstops.
 //
 // Environment variables:
+//   NVIDIA_API_KEY      NVIDIA NIM key (base URL: https://integrate.api.nvidia.com/v1)
+//   NVIDIA_MODEL        model override (default: deepseek-ai/deepseek-v4.1-flash)
+//   ZAI_API_KEY         Z.AI key (base URL: https://api.z.ai/api/paas/v4)
+//   ZAI_MODEL           model override (default: glm-4.7-flash)
 //   DEEPSEEK_API_KEY    DeepSeek key  (base URL: https://api.deepseek.com/v1)
 //   DEEPSEEK_MODEL      model override (default: deepseek-v4-flash)
 //   MIMO_API_KEY        MiMo key
@@ -10,7 +15,7 @@
 //   MIMO_MODEL          model override (default: mimo-v2.5)
 //   OPENROUTER_API_KEY  OpenRouter key (base URL: https://openrouter.ai/api/v1)
 //   OPENROUTER_MODEL    model override (default: openrouter/owl-alpha)
-//   LLM_PROVIDER        force a single provider: deepseek | mimo | openrouter
+//   LLM_PROVIDER        force a single provider: nvidia | zai | deepseek | mimo | openrouter
 
 import OpenAI from 'openai';
 import { sleep } from '../src/lib/async';
@@ -19,6 +24,7 @@ export interface ProviderConfig {
   name: string;
   client: OpenAI;
   model: string;
+  extraBody?: Record<string, unknown>;
 }
 
 export type ChatClient = Pick<OpenAI, 'chat'>;
@@ -27,6 +33,7 @@ export interface ChatProvider {
   name: string;
   client: ChatClient;
   model: string;
+  extraBody?: Record<string, unknown>;
 }
 
 export interface JsonCallOptions<T> {
@@ -60,6 +67,33 @@ export function getProviderChain(): ProviderConfig[] {
   const chain: ProviderConfig[] = [];
 
   const want = (name: string) => !force || force === name;
+
+  if (want('nvidia') && process.env.NVIDIA_API_KEY) {
+    chain.push({
+      name: 'nvidia',
+      client: new OpenAI({
+        apiKey: process.env.NVIDIA_API_KEY,
+        baseURL: 'https://integrate.api.nvidia.com/v1',
+        timeout: REQUEST_TIMEOUT_MS,
+        maxRetries: REQUEST_MAX_RETRIES,
+      }),
+      model: process.env.NVIDIA_MODEL || 'deepseek-ai/deepseek-v4.1-flash',
+    });
+  }
+
+  if (want('zai') && process.env.ZAI_API_KEY) {
+    chain.push({
+      name: 'zai',
+      client: new OpenAI({
+        apiKey: process.env.ZAI_API_KEY,
+        baseURL: 'https://api.z.ai/api/paas/v4',
+        timeout: REQUEST_TIMEOUT_MS,
+        maxRetries: REQUEST_MAX_RETRIES,
+      }),
+      model: process.env.ZAI_MODEL || 'glm-4.7-flash',
+      extraBody: { thinking: { type: 'disabled' } },
+    });
+  }
 
   if (want('deepseek') && process.env.DEEPSEEK_API_KEY) {
     chain.push({
@@ -107,6 +141,8 @@ export function getProviderChain(): ProviderConfig[] {
   if (chain.length === 0) {
     throw new Error(
       'No LLM provider configured. Set at least one of:\n' +
+      '  NVIDIA_API_KEY\n' +
+      '  ZAI_API_KEY\n' +
       '  DEEPSEEK_API_KEY\n' +
       '  MIMO_API_KEY + MIMO_BASE_URL\n' +
       '  OPENROUTER_API_KEY'
@@ -140,6 +176,7 @@ async function attemptProvider<T>(
       temperature: 0,
       max_tokens: 4096,
       response_format: { type: 'json_object' },
+      ...provider.extraBody,
     });
     const choice = response.choices[0];
     if (choice?.finish_reason === 'length') {

@@ -4,9 +4,9 @@
 // Uses the same provider chain, prompt and parser as llm-triage.ts (see ./llm-provider, ./llm-prompt).
 //
 // Usage:
-//   DEEPSEEK_API_KEY=sk-... npm run eval:llm
-//   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --samples 10  (10 from each category)
-//   DEEPSEEK_API_KEY=sk-... npm run eval:llm -- --golden     (frozen curated set, gated)
+//   NVIDIA_API_KEY=nvapi-... npm run eval:llm
+//   NVIDIA_API_KEY=nvapi-... npm run eval:llm -- --samples 10  (10 from each category)
+//   NVIDIA_API_KEY=nvapi-... npm run eval:llm -- --golden     (frozen curated set, gated)
 
 import fs from 'node:fs';
 import { readCsv } from '../src/lib/csv';

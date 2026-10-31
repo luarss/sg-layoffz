@@ -63,6 +63,8 @@ jobs:
         # if that logic fails, and still leaves time for dedup/validate/commit.
         timeout-minutes: 50
         env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}
           MIMO_BASE_URL: ${{ secrets.MIMO_BASE_URL }}
