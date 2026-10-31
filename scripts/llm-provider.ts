@@ -25,6 +25,7 @@ export interface ProviderConfig {
   client: OpenAI;
   model: string;
   extraBody?: Record<string, unknown>;
+  minIntervalMs?: number;
 }
 
 export type ChatClient = Pick<OpenAI, 'chat'>;
@@ -34,6 +35,7 @@ export interface ChatProvider {
   client: ChatClient;
   model: string;
   extraBody?: Record<string, unknown>;
+  minIntervalMs?: number;
 }
 
 export interface JsonCallOptions<T> {
@@ -78,6 +80,8 @@ export function getProviderChain(): ProviderConfig[] {
         maxRetries: REQUEST_MAX_RETRIES,
       }),
       model: process.env.NVIDIA_MODEL || 'deepseek-ai/deepseek-v4.1-flash',
+      extraBody: { chat_template_kwargs: { thinking: false } },
+      minIntervalMs: 1_500,
     });
   }
 
@@ -92,6 +96,7 @@ export function getProviderChain(): ProviderConfig[] {
       }),
       model: process.env.ZAI_MODEL || 'glm-4.7-flash',
       extraBody: { thinking: { type: 'disabled' } },
+      minIntervalMs: 3_000,
     });
   }
 
@@ -157,15 +162,38 @@ export function describeChain(chain: ChatProvider[]): string {
 }
 
 const RETRY_BACKOFF_MS = 500;
+const RATE_LIMIT_BACKOFF_MS = 5_000;
+const RATE_LIMIT_BACKOFF_MULTIPLIER = 3;
 
 type AttemptOutcome<T> =
   | { ok: true; value: T }
-  | { ok: false; error: string; notice: string | null };
+  | { ok: false; error: string; notice: string | null; rateLimited: boolean };
+
+const nextSlotByProvider = new Map<string, number>();
+
+async function waitForSlot(provider: ChatProvider): Promise<void> {
+  const interval = provider.minIntervalMs ?? 0;
+  if (interval <= 0) return;
+  const now = Date.now();
+  const slot = Math.max(now, nextSlotByProvider.get(provider.name) ?? 0);
+  nextSlotByProvider.set(provider.name, slot + interval);
+  if (slot > now) await sleep(slot - now);
+}
+
+function isRateLimited(err: unknown): boolean {
+  return typeof err === 'object' && err !== null && (err as { status?: unknown }).status === 429;
+}
+
+function retryDelayMs(attempt: number, rateLimited: boolean): number {
+  if (!rateLimited) return RETRY_BACKOFF_MS * attempt;
+  return RATE_LIMIT_BACKOFF_MS * RATE_LIMIT_BACKOFF_MULTIPLIER ** (attempt - 1);
+}
 
 async function attemptProvider<T>(
   provider: ChatProvider,
   options: JsonCallOptions<T>
 ): Promise<AttemptOutcome<T>> {
+  await waitForSlot(provider);
   try {
     const response = await provider.client.chat.completions.create({
       model: provider.model,
@@ -184,15 +212,22 @@ async function attemptProvider<T>(
         ok: false,
         error: `${provider.name}: response truncated (finish_reason=length)`,
         notice: ` [${provider.name} truncated, trying next]`,
+        rateLimited: false,
       };
     }
-    const raw = choice?.message?.content || '{}';
+    const message = choice?.message as { content?: string | null; reasoning_content?: string | null } | undefined;
+    const raw = message?.content || message?.reasoning_content || '{}';
     const value = options.parse(raw);
     if (value !== null) return { ok: true, value };
-    return { ok: false, error: `${provider.name}: unparseable response (raw: ${raw.slice(0, 80)})`, notice: null };
+    return { ok: false, error: `${provider.name}: unparseable response (raw: ${raw.slice(0, 80)})`, notice: null, rateLimited: false };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return { ok: false, error: `${provider.name}: ${message}`, notice: ` [${provider.name} failed, trying next]` };
+    return {
+      ok: false,
+      error: `${provider.name}: ${message}`,
+      notice: ` [${provider.name} failed, trying next]`,
+      rateLimited: isRateLimited(err),
+    };
   }
 }
 
@@ -211,7 +246,7 @@ export async function callJsonWithChain<T>(
       if (outcome.ok) return { value: outcome.value, provider: provider.name, errors };
       errors.push(outcome.error);
       notice = outcome.notice;
-      if (attempt < attempts) await sleep(RETRY_BACKOFF_MS * attempt);
+      if (attempt < attempts) await sleep(retryDelayMs(attempt, outcome.rateLimited));
     }
     if (notice) log(notice);
   }
