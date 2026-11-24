@@ -4,7 +4,7 @@ import { computeStats } from '@/lib/stats';
 import { loadMomBenchmark, buildBenchmarkComparison, BenchmarkComparisonRow } from '@/lib/momBenchmark';
 import { LayoffEntry } from '@/lib/types';
 import Layout from '@/components/Layout';
-import Headline from '@/components/Headline';
+import Headline, { ENTRIES_SECTION_ID } from '@/components/Headline';
 import FiltersBar, { Filters, EMPTY_FILTERS, applyFilters } from '@/components/FiltersBar';
 import DataTable from '@/components/DataTable';
 import ChartsSection from '@/components/ChartsSection';
@@ -30,15 +30,14 @@ export default function Home({ entries, years, latestYear, globalLatestDate, mom
 
   return (
     <Layout lastUpdated={globalLatestDate}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Singapore Layoff Tracker</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Tracking layoff and retrenchment events at Singapore-based companies. Data sourced from public news reports.
-          </p>
-        </div>
-
-        <div className="mb-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 space-y-16 sm:space-y-20">
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Singapore Layoff Tracker</h1>
+            <p className="mt-2 max-w-prose text-sm text-gray-500">
+              Tracking layoff and retrenchment events at Singapore-based companies. Data sourced from public news reports.
+            </p>
+          </div>
           <Headline
             jobsCut={stats.totalJobsCut}
             companies={stats.totalCompanies}
@@ -49,25 +48,21 @@ export default function Home({ entries, years, latestYear, globalLatestDate, mom
           />
         </div>
 
-        {stats.monthlyBreakdown.length > 0 && (
-          <div className="mb-8">
-            <ChartsSection stats={stats} />
-          </div>
-        )}
+        {stats.monthlyBreakdown.length > 0 && <ChartsSection stats={stats} />}
 
-        {momComparison.length > 0 && (
-          <div className="mb-8">
-            <MomBenchmark comparison={momComparison} />
-          </div>
-        )}
+        {momComparison.length > 0 && <MomBenchmark comparison={momComparison} />}
 
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Entries</h2>
+        <section
+          id={ENTRIES_SECTION_ID}
+          aria-labelledby="entries-heading"
+          className="border-t border-gray-200 pt-6 scroll-mt-16"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <h2 id="entries-heading" className="text-base font-semibold text-gray-900">Entries</h2>
             <FiltersBar filters={filters} onChange={setFilters} />
           </div>
           <DataTable entries={filtered} />
-        </div>
+        </section>
       </div>
     </Layout>
   );

@@ -8,10 +8,20 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import type { TooltipItem } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import type { BenchmarkComparisonRow } from '@/lib/momBenchmark';
+import {
+  applyChartDefaults,
+  categoryAxis,
+  chartColors,
+  legendOptions,
+  valueAxis,
+} from '@/lib/chartTheme';
+import { describeBenchmark } from '@/lib/chartData';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+applyChartDefaults();
 
 interface MomBenchmarkChartProps {
   data: BenchmarkComparisonRow[];
@@ -23,24 +33,22 @@ function quarterLabel(quarter: string): string {
 }
 
 export default function MomBenchmarkChart({ data }: MomBenchmarkChartProps) {
-  const labels = data.map((d) => quarterLabel(d.quarter));
-
   const chartData = {
-    labels,
+    labels: data.map((d) => quarterLabel(d.quarter)),
     datasets: [
       {
         label: 'MOM official retrenchments',
         data: data.map((d) => d.momRetrenchments),
-        backgroundColor: '#9ca3af',
+        backgroundColor: chartColors.reference,
         borderRadius: 4,
-        barThickness: 18,
+        maxBarThickness: 18,
       },
       {
         label: 'This tracker (jobs recorded)',
         data: data.map((d) => d.trackerJobs),
-        backgroundColor: '#1a1a1a',
+        backgroundColor: chartColors.accent,
         borderRadius: 4,
-        barThickness: 18,
+        maxBarThickness: 18,
       },
     ],
   };
@@ -49,13 +57,10 @@ export default function MomBenchmarkChart({ data }: MomBenchmarkChartProps) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: true,
-        labels: { font: { size: 12 }, color: '#6b7280', boxWidth: 12 },
-      },
+      legend: legendOptions(),
       tooltip: {
         callbacks: {
-          label: (ctx: any) => {
+          label: (ctx: TooltipItem<'bar'>) => {
             const d = data[ctx.dataIndex];
             if (ctx.datasetIndex === 0) {
               return `MOM: ${d.momRetrenchments.toLocaleString()} retrenchments`;
@@ -66,21 +71,14 @@ export default function MomBenchmarkChart({ data }: MomBenchmarkChartProps) {
       },
     },
     scales: {
-      x: {
-        grid: { display: false },
-        ticks: { font: { size: 12 }, color: '#9ca3af' },
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: '#f3f4f6' },
-        ticks: { font: { size: 12 }, color: '#9ca3af' },
-      },
+      x: categoryAxis(),
+      y: valueAxis(),
     },
   };
 
   return (
     <div className="h-64">
-      <Bar data={chartData} options={options} />
+      <Bar aria-label={describeBenchmark(data)} data={chartData} options={options} />
     </div>
   );
 }

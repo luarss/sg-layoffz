@@ -1,5 +1,9 @@
 'use client';
 
+import { ReactNode } from 'react';
+
+export const ENTRIES_SECTION_ID = 'entries';
+
 interface HeadlineProps {
   jobsCut: number;
   companies: number;
@@ -7,6 +11,40 @@ interface HeadlineProps {
   year: string;
   years: number[];
   onYearChange: (year: string) => void;
+}
+
+interface HeadlineItemProps {
+  withSeparator?: boolean;
+  children: ReactNode;
+}
+
+function HeadlineItem({ withSeparator = false, children }: HeadlineItemProps) {
+  return (
+    <li className="flex items-baseline">
+      {withSeparator && (
+        <span className="hidden sm:inline mr-3 text-gray-500" aria-hidden>
+          ·
+        </span>
+      )}
+      {children}
+    </li>
+  );
+}
+
+interface TotalLinkProps {
+  value: number;
+  label: string;
+}
+
+function TotalLink({ value, label }: TotalLinkProps) {
+  return (
+    <a href={`#${ENTRIES_SECTION_ID}`} className="group">
+      <span className="text-3xl sm:text-4xl font-bold text-sky-700 tabular-nums underline decoration-sky-700/25 decoration-2 underline-offset-4 group-hover:decoration-sky-700">
+        {value.toLocaleString()}
+      </span>{' '}
+      <span className="text-gray-600">{label}</span>
+    </a>
+  );
 }
 
 export default function Headline({
@@ -18,51 +56,38 @@ export default function Headline({
   onYearChange,
 }: HeadlineProps) {
   return (
-    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 text-base sm:text-lg text-gray-700">
-      <span>
-        <span className="text-3xl sm:text-4xl font-bold text-sky-500 tabular-nums">
-          {jobsCut.toLocaleString()}
-        </span>{' '}
-        <span className="text-gray-600">confirmed Singapore jobs cut</span>
-      </span>
-      <span className="text-gray-400" aria-hidden>
-        ·
-      </span>
-      <span>
-        <span className="text-3xl sm:text-4xl font-bold text-sky-500 tabular-nums">
-          {companies.toLocaleString()}
-        </span>{' '}
-        <span className="text-gray-600">companies</span>
-      </span>
+    <ul className="flex flex-col items-start gap-y-2 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3 text-base sm:text-lg text-gray-700">
+      <HeadlineItem>
+        <TotalLink value={jobsCut} label="confirmed Singapore jobs cut" />
+      </HeadlineItem>
+      <HeadlineItem withSeparator>
+        <TotalLink value={companies} label="companies" />
+      </HeadlineItem>
       {undisclosedEvents > 0 && (
-        <>
-          <span className="text-gray-400" aria-hidden>
-            ·
-          </span>
-          <span className="text-gray-500 text-sm sm:text-base">
-            <span className="font-semibold text-gray-600 tabular-nums">
+        <HeadlineItem withSeparator>
+          <a href={`#${ENTRIES_SECTION_ID}`} className="text-gray-600 text-sm sm:text-base hover:text-gray-900">
+            <span className="font-semibold tabular-nums">
               {undisclosedEvents.toLocaleString()}
             </span>{' '}
             more events with undisclosed headcount
-          </span>
-        </>
+          </a>
+        </HeadlineItem>
       )}
-      <span className="text-gray-400" aria-hidden>
-        ·
-      </span>
-      <select
-        value={year}
-        onChange={(e) => onYearChange(e.target.value)}
-        aria-label="Filter by year"
-        className="px-2 py-1 border border-gray-300 rounded-md text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-      >
-        <option value="all">All time</option>
-        {years.map((y) => (
-          <option key={y} value={String(y)}>
-            In {y}
-          </option>
-        ))}
-      </select>
-    </div>
+      <HeadlineItem withSeparator>
+        <select
+          value={year}
+          onChange={(e) => onYearChange(e.target.value)}
+          aria-label="Filter by year"
+          className="px-2 py-1 border border-gray-300 rounded-md text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-transparent"
+        >
+          <option value="all">All time</option>
+          {years.map((y) => (
+            <option key={y} value={String(y)}>
+              In {y}
+            </option>
+          ))}
+        </select>
+      </HeadlineItem>
+    </ul>
   );
 }

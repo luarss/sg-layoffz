@@ -18,14 +18,11 @@ export default function Layout({ children, lastUpdated }: LayoutProps) {
       </Head>
 
       <div className="min-h-screen flex flex-col">
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <Link href="/" className="flex items-center gap-2">
-                <span className="text-xl font-bold text-gray-900">
-                  sg-layoffz
-                </span>
-                <span className="hidden sm:inline text-sm text-gray-500">Singapore Layoff Tracker</span>
+            <div className="flex items-center justify-between h-14">
+              <Link href="/" className="text-base font-semibold tracking-tight text-gray-900">
+                sg-layoffz
               </Link>
               <nav className="flex items-center gap-6">
                 <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
@@ -41,9 +38,9 @@ export default function Layout({ children, lastUpdated }: LayoutProps) {
 
         <main className="flex-1">{children}</main>
 
-        <footer className="bg-gray-50 border-t border-gray-200 mt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col items-center gap-3 text-center">
+        <footer className="mt-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+            <div className="border-t border-gray-100 pt-8 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
               <div className="text-sm text-gray-500">
                 Built with ❤️ by{' '}
                 <a
@@ -55,7 +52,7 @@ export default function Layout({ children, lastUpdated }: LayoutProps) {
                   luarss
                 </a>
               </div>
-              <div className="text-xs text-gray-400 flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <div className="text-xs text-gray-500 flex flex-col sm:flex-row gap-1 sm:gap-4">
                 <span>Data sourced from public news reports. Not affiliated with any government agency.</span>
                 {lastUpdated && <span>Last updated: {lastUpdated}</span>}
               </div>

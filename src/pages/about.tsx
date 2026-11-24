@@ -3,8 +3,8 @@ import Layout from '@/components/Layout';
 export default function About() {
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">About</h1>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mb-8">About</h1>
 
         <div className="prose prose-gray max-w-none space-y-6">
           <section>

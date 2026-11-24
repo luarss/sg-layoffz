@@ -55,16 +55,18 @@ export default function FiltersBar({ filters, onChange }: FiltersBarProps) {
     <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
       <input
         type="text"
+        aria-label="Search entries"
         placeholder="Search company, industry..."
         value={filters.search}
         onChange={(e) => update('search', e.target.value)}
-        className="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+        className="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-transparent"
       />
 
       <select
         value={filters.industry}
+        aria-label="Filter by industry"
         onChange={(e) => update('industry', e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-transparent"
       >
         <option value="all">All Industries</option>
         {INDUSTRIES.map((ind) => (
@@ -76,8 +78,9 @@ export default function FiltersBar({ filters, onChange }: FiltersBarProps) {
 
       <select
         value={filters.status}
+        aria-label="Filter by status"
         onChange={(e) => update('status', e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-transparent"
       >
         <option value="all">All Status</option>
         <option value="confirmed">Confirmed</option>
@@ -86,8 +89,9 @@ export default function FiltersBar({ filters, onChange }: FiltersBarProps) {
 
       <select
         value={filters.range}
+        aria-label="Filter by time range"
         onChange={(e) => update('range', e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+        className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-transparent"
       >
         <option value="all">All Time</option>
         <option value="6">Past 6 Months</option>

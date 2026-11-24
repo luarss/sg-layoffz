@@ -10,8 +10,8 @@ const MomBenchmarkChart = dynamic(() => import('./MomBenchmarkChart'), {
 
 function ChartSkeleton() {
   return (
-    <div className="animate-pulse bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-      <span className="text-gray-400 text-sm">Loading chart...</span>
+    <div className="animate-pulse bg-gray-50 h-64 flex items-center justify-center">
+      <span className="text-gray-600 text-sm">Loading chart...</span>
     </div>
   );
 }
@@ -32,17 +32,17 @@ export default function MomBenchmark({ comparison }: MomBenchmarkProps) {
   const latest = rows[rows.length - 1];
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <section className="border-t border-gray-200 pt-6">
       <h3 className="text-sm font-semibold text-gray-900 mb-1">
         Coverage vs. MOM Official Retrenchments
       </h3>
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="max-w-prose text-xs text-gray-500 mb-6">
         How this tracker&apos;s recorded job cuts compare with the Ministry of Manpower&apos;s
         official quarterly retrenchment figures.
       </p>
 
       {latest && (
-        <p className="text-sm text-gray-700 mb-4">
+        <p className="max-w-prose text-sm text-gray-700 mb-8">
           This tracker captured{' '}
           <span className="font-semibold text-gray-900">
             {latest.coveragePct.toFixed(1)}%
@@ -53,7 +53,7 @@ export default function MomBenchmark({ comparison }: MomBenchmarkProps) {
         </p>
       )}
 
-      <div className="mb-6">
+      <div className="mb-10">
         <MomBenchmarkChart data={rows} />
       </div>
 
@@ -74,7 +74,7 @@ export default function MomBenchmark({ comparison }: MomBenchmarkProps) {
                 <td className="py-2 pr-4 text-gray-900">{quarterHeading(row.quarter)}</td>
                 <td className="py-2 pr-4 text-right text-gray-700">
                   {row.trackerJobs.toLocaleString()}
-                  <span className="text-gray-400"> ({row.trackerCount})</span>
+                  <span className="text-gray-600"> ({row.trackerCount})</span>
                 </td>
                 <td className="py-2 pr-4 text-right text-gray-700">
                   {row.momRetrenchments.toLocaleString()}
@@ -99,15 +99,23 @@ export default function MomBenchmark({ comparison }: MomBenchmarkProps) {
         </table>
       </div>
 
-      <p className="mt-4 text-xs text-gray-500 leading-relaxed">
-        Caveat: MOM counts <em>all</em> retrenchments across the economy, including small and
-        unreported ones, while this tracker only records layoffs that were publicly reported in the
-        news. Tracker figures should therefore normally sit well below the official numbers.
-        Occasionally a quarter can exceed 100% coverage because the tracker logs the total headcount
-        announced by a company (which may include roles outside Singapore or span multiple quarters),
-        whereas MOM counts only Singapore-based retrenchments in the quarter they occur. These
-        numbers are indicative of coverage, not an exact like-for-like comparison.
-      </p>
-    </div>
+      <div className="mt-6 max-w-prose text-xs text-gray-600 leading-relaxed">
+        <p className="font-medium text-gray-900">
+          These numbers are indicative of coverage, not an exact like-for-like comparison.
+        </p>
+        <ul className="mt-2 list-disc space-y-1 pl-4">
+          <li>
+            MOM counts <em>all</em> retrenchments across the economy, including small and unreported
+            ones. This tracker only records layoffs publicly reported in the news, so its figures
+            should normally sit well below the official numbers.
+          </li>
+          <li>
+            A quarter can occasionally exceed 100% coverage. The tracker logs the total headcount a
+            company announced, which may include roles outside Singapore or span multiple quarters.
+            MOM counts only Singapore-based retrenchments, in the quarter they occur.
+          </li>
+        </ul>
+      </div>
+    </section>
   );
 }

@@ -6,6 +6,11 @@
   body {
     @apply bg-white text-gray-900 antialiased;
   }
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible {
+    @apply outline-none ring-2 ring-sky-700 ring-offset-2 rounded-sm;
+  }
 }
 
 @layer components {
