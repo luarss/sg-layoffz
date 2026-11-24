@@ -118,6 +118,13 @@ describe('withEntryDefaults', () => {
     expect(filled.jobs_cut_global).toBe(120);
     expect(filled.jobs_cut_sg).toBeNull();
   });
+
+  it('keeps jobs_cut_sg null when the model rules the scraped figure is not Singapore-specific', () => {
+    const parsed = parseModelVerdict(verdictJson({ jobs_cut_sg: null, jobs_cut_global: 15000 }));
+    const filled = withEntryDefaults(parsed!.verdict, entry({ jobs_cut_sg: 15000, jobs_cut_global: 15000 }));
+    expect(filled.jobs_cut_sg).toBeNull();
+    expect(filled.jobs_cut_global).toBe(15000);
+  });
 });
 
 describe('buildUserPrompt', () => {

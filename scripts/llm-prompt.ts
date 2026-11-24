@@ -195,7 +195,7 @@ export function withEntryDefaults(verdict: ModelVerdict, entry: LayoffEntry): Mo
     company: verdict.company || entry.company,
     date_announced: isoDateOr(verdict.date_announced, entry.date_announced),
     date_reported: isoDateOr(verdict.date_reported, entry.date_reported),
-    jobs_cut_sg: verdict.jobs_cut_sg ?? entry.jobs_cut_sg,
+    jobs_cut_sg: verdict.jobs_cut_sg,
     jobs_cut_global: verdict.jobs_cut_global ?? entry.jobs_cut_global,
     pct_workforce: verdict.pct_workforce ?? entry.pct_workforce,
   };

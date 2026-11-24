@@ -33,7 +33,8 @@ export type IntegrityWarningType =
   | 'cross-file-contradiction'
   | 'possible-same-event'
   | 'same-day-same-event'
-  | 'name-split';
+  | 'name-split'
+  | 'headline-company';
 
 export interface IntegrityWarning {
   type: IntegrityWarningType;
@@ -44,10 +45,8 @@ export interface IntegrityWarning {
 }
 
 // Integrity finding types that are promoted to hard errors (block `npm run validate`
-// with exit 1) rather than staying advisory. Currently just the high-confidence
-// same-day subset of the cross-name same-event detection — see
-// 'same-day-same-event' in findCrossNamePairs for what qualifies.
-const HARD_INTEGRITY_ERROR_TYPES = new Set<IntegrityWarningType>(['same-day-same-event']);
+// with exit 1) rather than staying advisory.
+const HARD_INTEGRITY_ERROR_TYPES = new Set<IntegrityWarningType>(['same-day-same-event', 'headline-company']);
 
 const PER_ROW_ADVISORY_TYPES = new Set<IntegrityWarningType>([
   'unarchived-confirmed',
@@ -75,6 +74,9 @@ function today(): string {
 // "A leading retailer") that name a category instead of a company.
 export const VAGUE_COMPANY =
   /not specified|not named|unnamed|undisclosed|\bname not\b|\(name|firm\)|manager\)?$|company\)$|^(?:a|an|another)\s+(?:\w+\s+)*(?:bank|firm|company|startup|business|retailer|mnc|multinational|tech\s+firm|lender|insurer)$/i;
+
+export const HEADLINE_COMPANY =
+  /\s\|\s|\s[-–—]\s+(?:the\s+)?(?:straits\s+times|business\s+times|asiaone|mothership|cna|channel\s*news\s*asia|today|zaobao|edge\s+singapore|vulcan\s+post|tech\s+in\s+asia|yahoo|reuters|bloomberg)\b|\b(?:to|will)\s+(?:close|shut|cease|exit|cut|lay\s+off|retrench|wind\s+(?:up|down))\b|\b(?:closes|closing|shutters|shuts|lays\s+off|cuts\s+\d)\b/i;
 
 // Notes language that signals a future plan, an unconfirmed report, or a noticed
 // duplicate — i.e. the entry should be `rumored` (or rejected), not `confirmed`.
@@ -591,10 +593,11 @@ function findDuplicateSources(indexed: IndexedEntry[]): IntegrityWarning[] {
   return warnings;
 }
 
-function perRowAdvisories(item: IndexedEntry, now: string): IntegrityWarning[] {
+function perRowAdvisories(item: IndexedEntry, now: string, confirmedEventIds: Set<string>): IntegrityWarning[] {
   const e = item.entry;
   const notes = String(e.notes ?? '');
   const confirmed = e.status === 'confirmed';
+  const countsAsConfirmed = confirmed || confirmedEventIds.has(item.eventId);
   const warnings: IntegrityWarning[] = [];
 
   // A date in the future can't be an event that "already happened". Usually the
@@ -609,6 +612,12 @@ function perRowAdvisories(item: IndexedEntry, now: string): IntegrityWarning[] {
     );
   }
 
+  if (HEADLINE_COMPANY.test(e.company)) {
+    warnings.push(
+      rowWarning('headline-company', item, `Company is a news headline: "${e.company}" — replace with the company name`)
+    );
+  }
+
   if (confirmed && HEDGE_NOTES.test(notes)) {
     warnings.push(
       rowWarning('contradictory-verdict', item, `Confirmed but notes hedge: "${e.company}" (${e.date_announced}) — "${notes.slice(0, 90)}"`)
@@ -617,7 +626,7 @@ function perRowAdvisories(item: IndexedEntry, now: string): IntegrityWarning[] {
 
   // jobs_cut_sg feeds totalJobsCut, so a worldwide number parked in that column
   // inflates the SG headline. (A global figure belongs in jobs_cut_global.)
-  if (confirmed && e.jobs_cut_sg != null && e.jobs_cut_sg >= 1000 && GLOBAL_FIGURE.test(notes)) {
+  if (countsAsConfirmed && e.jobs_cut_sg != null && e.jobs_cut_sg >= 1000 && GLOBAL_FIGURE.test(notes)) {
     warnings.push(
       rowWarning(
         'global-figure',
@@ -641,6 +650,9 @@ export function checkIntegrity(
     .filter((group) => !distinctPairs.has(eventPairKey(group.firstId, group.secondId)))
     .map((group) => toPairWarning(group, earliest));
   const now = today();
+  const confirmedEventIds = new Set(
+    indexed.filter((item) => item.entry.status === 'confirmed').map((item) => item.eventId)
+  );
 
   return [
     ...pairWarnings,
@@ -648,7 +660,7 @@ export function checkIntegrity(
     ...findNameSplits(indexed, allowedNeighbours),
     ...findUnarchivedConfirmed(indexed),
     ...findDuplicateSources(indexed),
-    ...indexed.flatMap((item) => perRowAdvisories(item, now)),
+    ...indexed.flatMap((item) => perRowAdvisories(item, now, confirmedEventIds)),
   ];
 }
 

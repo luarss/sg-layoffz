@@ -4,6 +4,8 @@ import path from 'node:path';
 import {
   VAGUE_COMPANY,
   HEDGE_NOTES,
+  HEADLINE_COMPANY,
+  analyzeDataset,
   validateEntry,
   checkIntegrity,
   checkCrossFileContradictions,
@@ -51,6 +53,34 @@ describe('VAGUE_COMPANY', () => {
     expect(VAGUE_COMPANY.test('Standard Chartered Bank')).toBe(false);
     expect(VAGUE_COMPANY.test('OCBC')).toBe(false);
     expect(VAGUE_COMPANY.test('Grab')).toBe(false);
+  });
+});
+
+describe('HEADLINE_COMPANY', () => {
+  it('matches scraped article titles left in the company column', () => {
+    expect(HEADLINE_COMPANY.test('Monster Pet Vet To Close After 16 Years | The Straits Times')).toBe(true);
+    expect(HEADLINE_COMPANY.test('Biscuit King In Casuarina Road To Close In January | The Straits Times')).toBe(true);
+    expect(HEADLINE_COMPANY.test('Baju By Oniatta To Close Kampong Gelam Store | The Straits Times')).toBe(true);
+    expect(
+      HEADLINE_COMPANY.test(
+        "Kiddy Palace At Jurong Point To Close, Thanks Customers For '32 Years Of Memories', Lifestyle News - Asiaone"
+      )
+    ).toBe(true);
+    expect(HEADLINE_COMPANY.test('Acme Shutters Orchard Outlet')).toBe(true);
+  });
+
+  it('does not match real company names', () => {
+    expect(HEADLINE_COMPANY.test('Kiddy Palace')).toBe(false);
+    expect(HEADLINE_COMPANY.test('Keep Kalm and Carry On')).toBe(false);
+    expect(HEADLINE_COMPANY.test("Dan's Steaks Bar and Grill")).toBe(false);
+    expect(HEADLINE_COMPANY.test('Heineken / Asia Pacific Breweries Singapore')).toBe(false);
+    expect(HEADLINE_COMPANY.test('Tiger Beer (Asia Pacific Breweries)')).toBe(false);
+  });
+
+  it('is a hard integrity error so validate fails on a headline company', () => {
+    const headline = entry({ company: 'Monster Pet Vet To Close After 16 Years | The Straits Times', event_id: 'monster-pet-vet-2026-11' });
+    const analysis = analyzeDataset([headline], null, new Set(), new Set());
+    expect(analysis.hardIntegrityErrors.map((w) => w.type)).toContain('headline-company');
   });
 });
 
@@ -133,7 +163,22 @@ describe('checkIntegrity', () => {
     expect(w.some((x) => x.type === 'global-figure')).toBe(true);
   });
 
-  it('flags a confirmed entry with a vague company name', () => {
+  it('flags a rumored global figure inside a confirmed event', () => {
+    const w = checkIntegrity([
+      entry({ company: 'Omnicom', event_id: 'omnicom-2026-09', jobs_cut_sg: null }),
+      entry({
+        company: 'Omnicom',
+        event_id: 'omnicom-2026-09',
+        status: 'rumored',
+        jobs_cut_sg: 15000,
+        notes: 'planned 15,000-role global workforce reduction',
+        source_link: 'https://example.com/omnicom-rumor',
+      }),
+    ]);
+    expect(w.some((x) => x.type === 'global-figure')).toBe(true);
+  });
+
+    it('flags a confirmed entry with a vague company name', () => {
     const w = checkIntegrity([entry({ company: 'Another Legacy Bank', jobs_cut_sg: 777 })]);
     expect(w.some((x) => x.type === 'vague-company')).toBe(true);
   });
