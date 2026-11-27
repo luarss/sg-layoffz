@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import { Fragment, useMemo, useState } from 'react';
 import { LayoffEntry } from '@/lib/types';
+import { safeHttpUrl } from '@/lib/safeUrl';
 
 import {
   GroupedEventEntry,
@@ -188,7 +189,7 @@ function buildColumns(
       header: 'Source',
       cell: (info) => (
         <a
-          href={info.getValue<string>()}
+          href={safeHttpUrl(info.getValue<string>())}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex text-gray-500 hover:text-gray-900 transition-colors"
@@ -395,7 +396,7 @@ export default function DataTable({ entries }: DataTableProps) {
                                   </td>
                                   <td className="px-3 py-2 whitespace-nowrap">
                                     <a
-                                      href={fu.source_link}
+                                      href={safeHttpUrl(fu.source_link)}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="text-slate-500 hover:text-slate-900 transition-colors inline-flex items-center"

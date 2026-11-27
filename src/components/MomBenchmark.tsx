@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import type { BenchmarkComparisonRow } from '@/lib/momBenchmark';
+import { safeHttpUrl } from '@/lib/safeUrl';
 
 const MomBenchmarkChart = dynamic(() => import('./MomBenchmarkChart'), {
   ssr: false,
@@ -84,7 +85,7 @@ export default function MomBenchmark({ comparison }: MomBenchmarkProps) {
                 </td>
                 <td className="py-2">
                   <a
-                    href={row.source_url}
+                    href={safeHttpUrl(row.source_url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-900 underline"

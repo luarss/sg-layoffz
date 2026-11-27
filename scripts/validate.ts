@@ -6,6 +6,7 @@ import { readCsv } from '../src/lib/csv';
 import { LayoffEntry, INDUSTRIES } from '../src/lib/types';
 import { companyKey } from './normalize';
 import { daysBetween, todayIso } from '../src/lib/dates';
+import { isSafeHttpUrl } from '../src/lib/safeUrl';
 import { extractGnFingerprint } from './deduplicate';
 import { normalizeUrl } from './url-normalize';
 import { DOUBLE_COUNT_REVIEW_WINDOW_DAYS, SAME_EVENT_WINDOW_DAYS } from './same-event';
@@ -233,6 +234,8 @@ export function validateEntry(entry: LayoffEntry, rowIndex: number): ValidationE
 
   if (!entry.source_link || String(entry.source_link).trim() === '') {
     errors.push({ row: r, field: 'source_link', message: 'Source link is required' });
+  } else if (!isSafeHttpUrl(entry.source_link)) {
+    errors.push({ row: r, field: 'source_link', message: 'Source link must be an http(s) URL' });
   }
 
   if (!entry.event_id || String(entry.event_id).trim() === '') {
